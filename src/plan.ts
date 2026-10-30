@@ -4,7 +4,7 @@ import type { Manifest } from "./library/manifest.ts";
 import { splitOnly, suitesOf, isExtraId } from "./library/manifest.ts";
 import type { ScenarioVerdict } from "./judge/compare.ts";
 
-// The pure parts of a night (05): which suites run with which ids, the rerun order, last-nightly.json, the bisect choice.
+// The pure parts of a night: which suites run with which ids, the rerun order, last-nightly.json, the bisect choice.
 
 // --only split per suite with the runner's manifest: only suites with a match run; an id in none of the requested
 // suites is an error.
@@ -18,7 +18,7 @@ export function planSuites(m: Manifest, only: Array<string> | null, suites: Arra
   return order.map((s: Suite) => ({ suite: s, only: splitOnly(m, only, s).run })).filter((p: { only: Array<string> }) => p.only.length > 0);
 }
 
-// The environment a rerun gets: the judged run's target builds (04, Reruns: a rerun with another build is refused).
+// The environment a rerun gets: the judged run's target builds (finalize refuses a rerun with another build).
 export function rerunEnv(result: ResultFile): { [name: string]: string } {
   const env: { [name: string]: string } = { PERF_CORE_DIR: result.build.core.dir };
   if (result.build.ui) env.PERF_UI_DIR = result.build.ui.dir;
@@ -47,7 +47,7 @@ export function planReruns(judged: Array<{ suite: Suite, reruns: Array<string>, 
   return steps;
 }
 
-// <state>/last-nightly.json (05, State): lastRun moves on every nightly and gives the commit range of the post;
+// <state>/last-nightly.json: lastRun moves on every nightly and gives the commit range of the post;
 // lastJudged moves only when that suite ran completely, was not noisy and had a reference.
 export interface LastNightly {
   lastRun: { commit: string, date: string, runId: string } | null;
@@ -72,7 +72,7 @@ export function nextLastNightly(prev: LastNightly | null, night: { kind: string,
   return res;
 }
 
-// <state>/record-pending.json: the suites a new machine key left without a baseline (D22), and the record attempts.
+// <state>/record-pending.json: the suites a new machine key left without a baseline, and the record attempts.
 export interface PendingRecord {
   suites: Array<string>;
   since: string;

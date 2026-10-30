@@ -3,7 +3,7 @@ import * as path from "node:path";
 import { createHash } from "node:crypto";
 import { listInstalled } from "./util/deps.ts";
 
-// The install key of a package folder (D20): a sha1 of the dependency fields of its package.json plus the image tag.
+// The install key of a package folder: a sha1 of the dependency fields of its package.json plus the image tag.
 // A folder is reinstalled only when its key changes, so the weekly "Release: x.y.z" version bumps cause no reinstall.
 export const dependencyFields = ["dependencies", "devDependencies", "optionalDependencies", "peerDependencies", "overrides"];
 export const keyFileName = ".perf-install-key";

@@ -12,7 +12,7 @@ import { emptyKnown, applyNight, renewKnown, readKnown, writeKnown } from "../sr
 import { bisect, isBadStep, judgeEnds } from "../src/judge/bisect-step.ts";
 import { canonical, ratchetFile, readJson, writeJson } from "../src/judge/state.ts";
 
-// Hand-made result files (04, Checks): every verdict, the new-key path, only / skipped / incomplete against missing, a
+// Hand-made result files: every verdict, the new-key path, only / skipped / incomplete against missing, a
 // changed rev, the ratchet, the cap, known.json, the bisect step rule.
 const KEY = "test-machine";
 function entry(id: string, median: number, extra?: any): any {
@@ -155,7 +155,7 @@ describe("compare: the verdict table", () => {
     expect(verdictOf(f, "calculations/load/model").rerunMedians).toEqual([131, 129]);
     expect(verdictOf(f, "large/load/model").verdict).toBe("unconfirmed");
     expect(verdictOf(f, "expressions/load/model").verdict).toBe("ok");
-    // RF-F10: judged on the reruns, so the state treats it as an ok night with the reruns' median.
+    // Judged on the reruns, so the state treats it as an ok night with the reruns' median.
     expect(verdictOf(f, "expressions/load/model")).toMatchObject({ median: 120.5, firstMedian: 140, judgedOk: true });
     const known = emptyKnown();
     applyNight(known, "core", f.verdicts, "c9", "2026-10-29");

@@ -15,8 +15,8 @@ import type { Comparison } from "../src/judge/compare.ts";
 import type { Manifest } from "../src/library/manifest.ts";
 import { checkManifest, idsOfSuite } from "../src/library/manifest.ts";
 
-// The unit tests of 05 (Checks): the message builder, pr.ts, the install key and list, gate.ts, the --only split, the
-// bisect search on a fake measure function, last-nightly.json transitions.
+// The unit tests of the night's parts: the message builder, pr.ts, the install key and list, gate.ts, the --only split,
+// the bisect search on a fake measure function, last-nightly.json transitions.
 const tmp = (name: string): string => fs.mkdtempSync(path.join(os.tmpdir(), "perf-" + name + "-"));
 // survey-library's `node perf/manifest.ts` with a fixed machine block.
 const manifest: Manifest = checkManifest(JSON.parse(fs.readFileSync(path.join(__dirname, "testdata", "manifest.json"), "utf8")), "testdata");
@@ -119,7 +119,7 @@ describe("gate.ts", () => {
     expect(env.busiestMinutePinned).toBeCloseTo(0.5);
     expect(env.otherCoresPinned).toBeLessThan(0.25);
     expect(env.oomKills).toBe(1);
-    // R05-F5: one 0.6-core burst of 5 s at the very end of a 3-minute suite is diluted like one in the middle.
+    // One 0.6-core burst of 5 s at the very end of a 3-minute suite is diluted like one in the middle.
     const burst = (at: number): any => {
       const out: Array<string> = [];
       const cpu = [[0, 0], [0, 0], [0, 0], [0, 0]];

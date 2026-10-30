@@ -1,6 +1,6 @@
 import { median } from "../util/stats.ts";
 
-// The bisect step rule (04, D16), used by 05's bisect.ts. A measure function returns the medians of fresh runs of one
+// The bisect step rule, used by src/bisect.ts. A measure function returns the medians of fresh runs of one
 // scenario on one commit; the runner's perf/ stays the same, only the target build changes. It gives null for a commit
 // that does not build: bisect then tries its neighbours, and "narrowed" when none in the range builds.
 export type Measure = (commit: string) => Promise<number | null>;

@@ -1,10 +1,10 @@
 import { knownFile, readJson, writeJson } from "./state.ts";
 
-// The known-regression state (D16): open regressions with their frozen reference and bisect range, and the last
+// The known-regression state: open regressions with their frozen reference and bisect range, and the last
 // commit where each scenario was judged ok. Writes are atomic.
 export interface KnownEntry {
   kind: "time" | "counter";
-  // The frozen reference: a regression never becomes the reference (D19).
+  // The frozen reference: a regression never becomes the reference, so it stays regressed until fixed.
   ref: number;
   counter?: string;
   since: string;
@@ -55,7 +55,7 @@ export function knownEntries(known: KnownState, suite: string, id: string): Arra
   return Object.keys(all).filter((key: string) => key === id || key.indexOf(id + "#") === 0).map((key: string) => ({ key: key, entry: all[key] }));
 }
 
-// A renewed baseline accepts the scenarios' current values (04, Removal): their entries go, and their last ok commits
+// A renewed baseline accepts the scenarios' current values: their entries go, and their last ok commits
 // start at the commit the baseline was recorded on. A full renewal (ids undefined) removes every entry of the suite.
 export function renewKnown(known: KnownState, suite: string, commits: { [id: string]: string | null | undefined }, ids?: Array<string>): Array<string> {
   const entries = known.entries[suite] || {};

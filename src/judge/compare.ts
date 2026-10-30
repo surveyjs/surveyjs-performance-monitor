@@ -13,7 +13,7 @@ import { readKnown, knownEntry, emptyKnown } from "./known.ts";
 import { median } from "../util/stats.ts";
 import { baselineFile, newestBaseline, stateDirOf } from "./state.ts";
 
-// Judging a run (04, D10): verdicts against the reference, the rerun plan, and the final verdicts after reruns.
+// Judging a run: verdicts against the reference, the rerun plan, and the final verdicts after reruns.
 export type Verdict = "ok" | "improved" | "suspect" | "regression" | "counter regression" | "slow-process" | "unconfirmed" |
   "not-run" | "missing" | "fixture changed" | "new" | "skipped" | "noisy" | "unstable" | "counterOnly" | "local" | "no reference";
 
@@ -60,7 +60,7 @@ export interface ScenarioVerdict {
 export interface CompareInput {
   result: ResultFile;
   baseline?: Baseline;
-  // The newest baseline of the suite with any machine key, for counters on a new machine (D22), and its ratchet: the
+  // The newest baseline of the suite with any machine key, for counters on a new machine key, and its ratchet: the
   // counter minimum of the ok nights on that key.
   counterBaseline?: Baseline;
   counterRatchet?: Ratchet;
@@ -103,7 +103,7 @@ function judgeCounters(entry: ResultEntry, ref: Reference | undefined, base: Bas
     else if (b.unstable) cv.verdict = "unstable";
     else {
       cv.change = r === 0 ? (c.value > 0 ? Infinity : 0) : c.value / r - 1;
-      // work: fail above +2% and +1; dom: reported from +2%, fail above x1.5 and +200 (D21).
+      // work: fail above +2% and +1; dom: reported from +2%, fail above x1.5 and +200.
       if (c.kind === "work" && c.value > r * 1.02 && c.value > r + 1) cv.verdict = "regression";
       if (c.kind === "dom" && c.value > r * 1.5 && c.value > r + 200) cv.verdict = "regression";
       else if (c.kind === "dom" && c.value > r * 1.02) cv.verdict = "dom-note";

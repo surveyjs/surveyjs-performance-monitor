@@ -3,7 +3,7 @@ import type { KnownChange } from "./judge/known.ts";
 import type { CommitPr } from "./pr.ts";
 import type { BisectResult } from "./judge/bisect-step.ts";
 
-// The Discord messages (05, D13): a payload and its files, no network. run.sh posts them from the host.
+// The Discord messages: a payload and its files, no network. run.sh posts them from the host.
 // Limits (docs.discord.com/developers, checked 2026-10-29): content 2,000 characters, 10 embeds, an embed title 256,
 // description 4,096, footer 2,048, and 6,000 characters over all embeds of a message; 20 MiB per file. The number of
 // files per message is not stated there: we attach at most 10.

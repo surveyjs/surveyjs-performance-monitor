@@ -7,7 +7,7 @@ import { readResult, fixtureOfId } from "../library/contract.ts";
 import { baselineFile, ratchetFile, readJson, writeJson, canonical, stateDirOf } from "./state.ts";
 import { readKnown, writeKnown, renewKnown } from "./known.ts";
 
-// The baseline of a suite on one machine (04): built from record runs, never committed to the repo.
+// The baseline of a suite on one machine key: built from record runs, never committed to the repo.
 export const defaultTolerance = 0.25;
 export const calibrationLimit = 1.15;
 
@@ -47,7 +47,7 @@ export interface Baseline {
 }
 
 export interface BaselineOptions {
-  // Ids to replace in an existing baseline (D22, partial renewal); the other scenarios are kept.
+  // Ids to replace in an existing baseline (a partial renewal, --record --only); the other scenarios are kept.
   update?: Array<string>;
   // kind "local" results are refused unless the baseline is a local one (PERF_STATE_DIR unset).
   allowLocal?: boolean;
@@ -133,10 +133,10 @@ function stamp(date: Date): string {
   return date.toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
 }
 
-// Writes the baseline; a renewal keeps the old file as <name>.<UTC date>.json, removes the ratchet (D19) and the
-// renewed scenarios' known.json entries (04, Removal). A partial renewal touches only the ids it measured again: an id
-// asked for but not measured keeps its old entry, so its ratchet and its open regressions stay. Returns the file and the
-// removed entries.
+// Writes the baseline; a renewal keeps the old file as <name>.<UTC date>.json, removes the ratchet and the renewed
+// scenarios' known.json entries (it accepts their current values). A partial renewal touches only the ids it measured
+// again: an id asked for but not measured keeps its old entry, so its ratchet and its open regressions stay. Returns the
+// file and the removed entries.
 export function writeBaseline(stateDir: string, build: BaselineBuild, options: BaselineOptions = {}): { file: string, knownRemoved: Array<string> } {
   const b = build.baseline;
   const file = baselineFile(stateDir, b.suite, b.machineKey);

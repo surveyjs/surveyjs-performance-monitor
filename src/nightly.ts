@@ -25,7 +25,7 @@ import { planSuites, planReruns, nextLastNightly, chooseBisects, measuredKey, pe
 import { repoUrl } from "./pr.ts";
 import { firstParentRange, commitPr, rangePrs, search, markBisect, bisectDue } from "./bisect.ts";
 
-// The container side of a night (05): slots, installs, builds, suites, compare, reruns, payloads, state, bisect.
+// The container side of a night: slots, installs, builds, suites, compare, reruns, payloads, state, bisect.
 // node src/nightly.ts [--runner <dir>] [--nightly] [--ref <ref>] [--sha <sha>] [--label <text>] [--suites a,b]
 //   [--only ids] [--record] [--bisect <good>..<bad>] [--no-bisect] [--reinstall] [--repo <dir>] [--history <dir>]
 //   [--host-run <dir>] [--image <tag>] [--dry-post]
@@ -199,7 +199,7 @@ function npmEnv(ctx: Ctx, ignoreScripts: boolean): NodeJS.ProcessEnv {
   return env;
 }
 
-// D20: a folder is reinstalled only when its install key changes (or --reinstall).
+// A folder is reinstalled only when its install key changes (or --reinstall).
 async function install(ctx: Ctx, dir: string, name: string, ignoreScripts: boolean, extraArgs: Array<string> = []): Promise<boolean> {
   if (!needsInstall(dir, ctx.o.image, ctx.o.reinstall)) return false;
   const logFile = path.join(ctx.logs, "install-" + name + ".log");
@@ -216,7 +216,7 @@ async function npmRun(ctx: Ctx, dir: string, script: string, logFile: string): P
   return r.code === 0;
 }
 
-// Slots (05, Slots): work/target and work/bisect are cleaned once per run; between bisect steps only a checkout and a
+// Slots: work/target and work/bisect are cleaned once per run; between bisect steps only a checkout and a
 // clean that keeps node_modules and build/.
 // core.longpaths: the screenshot etalons have long names, and a local state folder can be deep (Windows only).
 function prepareSlot(repo: string, dir: string, sha: string, full: boolean): void {
@@ -338,7 +338,7 @@ function suiteEnv(ctx: Ctx, extra: { [name: string]: string | undefined }): Node
   return env;
 }
 
-// One suite run in fresh processes (02, 03): over its budget + 50% it gets SIGTERM and writes incomplete. After it,
+// One suite run in fresh processes: over its budget + 50% it gets SIGTERM and writes incomplete. After it,
 // annotate writes the environment block from the sampler's lines.
 async function runSuite(ctx: Ctx, suite: Suite, file: string, env: { [name: string]: string | undefined }, logName: string): Promise<SuiteRun> {
   const logFile = path.join(ctx.logs, logName + ".log");
@@ -469,7 +469,7 @@ function depsNote(ctx: Ctx, list: Array<string>): string | undefined {
 async function night(ctx: Ctx): Promise<number> {
   const plan = planSuites(ctx.m, ctx.o.only, ctx.o.suites);
   if (!plan.length) throw new Error("no suite has any of the requested ids");
-  // A new machine key (D22): the next nightly records the pending suites, at most twice, and runs the other suites as a
+  // A new machine key: the next nightly records the pending suites, at most twice, and runs the other suites as a
   // night; after two attempts the night is judged as usual (times not judged for those suites) and the post asks for a
   // --record by hand.
   const pendingFile = path.join(ctx.state, "record-pending.json");
@@ -504,7 +504,7 @@ async function night(ctx: Ctx): Promise<number> {
     }, "suite-" + suite));
     judged.push({ suite: suite, run: run });
   }
-  // Compare, all reruns at the end, compare again (04).
+  // Compare, all reruns at the end, compare again.
   const known = readKnown(ctx.state);
   for (const j of judged) {
     if (!j.run.result) continue;
@@ -563,7 +563,7 @@ async function night(ctx: Ctx): Promise<number> {
   const dn = depsNote(ctx, target.deps);
   if (dn) notes.push(dn);
   if (pendingRecord.length) notes.push("new machine key for " + pendingRecord.join(", ") + ": the next nightly records a baseline");
-  // Bisect (D16): new regressions, and known ones a past night skipped (the budget, an error or a timeout); at most 2 and
+  // Bisect: new regressions, and known ones a past night skipped (the budget, an error or a timeout); at most 2 and
   // 40 minutes a night. A night that recorded a baseline has used the time: they stay due for the next night.
   const candidates: Array<BisectCandidate> = [];
   judged.forEach((j: Judged) => {

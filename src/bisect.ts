@@ -6,7 +6,7 @@ import type { CommitPr } from "./pr.ts";
 import { prOf } from "./pr.ts";
 import type { KnownEntry } from "./judge/known.ts";
 
-// The search for the first bad commit (05, D16) with 04's bisect step rule: the range lastOkCommit..current over
+// The search for the first bad commit with the step rule of judge/bisect-step.ts: the range lastOkCommit..current over
 // first-parent master, a time budget for the night, and the PR of the first bad commit.
 export class BudgetError extends Error {
   constructor() {
