@@ -191,7 +191,8 @@ export function judge(input: CompareInput): Comparison {
     if (calibrationRatio > calibrationLimit) { verdicts.push(make(entry.id, "slow-process", base)); continue; }
     const isSuspect = entry.median > r.time * (1 + tol) && entry.median - r.time > minDelta;
     const isImproved = entry.median < r.time / (1 + tol) && r.time - entry.median > minDelta;
-    const okFrozen = !!k && k.kind === "time" && entry.median <= k.ref * (1 + tol);
+    // With an open time entry the reference is its frozen value: a night that is not a suspect against it is ok against it.
+    const okFrozen = !!k && k.kind === "time" && !isSuspect;
     if (isSuspect) verdicts.push(make(entry.id, "suspect", base));
     else verdicts.push(make(entry.id, isImproved ? "improved" : "ok", Object.assign(base, { judgedOk: true, okAgainstFrozen: okFrozen })));
   }

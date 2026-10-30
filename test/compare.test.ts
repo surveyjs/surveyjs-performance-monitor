@@ -286,6 +286,15 @@ describe("the ratchet and known.json", () => {
     const fixed = nightly(state, 72, "d10");
     expect(fixed.change.removed).toEqual(["large/load/model"]);
   });
+  test("a frozen entry goes on any night that is not a suspect against it, under minDelta too", () => {
+    const small = baselineOf({ "large/load/model": 1 });
+    const known = emptyKnown();
+    known.entries.core = { "large/load/model": { kind: "time", ref: 1, since: "d1", sinceCommit: "x", lastOkCommit: "g" } };
+    // 1.5 ms against a frozen 1 ms: +50%, but 0.5 ms is under core's minDelta of 2 ms, so the night is ok.
+    const c = judge({ result: result([entry("large/load/model", 1.5)]), baseline: small, known: known });
+    expect(verdictOf(c, "large/load/model")).toMatchObject({ verdict: "ok", timeSource: "frozen", okAgainstFrozen: true });
+    expect(applyNight(known, "core", c.verdicts, "c2", "d2").removed).toEqual(["large/load/model"]);
+  });
   test("the counter minimum: a counter regression after an improvement stays regressed", () => {
     const state = { ratchet: { scenarios: {} } as Ratchet, known: emptyKnown() };
     nightly(state, 100, "d1", 90);
