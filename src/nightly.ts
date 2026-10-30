@@ -21,7 +21,7 @@ import type { Message, SuiteReport, BisectReport } from "./discord.ts";
 import { resultMessage, bisectMessage, plainMessage, limits, stripAnsi } from "./discord.ts";
 import { installKeyOfDir, needsInstall, writeKey, installedList, depsDiff } from "./install-key.ts";
 import type { BisectCandidate, LastNightly, NightSuite } from "./plan.ts";
-import { planSuites, planReruns, nextLastNightly, chooseBisects } from "./plan.ts";
+import { planSuites, planReruns, nextLastNightly, chooseBisects, measuredKey } from "./plan.ts";
 import { repoUrl } from "./pr.ts";
 import { firstParentRange, commitPr, rangePrs, search, knownBisect } from "./bisect.ts";
 
@@ -548,7 +548,7 @@ async function night(ctx: Ctx): Promise<number> {
         const ratchet = readRatchet(ctx.state, j.suite, j.final.machineKey);
         advanceRatchet(ratchet, j.baseline, known, j.suite, j.final.verdicts, date);
         writeRatchet(ctx.state, j.suite, j.final.machineKey, ratchet);
-      } else if (newestBaseline(ctx.state, j.suite)) pendingRecord.push(j.suite);
+      } else if (newestBaseline(ctx.state, j.suite) && measuredKey(j.run.result)) pendingRecord.push(j.suite);
     }
     writeKnown(ctx.state, known);
     // A pending record keeps its attempts: it is not restarted every night.

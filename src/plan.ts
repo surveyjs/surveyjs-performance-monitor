@@ -72,6 +72,12 @@ export function nextLastNightly(prev: LastNightly | null, night: { kind: string,
   return res;
 }
 
+// A result without a baseline for its machine key starts a record of the suite only when it measured on that key: a
+// browser suite that failed before its first test has no Chromium yet, and its key ("chromiumnone") is not the machine's.
+export function measuredKey(result: ResultFile): boolean {
+  return result.results.length > 0 && (result.suite === "core" || !!result.machine.chromium);
+}
+
 export interface BisectCandidate {
   suite: Suite;
   id: string;

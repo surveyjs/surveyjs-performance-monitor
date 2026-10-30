@@ -8,7 +8,7 @@ import { installKeyOf, installedList, depsDiff } from "../src/install-key.ts";
 import { parseProcStat, busyCores, parseCpuList, parseLoadLine, environmentOf, gateStep, intervalsOf } from "../src/gate.ts";
 import { escapeText, resultMessage, bisectMessage, embedsSize, limits, rangeLines, rangeText } from "../src/discord.ts";
 import type { SuiteReport } from "../src/discord.ts";
-import { planSuites, planReruns, nextLastNightly, chooseBisects } from "../src/plan.ts";
+import { planSuites, planReruns, nextLastNightly, chooseBisects, measuredKey } from "../src/plan.ts";
 import { search, firstParentRange, rangePrs } from "../src/bisect.ts";
 import { parseArgs, curlArgv, writeMessage, syncRepo } from "../src/nightly.ts";
 import type { Comparison } from "../src/judge/compare.ts";
@@ -300,6 +300,16 @@ describe("plan.ts", () => {
     expect(r.skipped.map((x: any) => x.c.suite + ":" + x.c.id)).toEqual(["core:z", "survey-js-ui:x", "react:x", "react:paint"]);
     const w = chooseBisects([c("core", "a", 0.3, ["whole-suite"]), c("core", "b", 0.5, ["whole-suite"]), c("react", "p", 0.4)]);
     expect(w.chosen.map((x: any) => x.id)).toEqual(["b", "p"]);
+  });
+  test("a machine key is new only for a suite that measured on it, with Chromium known for a browser suite", () => {
+    const r = (suite: string, chromium: string | null, measured: boolean): any => ({ suite: suite, machine: { key: "k", chromium: chromium },
+      results: measured ? [{ id: "large/load/model" }] : [] });
+    // A browser suite that failed before its first test: the reporter's key has no Chromium ("chromiumnone").
+    expect(measuredKey(r("react", null, false))).toBe(false);
+    expect(measuredKey(r("react", null, true))).toBe(false);
+    expect(measuredKey(r("survey-js-ui", "140.0.7339.16", false))).toBe(false);
+    expect(measuredKey(r("survey-js-ui", "140.0.7339.16", true))).toBe(true);
+    expect(measuredKey(r("core", null, true))).toBe(true);
   });
 });
 
