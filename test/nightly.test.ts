@@ -429,6 +429,34 @@ describe("bisect.ts", () => {
   });
 });
 
+describe("bisect.ts: a back-merge on master", () => {
+  test("the range keeps only commits that contain the good end", () => {
+    const repo = tmp("backmerge");
+    const g = (...args: Array<string>): string => execFileSync("git", ["-c", "user.name=t", "-c", "user.email=t@t"].concat(args), { cwd: repo, encoding: "utf8" }).trim();
+    const commit = (message: string): string => {
+      g("commit", "--allow-empty", "-q", "-m", message);
+      return g("rev-parse", "HEAD");
+    };
+    g("init", "-q", "-b", "master");
+    commit("c0");
+    // origin/master moves on (o1, the night's last ok commit) while a developer commits l1, l2 on a stale local master,
+    // then pulls: "Merge branch 'master' of ..." has the local commits as its first parent (12df0423c in survey-library).
+    g("checkout", "-q", "-b", "local");
+    const l1 = commit("l1");
+    const l2 = commit("l2");
+    g("checkout", "-q", "master");
+    const o1 = commit("o1");
+    g("checkout", "-q", "local");
+    g("merge", "-q", "--no-ff", "-m", "Merge branch 'master' of https://github.com/surveyjs/survey-library", "master");
+    const m = g("rev-parse", "HEAD");
+    const m3 = commit("m3");
+    // l1 and l2 do not have o1: measuring them would bisect commits that miss part of the good end.
+    expect(g("rev-list", "--first-parent", "--reverse", o1 + ".." + m3).split(/\r?\n/)).toEqual([l1, l2, m, m3]);
+    expect(firstParentRange(repo, o1, m3)).toEqual([o1, m, m3]);
+    fs.rmSync(repo, { recursive: true, force: true });
+  });
+});
+
 describe("prepare", () => {
   test("--prepare needs the mirror and the tool's commit", () => {
     expect(() => parseArgs(["--prepare"])).toThrow(/--mirror <dir> and --tool-sha <sha>/);

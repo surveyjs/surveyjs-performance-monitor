@@ -15,13 +15,17 @@ export class BudgetError extends Error {
 }
 
 // [good, ...the first-parent commits after it, up to bad], oldest first; refused when good is not an ancestor of bad.
+// Only commits that contain good: after a back-merge ("Merge branch 'master' of ...") the first-parent line runs
+// through a developer's local commits that branched off before good.
 export function firstParentRange(repo: string, good: string, bad: string): Array<string> {
   try {
     git(repo, ["merge-base", "--is-ancestor", good, bad]);
   } catch(e) {
     throw new RangeError(good.substring(0, 9) + " is not an ancestor of " + bad.substring(0, 9));
   }
-  const list = git(repo, ["rev-list", "--first-parent", "--reverse", good + ".." + bad]).split(/\r?\n/).filter((s: string) => !!s);
+  const lines = (args: Array<string>): Array<string> => git(repo, args).split(/\r?\n/).filter((s: string) => !!s);
+  const descendants = new Set<string>(lines(["rev-list", "--ancestry-path", good + ".." + bad]));
+  const list = lines(["rev-list", "--first-parent", "--reverse", good + ".." + bad]).filter((sha: string) => descendants.has(sha));
   return [git(repo, ["rev-parse", good])].concat(list);
 }
 
