@@ -6,7 +6,7 @@ import { execFileSync } from "node:child_process";
 import { prOf } from "../src/pr.ts";
 import { installKeyOf, installedList, depsDiff } from "../src/install-key.ts";
 import { parseProcStat, busyCores, parseCpuList, parseLoadLine, environmentOf, gateStep, intervalsOf } from "../src/gate.ts";
-import { escapeText, resultMessage, bisectMessage, embedsSize, limits, rangeLines, rangeText } from "../src/discord.ts";
+import { escapeText, resultMessage, bisectMessage, embedsSize, limits, rangeLines, rangeText, changeLine } from "../src/discord.ts";
 import type { SuiteReport } from "../src/discord.ts";
 import { planSuites, planReruns, nextLastNightly, chooseBisects, measuredKey } from "../src/plan.ts";
 import { search, firstParentRange, rangePrs, markBisect, bisectDue } from "../src/bisect.ts";
@@ -236,6 +236,12 @@ describe("discord.ts", () => {
     expect(b.payload.allowed_mentions).toEqual({ parse: [] });
     expect(b.payload.content).toMatch(/first bad `abcdef012` \[#90004\]\(<https:\/\/github.com\/surveyjs\/survey-library\/pull\/90004>\) spin/);
   });
+  test("a time regression with a regressed counter shows both", () => {
+    const counters = [{ name: "expressionRuns", kind: "work", value: 110, ref: 100, verdict: "regression" }];
+    expect(changeLine(verdict("large/load/model", "regression", { median: 140, change: 0.4, counter: "expressionRuns", counters: counters })))
+      .toBe("**regression** `large/load/model` 100 → 140 ms (+40.0%, threshold +25.0%) · counter expressionRuns 100 → 110");
+    expect(changeLine(verdict("large/load/model", "regression", { median: 140, change: 0.4 }))).toBe("**regression** `large/load/model` 100 → 140 ms (+40.0%, threshold +25.0%)");
+  });
   test("a message directory and the curl argv with the webhook redacted", () => {
     const dir = tmp("msg");
     const src = path.join(dir, "src");
@@ -300,6 +306,10 @@ describe("plan.ts", () => {
     expect(r.skipped.map((x: any) => x.c.suite + ":" + x.c.id)).toEqual(["core:z", "survey-js-ui:x", "react:x", "react:paint"]);
     const w = chooseBisects([c("core", "a", 0.3, ["whole-suite"]), c("core", "b", 0.5, ["whole-suite"]), c("react", "p", 0.4)]);
     expect(w.chosen.map((x: any) => x.id)).toEqual(["b", "p"]);
+    // A time and a counter entry of one scenario: one bisect, the counter's; the other is covered by it.
+    const t = chooseBisects([c("core", "x", 0.3), Object.assign(c("core", "x", 0.3), { counter: "expressionRuns" })]);
+    expect(t.chosen.map((x: any) => x.id + "#" + x.counter)).toEqual(["x#expressionRuns"]);
+    expect(t.skipped.map((x: any) => x.reason)).toEqual(["covered: x is bisected"]);
   });
   test("a machine key is new only for a suite that measured on it, with Chromium known for a browser suite", () => {
     const r = (suite: string, chromium: string | null, measured: boolean): any => ({ suite: suite, machine: { key: "k", chromium: chromium },

@@ -213,6 +213,36 @@ describe("compare: the verdict table", () => {
     expect(verdictOf(judge({ result: result([entry("large/load/model", 200)]), baseline: b2 }), "large/load/model").verdict).toBe("unstable");
     expect(verdictOf(judge({ result: result([entry("large/load/model", 200, { counterOnly: true })]), baseline: base }), "large/load/model").verdict).toBe("counterOnly");
   });
+  test("a counter regression: every regressed counter opens its entry, and the time is judged too", () => {
+    const both = { expressionRuns: { value: 110, kind: "work" }, domNodes: { value: 1700, kind: "dom" } };
+    const one = { expressionRuns: { value: 110, kind: "work" }, domNodes: { value: 1000, kind: "dom" } };
+    // Two counters up, the time ok: both counters are in known.json.
+    const k1 = emptyKnown();
+    const c1 = judge({ result: result([entry("large/load/model", 100, { counters: both })]), baseline: base, known: k1 });
+    expect(verdictOf(c1, "large/load/model").verdict).toBe("counter regression");
+    expect(applyNight(k1, "core", c1.verdicts, "c1", "d1").added.map((a: any) => a.entry.counter)).toEqual(["expressionRuns", "domNodes"]);
+    // A counter and the time up: the time is a suspect, rerun, and a regression with its counter when the reruns confirm it.
+    const input = { result: result([entry("large/load/model", 140, { counters: one })]), baseline: base };
+    const c2 = judge(input);
+    expect(verdictOf(c2, "large/load/model")).toMatchObject({ verdict: "suspect", counter: "expressionRuns" });
+    expect(c2.reruns).toEqual(["large/load/model"]);
+    const rerun = (m: number): any => result([entry("large/load/model", m, { counters: one })]);
+    const f2 = finalize(c2, input, [rerun(141), rerun(139)]);
+    expect(verdictOf(f2, "large/load/model").verdict).toBe("regression");
+    const k2 = emptyKnown();
+    applyNight(k2, "core", f2.verdicts, "c2", "d2");
+    expect(Object.keys(k2.entries.core).sort()).toEqual(["large/load/model", "large/load/model#expressionRuns"]);
+    // Not confirmed by the reruns: the counter regression stays, judged ok on time.
+    expect(verdictOf(finalize(c2, input, [rerun(100), rerun(101)]), "large/load/model")).toMatchObject({ verdict: "counter regression", judgedOk: true });
+    // The time back to its frozen reference on a counter regression night: the time entry goes, the counter one opens.
+    const k3 = emptyKnown();
+    k3.entries.core = { "large/load/model": { kind: "time", ref: 100, since: "d1", sinceCommit: "x", lastOkCommit: "g" } };
+    k3.lastOkCounters.core = { "large/load/model": "g" };
+    const c3 = judge({ result: result([entry("large/load/model", 100, { counters: one })]), baseline: base, known: k3 });
+    const ch3 = applyNight(k3, "core", c3.verdicts, "c3", "d3");
+    expect(ch3.removed).toEqual(["large/load/model"]);
+    expect(ch3.added.map((a: any) => a.entry)).toEqual([expect.objectContaining({ kind: "counter", counter: "expressionRuns", lastOkCommit: "g" })]);
+  });
   test("a new machine key: counters against the newest baseline of the suite, times not judged", () => {
     const r = result([entry("large/load/model", 500), entry("expressions/load/model", 100, { counters: { expressionRuns: { value: 300, kind: "work" } } })], { machine: { key: "new-key" } });
     const c = judge({ result: r, counterBaseline: base });

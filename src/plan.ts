@@ -100,6 +100,8 @@ export function chooseBisects(candidates: Array<BisectCandidate>, max: number = 
   for (const c of sorted) {
     const covered = chosen.concat(skipped.map((s: { c: BisectCandidate }) => s.c)).filter((x: BisectCandidate) => x.id === c.id && x.suite !== c.suite)[0];
     if (covered) { skipped.push({ c: c, reason: "bisected in " + covered.suite }); continue; }
+    // A scenario with a time and a counter entry, or several counter entries: one bisect, a counter's first.
+    if (chosen.some((x: BisectCandidate) => x.id === c.id && x.suite === c.suite)) { skipped.push({ c: c, reason: "covered: " + c.id + " is bisected" }); continue; }
     const whole = c.verdict.tags.indexOf("whole-suite") > -1;
     if (whole && wholeSuite.has(c.suite)) { skipped.push({ c: c, reason: "whole-suite: one scenario is bisected" }); continue; }
     if (whole && !(c.verdict.rerunMedians && c.verdict.rerunMedians.length)) { skipped.push({ c: c, reason: "whole-suite: not rerun" }); continue; }

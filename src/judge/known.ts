@@ -81,7 +81,8 @@ export interface KnownChange {
 //   ok record it for counter ranges;
 // * a time entry is removed when the night is ok against its frozen ref, a counter entry when that counter is ok
 //   against its frozen ref (the reference carries it);
-// * a new regression gets an entry with the bisect range lastOkCommit..current;
+// * a new regression gets an entry with the bisect range lastOkCommit..current: a time regression its time entry, and
+//   every regressed counter of a regression or a counter regression its counter entry;
 // * a known one is "still regressed", with no new bisect.
 export function applyNight(known: KnownState, suite: string, verdicts: Array<any>, commit: string | null, date: string): KnownChange {
   const entries = known.entries[suite] = known.entries[suite] || {};
@@ -89,6 +90,8 @@ export function applyNight(known: KnownState, suite: string, verdicts: Array<any
   const lastOkCounters = known.lastOkCounters[suite] = known.lastOkCounters[suite] || {};
   const change: KnownChange = { added: [], still: [], removed: [] };
   for (const v of verdicts) {
+    // The ranges start before tonight: a counter regression whose time is ok records tonight as its lastOkCommit below.
+    const okBefore = lastOk[v.id];
     knownEntries(known, suite, v.id).forEach((open: { key: string, entry: KnownEntry }) => {
       const fixed = open.entry.kind === "time" ? v.okAgainstFrozen : v.verdict !== "fixture changed" &&
         (v.counters || []).some((c: any) => c.name === open.entry.counter && (c.verdict === "ok" || c.verdict === "dom-note"));
@@ -98,19 +101,23 @@ export function applyNight(known: KnownState, suite: string, verdicts: Array<any
     });
     if (v.judgedOk && commit) lastOk[v.id] = commit;
     if (v.countersOk && commit) lastOkCounters[v.id] = commit;
+    const open: Array<{ kind: "time" | "counter", ref: number, counter?: string }> = [];
+    if (v.verdict === "regression") open.push({ kind: "time", ref: v.reference });
     if (v.verdict === "regression" || v.verdict === "counter regression") {
-      const kind = v.verdict === "regression" ? "time" : "counter";
-      const key = entryKey(v.id, kind, v.counter);
+      (v.counters || []).filter((c: any) => c.verdict === "regression").forEach((c: any) => open.push({ kind: "counter", ref: c.ref, counter: c.name }));
+    }
+    open.forEach((o: { kind: "time" | "counter", ref: number, counter?: string }) => {
+      const key = entryKey(v.id, o.kind, o.counter);
       if (entries[key]) {
         change.still.push({ id: v.id, entry: entries[key] });
-      } else {
-        const added: KnownEntry = { kind: kind, ref: kind === "time" ? v.reference : v.counterReference, since: date, sinceCommit: commit,
-          lastOkCommit: (kind === "counter" ? lastOkCounters[v.id] || lastOk[v.id] : lastOk[v.id]) || null };
-        if (v.counter) added.counter = v.counter;
-        entries[key] = added;
-        change.added.push({ id: v.id, entry: added });
+        return;
       }
-    }
+      const added: KnownEntry = { kind: o.kind, ref: o.ref, since: date, sinceCommit: commit,
+        lastOkCommit: (o.kind === "counter" ? lastOkCounters[v.id] || okBefore : okBefore) || null };
+      if (o.counter) added.counter = o.counter;
+      entries[key] = added;
+      change.added.push({ id: v.id, entry: added });
+    });
   }
   return change;
 }

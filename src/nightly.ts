@@ -8,7 +8,7 @@ import type { Suite, ResultFile, ResultEntry } from "./library/contract.ts";
 import { annotate } from "./library/contract.ts";
 import type { Manifest } from "./library/manifest.ts";
 import { loadManifest, parseOnly, idsOfSuite, packageOf, uiSourceDirs } from "./library/manifest.ts";
-import type { Comparison, ScenarioVerdict, CompareInput } from "./judge/compare.ts";
+import type { Comparison, ScenarioVerdict, CompareInput, CounterVerdict } from "./judge/compare.ts";
 import { judge, finalize, loadInput, markdownTable, compareFileOf } from "./judge/compare.ts";
 import type { KnownChange } from "./judge/known.ts";
 import { readKnown, writeKnown, applyNight } from "./judge/known.ts";
@@ -766,7 +766,9 @@ async function bisectNight(ctx: Ctx, candidates: Array<BisectCandidate>, judged:
       reports.push({ suite: c.suite, id: c.id, status: "skipped (budget)", message: "the night's bisect budget is used up" });
     } else {
       const tol = c.verdict.tolerance || defaultTolerance;
-      const ref = c.counter ? (c.verdict.counterReference || 0) : (c.verdict.reference || 0);
+      // A counter candidate is any of the scenario's regressed counters, not only the one the verdict shows.
+      const cv = c.counter ? c.verdict.counters.filter((x: CounterVerdict) => x.name === c.counter)[0] : undefined;
+      const ref = c.counter ? (cv && cv.ref !== null ? cv.ref : c.verdict.counterReference || 0) : (c.verdict.reference || 0);
       reports.push(await runOneBisect(ctx, c, c.lastOkCommit as string, ctx.sha, deadline, ref, tol, { sha: ctx.sha, target: target }));
     }
     const r = reports[reports.length - 1];

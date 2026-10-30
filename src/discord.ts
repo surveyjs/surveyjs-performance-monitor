@@ -96,8 +96,11 @@ export function changeLine(v: ScenarioVerdict): string {
   if (v.verdict === "missing" || v.verdict === "fixture changed") return "**" + v.verdict + "** `" + v.id + "`" + (v.reason ? " " + escapeText(cut(v.reason, 160)) : "");
   const reruns = v.rerunMedians && v.rerunMedians.length ? ", reruns " + v.rerunMedians.map(ms).join(", ") : "";
   const tags = v.tags.length ? " [" + v.tags.join(", ") + "]" : "";
+  // A time regression with a regressed counter too.
+  const c = v.counter ? v.counters.filter((x: any) => x.name === v.counter)[0] : undefined;
+  const counter = c ? " \u00b7 counter " + v.counter + " " + c.ref + " \u2192 " + c.value : "";
   return (v.verdict === "regression" ? "**regression**" : v.verdict) + " `" + v.id + "` " + ms(v.reference) + " \u2192 " + ms(v.median) + " ms (" + pct(v.change) +
-    (v.threshold !== undefined ? ", threshold " + pct(v.threshold) : "") + reruns + ")" + tags;
+    (v.threshold !== undefined ? ", threshold " + pct(v.threshold) : "") + reruns + ")" + tags + counter;
 }
 
 const rank: { [v: string]: number } = { "regression": 0, "counter regression": 0, "missing": 1, "fixture changed": 1, "unconfirmed": 2, "improved": 3 };
