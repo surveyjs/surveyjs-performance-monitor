@@ -11,7 +11,11 @@ export interface KnownEntry {
   sinceCommit: string | null;
   lastOkCommit: string | null;
   firstBad?: { sha: string, pr: number | null };
-  bisect?: "done" | "narrowed" | "not-reproduced" | "not-in-range" | "skipped";
+  // skipped: due again on a later night; covered: another candidate's bisect stands for it; failed: errors or timeouts
+  // used up the attempts (run.sh --bisect by hand).
+  bisect?: "done" | "narrowed" | "not-reproduced" | "not-in-range" | "skipped" | "covered" | "failed";
+  // Bisects that ended in an error or a timeout.
+  bisectAttempts?: number;
 }
 
 // entries: a time entry is keyed by the scenario id, a counter entry by "<id>#<counter>", so both can be open at once.

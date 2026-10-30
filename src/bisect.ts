@@ -4,6 +4,7 @@ import { bisect } from "./judge/bisect-step.ts";
 import type { BisectReport } from "./discord.ts";
 import type { CommitPr } from "./pr.ts";
 import { prOf } from "./pr.ts";
+import type { KnownEntry } from "./judge/known.ts";
 
 // The search for the first bad commit (05, D16) with 04's bisect step rule: the range lastOkCommit..current over
 // first-parent master, a time budget for the night, and the PR of the first bad commit.
@@ -82,9 +83,22 @@ export async function search(commits: Array<string>, measure: Measure, options: 
   return report;
 }
 
-// The known.json bisect field of a report.
-export function knownBisect(status: BisectReport["status"]): "done" | "narrowed" | "not-reproduced" | "not-in-range" | "skipped" {
-  if (status === "found") return "done";
-  if (status === "narrowed" || status === "not-reproduced" || status === "not-in-range") return status;
-  return "skipped";
+// A bisect that ends in an error or a timeout is tried again on later nights, at most this many times in all.
+export const maxBisectAttempts = 2;
+
+// A known.json entry a night bisects: a new one, or one a past night skipped.
+export function bisectDue(entry: KnownEntry): boolean {
+  return !entry.bisect || entry.bisect === "skipped";
+}
+
+// The known.json bisect field after a report; "covered" for a candidate another bisect of the night stands for. A
+// budget skip is not an attempt: the bisect did not start.
+export function markBisect(entry: KnownEntry, status: BisectReport["status"] | "covered"): void {
+  if (status === "found") entry.bisect = "done";
+  else if (status === "narrowed" || status === "not-reproduced" || status === "not-in-range" || status === "covered") entry.bisect = status;
+  else if (status === "skipped (budget)") entry.bisect = "skipped";
+  else {
+    entry.bisectAttempts = (entry.bisectAttempts || 0) + 1;
+    entry.bisect = entry.bisectAttempts >= maxBisectAttempts ? "failed" : "skipped";
+  }
 }

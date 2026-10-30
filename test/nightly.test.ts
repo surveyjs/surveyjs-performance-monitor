@@ -9,7 +9,7 @@ import { parseProcStat, busyCores, parseCpuList, parseLoadLine, environmentOf, g
 import { escapeText, resultMessage, bisectMessage, embedsSize, limits, rangeLines, rangeText } from "../src/discord.ts";
 import type { SuiteReport } from "../src/discord.ts";
 import { planSuites, planReruns, nextLastNightly, chooseBisects, measuredKey } from "../src/plan.ts";
-import { search, firstParentRange, rangePrs } from "../src/bisect.ts";
+import { search, firstParentRange, rangePrs, markBisect, bisectDue } from "../src/bisect.ts";
 import { parseArgs, curlArgv, writeMessage, syncRepo } from "../src/nightly.ts";
 import type { Comparison } from "../src/judge/compare.ts";
 import type { Manifest } from "../src/library/manifest.ts";
@@ -347,6 +347,33 @@ describe("bisect.ts", () => {
     const late = await search(commits, async(c: string) => { t += 10 * 60000; return commits.indexOf(c) >= 3 ? 150 : 100; },
       { suite: "core", id: "x", reference: 100, tolerance: 0.25, deadline: 25 * 60000, now: () => t, prOf: pr });
     expect(late.status).toBe("timed out");
+  });
+  test("known.json bisect state: covered and failed are not due again; the budget is not an attempt", () => {
+    const entry = (): any => ({ kind: "time", ref: 100, since: "d1", sinceCommit: "x", lastOkCommit: "g" });
+    // An error that repeats (a scenario that throws on every commit) takes the slot twice, then leaves the queue.
+    const e = entry();
+    markBisect(e, "error");
+    expect([e.bisect, e.bisectAttempts, bisectDue(e)]).toEqual(["skipped", 1, true]);
+    markBisect(e, "error");
+    expect([e.bisect, e.bisectAttempts, bisectDue(e)]).toEqual(["failed", 2, false]);
+    const t = entry();
+    markBisect(t, "timed out");
+    expect([t.bisect, bisectDue(t)]).toEqual(["skipped", true]);
+    markBisect(t, "timed out");
+    expect(bisectDue(t)).toBe(false);
+    const b = entry();
+    markBisect(b, "skipped (budget)");
+    markBisect(b, "skipped (budget)");
+    markBisect(b, "skipped (budget)");
+    expect([b.bisect, b.bisectAttempts, bisectDue(b)]).toEqual(["skipped", undefined, true]);
+    // Covered by another suite's bisect or by the whole-suite one: not queued again.
+    const c = entry();
+    markBisect(c, "covered");
+    expect([c.bisect, bisectDue(c)]).toEqual(["covered", false]);
+    const f = entry();
+    markBisect(f, "found");
+    expect([f.bisect, bisectDue(f)]).toEqual(["done", false]);
+    expect(bisectDue(entry())).toBe(true);
   });
   test("the first-parent range and the PRs of a real repository", () => {
     const repo = tmp("repo");

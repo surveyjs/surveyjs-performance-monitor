@@ -23,7 +23,7 @@ import { installKeyOfDir, needsInstall, writeKey, installedList, depsDiff } from
 import type { BisectCandidate, LastNightly, NightSuite } from "./plan.ts";
 import { planSuites, planReruns, nextLastNightly, chooseBisects, measuredKey } from "./plan.ts";
 import { repoUrl } from "./pr.ts";
-import { firstParentRange, commitPr, rangePrs, search, knownBisect } from "./bisect.ts";
+import { firstParentRange, commitPr, rangePrs, search, markBisect, bisectDue } from "./bisect.ts";
 
 // The container side of a night (05): slots, installs, builds, suites, compare, reruns, payloads, state, bisect.
 // node src/nightly.ts [--runner <dir>] [--nightly] [--ref <ref>] [--sha <sha>] [--label <text>] [--suites a,b]
@@ -596,10 +596,11 @@ async function night(ctx: Ctx): Promise<number> {
   const dir1 = path.join(ctx.history, "discord", "1-result");
   writeMessage(dir1, msg, sources);
   if (ctx.o.dryPost) printDry(dir1);
-  // Bisect (D16): new regressions, and known ones a past night skipped for the budget; at most 2 and 40 minutes a night.
+  // Bisect (D16): new regressions, and known ones a past night skipped (the budget, an error or a timeout); at most 2 and
+  // 40 minutes a night.
   const candidates: Array<BisectCandidate> = [];
   judged.forEach((j: Judged) => {
-    const due = j.known ? j.known.added.concat(j.known.still.filter((s: any) => !s.entry.bisect || s.entry.bisect === "skipped")) : [];
+    const due = j.known ? j.known.added.concat(j.known.still.filter((s: any) => bisectDue(s.entry))) : [];
     due.forEach((a: any) => {
       const v = j.final!.verdicts.filter((x: ScenarioVerdict) => x.id === a.id)[0];
       if (v) candidates.push({ suite: j.suite, id: a.id, verdict: v, lastOkCommit: a.entry.lastOkCommit, counter: a.entry.kind === "counter" ? a.entry.counter : undefined });
@@ -770,15 +771,16 @@ async function bisectNight(ctx: Ctx, candidates: Array<BisectCandidate>, judged:
     }
     const r = reports[reports.length - 1];
     if (entry) {
-      entry.bisect = knownBisect(r.status);
+      markBisect(entry, r.status);
       if (r.firstBad) entry.firstBad = { sha: r.firstBad.sha, pr: r.firstBad.pr };
     }
   }
-  // Skipped for the budget: "skipped", so a later night bisects it; covered by another suite's bisect: left as is.
+  // Skipped for the budget: "skipped", so a later night bisects it; covered by another suite's or the whole-suite
+  // bisect: "covered", so it is not queued again.
   skipped.forEach((s: { c: BisectCandidate, reason: string }) => {
     reports.push({ suite: s.c.suite, id: s.c.id, status: "skipped (budget)", message: s.reason });
     const entry = entryOf(s.c);
-    if (entry && s.reason.indexOf("budget") === 0) entry.bisect = "skipped";
+    if (entry) markBisect(entry, s.reason.indexOf("budget") === 0 ? "skipped (budget)" : "covered");
   });
   writeKnown(ctx.state, known);
   writeBisectMessage(ctx, reports);
