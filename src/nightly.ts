@@ -28,7 +28,8 @@ import { firstParentRange, commitPr, rangePrs, search, knownBisect } from "./bis
 // The container side of a night (05): slots, installs, builds, suites, compare, reruns, payloads, state, bisect.
 // node src/nightly.ts [--runner <dir>] [--nightly] [--ref <ref>] [--sha <sha>] [--label <text>] [--suites a,b]
 //   [--only ids] [--record] [--bisect <good>..<bad>] [--no-bisect] [--reinstall] [--repo <dir>] [--history <dir>]
-//   [--image <tag>] [--dry-post]
+//   [--host-run <dir>] [--image <tag>] [--dry-post]
+// node src/nightly.ts --prepare --mirror <dir> --tool-sha <sha> [--suites a,b] [--only ids] [--bisect <good>..<bad>]
 // The tests come from a survey-library checkout (the tool, or --runner): its perf/manifest.ts names the suites, their
 // ids, budgets and commands (its perf/CONTRACT.md).
 // PERF_STATE_DIR is required. Exit codes: 0 done, 1 the night has failing verdicts, 3 an infrastructure failure
@@ -50,8 +51,15 @@ export interface Options {
   reinstall: boolean;
   repo?: string;
   history?: string;
+  // The host's folder of this run, read-only (run.sh): the gate result and the load samples.
+  hostRun?: string;
   image: string;
   dryPost: boolean;
+  // --prepare (run.sh, before the gate): fetch the state directory's clone from the mirror, move the tool to toolSha,
+  // check the options against its manifest.
+  prepare: boolean;
+  mirror?: string;
+  toolSha?: string;
 }
 
 export function parseArgs(argv: Array<string>): Options {
@@ -63,14 +71,16 @@ export function parseArgs(argv: Array<string>): Options {
     return argv[i + 1];
   };
   const known = ["--runner", "--nightly", "--ref", "--sha", "--label", "--suites", "--only", "--record", "--bisect", "--no-bisect", "--reinstall",
-    "--repo", "--history", "--image", "--dry-post", "--check-args"];
+    "--repo", "--history", "--host-run", "--image", "--dry-post", "--check-args", "--prepare", "--mirror", "--tool-sha"];
   argv.filter((a: string) => a.indexOf("--") === 0).forEach((a: string) => { if (known.indexOf(a) < 0) throw new Error("unknown option " + a); });
   const o: Options = {
     runner: opt("--runner"), kind: flag("--record") ? "record" : flag("--nightly") ? "nightly" : "on-demand", ref: opt("--ref") || "origin/master",
     sha: opt("--sha"), label: opt("--label"), suites: (opt("--suites") || "core,react,survey-js-ui").split(",").map((s: string) => s.trim()) as Array<Suite>,
     only: parseOnly(opt("--only")), bisect: opt("--bisect"), noBisect: flag("--no-bisect"), reinstall: flag("--reinstall"), repo: opt("--repo"),
-    history: opt("--history"), image: opt("--image") || process.env.PERF_IMAGE || "local", dryPost: flag("--dry-post")
+    history: opt("--history"), hostRun: opt("--host-run"), image: opt("--image") || process.env.PERF_IMAGE || "local", dryPost: flag("--dry-post"),
+    prepare: flag("--prepare"), mirror: opt("--mirror"), toolSha: opt("--tool-sha")
   };
+  if (o.prepare && (!o.mirror || !o.toolSha)) throw new Error("--prepare needs --mirror <dir> and --tool-sha <sha>");
   if (o.bisect && !o.only) throw new Error("--bisect needs --only <id>");
   if (o.bisect && !/^.+?\.\..+$/.test(o.bisect)) throw new Error("--bisect takes <good>..<bad>");
   return o;
@@ -167,6 +177,8 @@ export interface Ctx {
   local: boolean;
   // The tool's perf/manifest.ts: suites, ids, budgets, commands, UI packages and this process's machine key.
   m: Manifest;
+  // Where run.sh's gate.json and load.jsonl are: --host-run on the server, else the history folder (a local run).
+  hostRun: string;
 }
 
 async function phase<T>(ctx: Ctx, name: string, fn: () => Promise<T>): Promise<T> {
@@ -207,13 +219,13 @@ async function npmRun(ctx: Ctx, dir: string, script: string, logFile: string): P
 // Slots (05, Slots): work/target and work/bisect are cleaned once per run; between bisect steps only a checkout and a
 // clean that keeps node_modules and build/.
 // core.longpaths: the screenshot etalons have long names, and a local state folder can be deep (Windows only).
-function prepareSlot(ctx: Ctx, dir: string, sha: string, full: boolean): void {
+function prepareSlot(repo: string, dir: string, sha: string, full: boolean): void {
   try {
     if (!fs.existsSync(path.join(dir, ".git"))) {
       fs.rmSync(dir, { recursive: true, force: true });
-      git(ctx.repo, ["worktree", "prune"]);
+      git(repo, ["worktree", "prune"]);
       fs.mkdirSync(path.dirname(dir), { recursive: true });
-      git(ctx.repo, ["-c", "core.longpaths=true", "worktree", "add", "--force", "--detach", dir, sha]);
+      git(repo, ["-c", "core.longpaths=true", "worktree", "add", "--force", "--detach", dir, sha]);
       return;
     }
     git(dir, ["-c", "core.longpaths=true", "checkout", "--force", "--detach", sha]);
@@ -221,6 +233,36 @@ function prepareSlot(ctx: Ctx, dir: string, sha: string, full: boolean): void {
   } catch(e: any) {
     throw new InfraError("checkout of " + sha.substring(0, 9) + " in " + path.basename(dir) + " failed: " + String(e.message || e).split("\n").filter((l: string) => /error|fatal/.test(l)).join(" ").substring(0, 300));
   }
+}
+
+// The state directory's own clone of survey-library: its origin is the host's bare mirror, mounted read-only, whose
+// refs/remotes/origin/* and tags it copies. The host never runs git in the state directory (run.sh), so whatever a
+// target writes here reaches no git the host runs.
+export function syncRepo(repo: string, mirror: string): void {
+  if (!fs.existsSync(path.join(repo, ".git"))) {
+    fs.rmSync(repo, { recursive: true, force: true });
+    fs.mkdirSync(repo, { recursive: true });
+    git(repo, ["init", "--quiet"]);
+    git(repo, ["remote", "add", "origin", mirror]);
+  }
+  git(repo, ["config", "remote.origin.url", mirror]);
+  git(repo, ["config", "--replace-all", "remote.origin.fetch", "+refs/remotes/origin/*:refs/remotes/origin/*"]);
+  git(repo, ["config", "--add", "remote.origin.fetch", "+refs/tags/*:refs/tags/*"]);
+  git(repo, ["fetch", "--prune", "--quiet", "origin"]);
+}
+
+// run.sh's prepare step, in a container without network before the gate: the clone, the tool at master, and the
+// options checked against the tool's manifest, so a typo is not found an hour later as a crash.
+function prepare(o: Options, state: string): number {
+  const repo = path.join(state, "repo");
+  const tool = path.join(state, "work", "tool");
+  fs.mkdirSync(path.join(state, "home"), { recursive: true });
+  syncRepo(repo, path.resolve(o.mirror as string));
+  prepareSlot(repo, tool, o.toolSha as string, false);
+  const m = loadManifest(tool);
+  planSuites(m, o.bisect ? (o.only as Array<string>).slice(0, 1) : o.only, o.suites);
+  log("prepared: tool " + (o.toolSha as string).substring(0, 9) + ", runner contract " + m.contract + "; options ok");
+  return 0;
 }
 
 export interface TargetBuild {
@@ -316,10 +358,10 @@ async function runSuite(ctx: Ctx, suite: Suite, file: string, env: { [name: stri
 }
 
 function environment(ctx: Ctx, from: number, to: number): any {
-  const gateFile = path.join(ctx.history, "gate.json");
+  const gateFile = path.join(ctx.hostRun, "gate.json");
   const gate = fs.existsSync(gateFile) ? readJson<any>(gateFile, null) : null;
   const num = (v: string | undefined): number | undefined => (v ? Number(v) : undefined);
-  return environmentOf(readLoad(path.join(ctx.history, "load.jsonl")), { from: from, to: to, pinned: parseCpuList(process.env.PERF_CPUS),
+  return environmentOf(readLoad(path.join(ctx.hostRun, "load.jsonl")), { from: from, to: to, pinned: parseCpuList(process.env.PERF_CPUS),
     maxOther: num(process.env.PERF_MAX_OTHER_CORES), gate: gate, requireSamples: !ctx.local });
 }
 
@@ -416,7 +458,7 @@ async function buildTarget(ctx: Ctx, suites: Array<Suite>): Promise<TargetBuild>
     return buildCheckout(ctx, ctx.tool, suites, "tool", true);
   }
   const dir = path.join(ctx.state, "work", "target");
-  prepareSlot(ctx, dir, ctx.sha, true);
+  prepareSlot(ctx.repo, dir, ctx.sha, true);
   return buildCheckout(ctx, dir, suites, "target", false);
 }
 
@@ -594,7 +636,7 @@ function bisectBuilder(ctx: Ctx, suite: Suite): (sha: string) => Promise<Built |
   return async(sha: string): Promise<Built | null> => {
     if (built[sha] !== undefined) return built[sha];
     log("bisect build " + sha.substring(0, 9));
-    prepareSlot(ctx, slot, sha, !cleaned);
+    prepareSlot(ctx.repo, slot, sha, !cleaned);
     cleaned = true;
     const dirs = [slot, path.join(slot, "packages", "survey-core")];
     await install(ctx, slot, "bisect-root", true);
@@ -790,7 +832,7 @@ async function onDemandBisect(ctx: Ctx): Promise<number> {
 // runs is recorded again, at most twice. With --only: baseline --update <ids>.
 // The gate gave up (a busy server): every run would be noisy, and a record of noisy runs is refused.
 function gateRefused(ctx: Ctx): string | undefined {
-  const gate = readJson<any>(path.join(ctx.history, "gate.json"), null);
+  const gate = readJson<any>(path.join(ctx.hostRun, "gate.json"), null);
   return gate && gate.ok === false ? gate.reason || "gate" : undefined;
 }
 
@@ -952,9 +994,11 @@ export async function main(argv: Array<string>): Promise<number> {
   const stateEnv = process.env.PERF_STATE_DIR;
   if (!stateEnv) throw new Error("PERF_STATE_DIR is required (a scratchpad folder for local runs)");
   const state = path.resolve(stateEnv);
+  // --prepare moves the tool first: its manifest is read after.
+  if (o.prepare) return prepare(o, state);
   const tool = o.runner ? path.resolve(o.runner) : path.join(state, "work", "tool");
   const m = loadManifest(tool);
-  // --check-args: run.sh checks the options with this parser and the tool's manifest before the gate (no git).
+  // --check-args: the options against this parser and the tool's manifest, with no git (a local check).
   if (argv.indexOf("--check-args") > -1) {
     planSuites(m, o.bisect ? (o.only as Array<string>).slice(0, 1) : o.only, o.suites);
     console.log("options ok");
@@ -968,7 +1012,7 @@ export async function main(argv: Array<string>): Promise<number> {
   if (!o.history && fs.existsSync(history)) throw new Error("history directory exists: " + history);
   fs.mkdirSync(history, { recursive: true });
   const ctx: Ctx = { o: o, state: state, tool: tool, repo: repo, history: history, runId: path.basename(history), sha: sha, started: started, phases: [],
-    logs: path.join(history, "logs"), local: !!o.runner, m: m };
+    logs: path.join(history, "logs"), local: !!o.runner, m: m, hostRun: o.hostRun ? path.resolve(o.hostRun) : history };
   log(o.kind + (o.bisect ? " bisect " + o.bisect : "") + " of " + o.ref + " " + sha.substring(0, 9) + "; runner " + tool + "; state " + state + "; history " + history);
   let code = 0;
   try {

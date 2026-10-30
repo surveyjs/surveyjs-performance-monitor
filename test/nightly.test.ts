@@ -10,7 +10,7 @@ import { escapeText, resultMessage, bisectMessage, embedsSize, limits, rangeLine
 import type { SuiteReport } from "../src/discord.ts";
 import { planSuites, planReruns, nextLastNightly, chooseBisects } from "../src/plan.ts";
 import { search, firstParentRange, rangePrs } from "../src/bisect.ts";
-import { parseArgs, curlArgv, writeMessage } from "../src/nightly.ts";
+import { parseArgs, curlArgv, writeMessage, syncRepo } from "../src/nightly.ts";
 import type { Comparison } from "../src/judge/compare.ts";
 import type { Manifest } from "../src/library/manifest.ts";
 import { checkManifest, idsOfSuite } from "../src/library/manifest.ts";
@@ -356,5 +356,42 @@ describe("bisect.ts", () => {
     const prs = rangePrs(repo, shas[0], shas[3]);
     expect(prs.map((p: any) => p.pr + " " + p.title)).toEqual(["90003 step 3", "90002 the title of 2", "90001 step 1"]);
     fs.rmSync(repo, { recursive: true, force: true });
+  });
+});
+
+describe("prepare", () => {
+  test("--prepare needs the mirror and the tool's commit", () => {
+    expect(() => parseArgs(["--prepare"])).toThrow(/--mirror <dir> and --tool-sha <sha>/);
+    expect(() => parseArgs(["--prepare", "--mirror", "/mirror"])).toThrow(/--tool-sha/);
+    const o = parseArgs(["--prepare", "--mirror", "/mirror", "--tool-sha", "abc", "--only", "large/load/model"]);
+    expect([o.prepare, o.mirror, o.toolSha, o.only]).toEqual([true, "/mirror", "abc", ["large/load/model"]]);
+    expect(parseArgs(["--host-run", "/host-run"]).hostRun).toBe("/host-run");
+  });
+  test("the state directory's clone takes the mirror's origin refs and tags, and follows the mirror", () => {
+    const dir = tmp("prepare");
+    const g = (cwd: string, args: Array<string>): string => execFileSync("git", args, { cwd: cwd, encoding: "utf8" }).trim();
+    const commit = (cwd: string, message: string): string => {
+      g(cwd, ["-c", "user.name=t", "-c", "user.email=t@t", "commit", "--allow-empty", "-q", "-m", message]);
+      return g(cwd, ["rev-parse", "HEAD"]);
+    };
+    const upstream = path.join(dir, "upstream");
+    fs.mkdirSync(upstream);
+    g(upstream, ["init", "-q", "-b", "master"]);
+    const one = commit(upstream, "one");
+    g(upstream, ["tag", "v1"]);
+    // The host's mirror, as README.md sets it up: bare, with origin's branches under refs/remotes/origin.
+    const mirror = path.join(dir, "mirror.git");
+    g(dir, ["clone", "-q", "--bare", upstream, mirror]);
+    g(mirror, ["config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*"]);
+    g(mirror, ["fetch", "-q", "--prune", "origin"]);
+    const repo = path.join(dir, "repo");
+    syncRepo(repo, mirror);
+    expect(g(repo, ["rev-parse", "origin/master"])).toBe(one);
+    expect(g(repo, ["rev-parse", "v1^{commit}"])).toBe(one);
+    const two = commit(upstream, "two");
+    g(mirror, ["fetch", "-q", "--prune", "origin"]);
+    syncRepo(repo, mirror);
+    expect(g(repo, ["rev-parse", "origin/master"])).toBe(two);
+    fs.rmSync(dir, { recursive: true, force: true });
   });
 });

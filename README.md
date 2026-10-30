@@ -16,9 +16,9 @@ their ids, budgets and commands, and every suite run writes one result file.
 | `src/judge/` | baseline, the reference ratchet, compare, `known.json`, the bisect step rule |
 | `src/library/` | survey-library's runner contract: the manifest and the result file |
 | `src/plan.ts`, `bisect.ts`, `discord.ts`, `gate.ts`, `install-key.ts`, `pr.ts` | the night's plan, the bisect search, the messages, the load gate, install keys, PR numbers |
-| `bin/run.sh` | the host side: lock, git, image, gate, container, load sampler, posting |
+| `bin/run.sh`, `bin/host-lib.sh` | the host side: lock, git mirror, image, prepare, gate, container, load sampler, posting; the host's checks of what a container wrote |
 | `docker/`, `systemd/` | the image and the timer |
-| `test/` | unit tests; `test/testdata/` holds a real manifest and a real core result file of survey-library |
+| `test/` | unit tests; `host.test.sh` for the host's checks; `test/testdata/` holds a real manifest and a real core result file of survey-library |
 
 ## Development
 
@@ -27,6 +27,7 @@ npm install
 npm test                                   # unit tests
 npm run lint && npm run typecheck
 SURVEY_LIBRARY_DIR=../survey-library npm test   # also checks that checkout's manifest
+bash test/host.test.sh                          # the host's checks (Linux)
 ```
 
 The code is TypeScript that Node 22.18+ runs directly (type stripping): no build, no runtime dependency.
@@ -53,16 +54,25 @@ bash, util-linux `flock`, coreutils `timeout`, curl 7.76 or newer, git, Docker (
 
 ### Bootstrap
 
+Three folders, kept apart (`run.sh` refuses one inside another):
+
+| folder | owner | what | in the containers |
+|---|---|---|---|
+| `/opt/surveyjs-performance-monitor` | root | this repository at a release tag; `run.sh` runs from here | read-only |
+| `/var/lib/surveyjs-performance-monitor-host` (`PERF_HOST_DIR`) | perf | the host's own files: a bare git mirror of survey-library, `run.lock`, `running.json`, `runs/<run>/` (`nightly.log`, `load.jsonl`, `gate.json`, `prepare.log`, `outbox/`, `posted-*`) | the mirror and the run's own folder, read-only |
+| `/srv/surveyjs-performance-monitor` (`PERF_STATE_DIR`) | perf | the containers' working folder: their clone of survey-library, `work/`, `baselines/`, `history/`, `known.json`, ... | read-write |
+
 ```bash
 sudo git clone https://github.com/surveyjs/surveyjs-performance-monitor /opt/surveyjs-performance-monitor
-S=/srv/surveyjs-perf                         # PERF_STATE_DIR, owned by the user that runs the tests
-mkdir -p $S && cd $S
-git clone https://github.com/surveyjs/survey-library repo
-git -C repo worktree add --detach ../work/tool origin/master
+sudo git -C /opt/surveyjs-performance-monitor checkout <tag>
+H=/var/lib/surveyjs-performance-monitor-host
+S=/srv/surveyjs-performance-monitor
+sudo install -d -m 700 -o perf -g perf $H $S
+sudo -u perf git clone --quiet --bare https://github.com/surveyjs/survey-library $H/mirror.git
+sudo -u perf git --git-dir=$H/mirror.git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
+sudo -u perf git --git-dir=$H/mirror.git fetch --prune origin
 sudo install -D -m 600 -o perf -g perf /dev/null /etc/surveyjs-perf/perf.env   # then fill it, see below
 ```
-
-`/opt/surveyjs-performance-monitor` belongs to root: `run.sh` runs from there, and the containers mount it read-only.
 
 The env file (`PERF_ENV_FILE`, default `/etc/surveyjs-perf/perf.env`) holds plain `KEY=value` lines, no quotes; `run.sh`
 parses it line by line:
@@ -78,11 +88,25 @@ PERF_GATE_MAX_MIN=60
 PERF_KEEP_DAYS=90
 ```
 
-The env file stays **outside** the state directory, and `run.sh` refuses an env file inside it: the container mounts
-the state directory read-write and runs the target's npm scripts and build, so whatever it can reach there must hold no
-secret and no code the host runs (`repo/.git/hooks` and `repo/.git/config` are mounted read-only for the same reason).
-The webhook is never passed to the container, and curl reads it from a process substitution, so it is not in `ps`
-either.
+The env file stays **outside** the state directory, and `run.sh` refuses an env file inside it. The webhook is never
+passed to a container, and curl reads it from a process substitution, so it is not in `ps` either.
+
+### The host and the containers
+
+The containers run survey-library's code (`master`, or any branch given with `--ref`) and its npm dependencies with their
+install scripts, and they write the whole state directory. Whatever is there can be a link, a rewritten git config or a
+file that changes while the host reads it. So the host:
+
+* runs git only in its own mirror (`git --git-dir=$PERF_HOST_DIR/mirror.git`: fetch, rev-parse, `show <sha>:package.json`),
+  never in the state directory; the prepare container fetches the state directory's clone from the mirror, read-only;
+* runs no program from the state directory: `nightly.ts`, `gate.ts` and the Dockerfile come from this checkout;
+* writes nothing there: its lock, its logs, the load samples and the gate result go to its own run folder, which the
+  night container sees read-only;
+* reads from there only whether a few files exist, and a ready Discord message, which it first copies to
+  `runs/<run>/outbox/<n>` taking regular files with plain names only (`bin/host-lib.sh`; a link, a linked folder on the
+  way, or a `files.txt` naming anything else is refused and posted as such). curl reads only that copy.
+
+`test/host.test.sh` checks these rules against links and odd names (Linux: `bash test/host.test.sh`).
 
 ### Keeping other work off `PERF_CPUS`
 
@@ -104,7 +128,7 @@ are not.
 
 ```bash
 sudo cp /opt/surveyjs-performance-monitor/systemd/perf-nightly.* /etc/systemd/system/
-sudoedit /etc/systemd/system/perf-nightly.service   # User=, Group= and PERF_STATE_DIR
+sudoedit /etc/systemd/system/perf-nightly.service   # User=, Group=, PERF_STATE_DIR and PERF_HOST_DIR
 sudo systemctl daemon-reload && sudo systemctl enable --now perf-nightly.timer
 systemctl list-timers perf-nightly.timer            # the next run
 ```
@@ -132,11 +156,11 @@ nightly records the suites by itself (at most twice; after that the post asks fo
 
 ### On demand
 
-Run them as the state owner, with the service's state directory (the env file is readable only by that user, and
+Run them as the owner of the two folders, with the service's folders (the env file is readable only by that user, and
 `run.lock` belongs to it):
 
 ```bash
-R="sudo -u perf PERF_STATE_DIR=/srv/surveyjs-perf /opt/surveyjs-performance-monitor/bin/run.sh"
+R="sudo -u perf PERF_STATE_DIR=/srv/surveyjs-performance-monitor PERF_HOST_DIR=/var/lib/surveyjs-performance-monitor-host /opt/surveyjs-performance-monitor/bin/run.sh"
 $R --ref feature/x --label "PR #12345"          # a branch against master's reference
 $R --ref feature/x --only records-10k/records/next@orders
 $R --bisect v3.2.2..master --only <id>          # search by hand; refs are origin/<ref> first, then tags and shas
@@ -148,20 +172,24 @@ The options are checked before the gate: a wrong suite or id is posted at once a
 
 ### Updating the server
 
-`sudo git -C /opt/surveyjs-performance-monitor pull` after reading the diff. The tests themselves come from
-survey-library's `master`, which `run.sh` checks out into `work/tool` before every run.
+Read the diff, then `sudo git -C /opt/surveyjs-performance-monitor fetch && sudo git -C /opt/surveyjs-performance-monitor
+checkout <tag>`. The tests themselves come from survey-library's `master`, which the prepare step checks out into
+`work/tool` before every run.
 
 ### What a night does
 
-1. `run.sh` (host): takes `run.lock`, posts a stuck or unfinished previous run, fetches, moves `work/tool` to
-   survey-library's `origin/master`, builds the image if needed, runs the gate, then the container with the load
-   sampler beside it, and posts `history/<run>/discord/1-result` and `2-bisect`. A crash, a timeout or an
-   out-of-memory kill is posted with the last 50 log lines attached.
+1. `run.sh` (host): takes `run.lock`, posts a stuck or unfinished previous run, fetches the mirror, builds the image if
+   needed (Playwright's version from survey-library's `package.json` on `master`), then:
+   * the prepare container: the state directory's clone fetches from the mirror, `work/tool` moves to `master`, and
+     `nightly.ts` checks the options against the tool's manifest;
+   * the gate; the night container with the load sampler beside it;
+   * posts `history/<run>/discord/1-result` and `2-bisect` through its outbox. A crash, a timeout or an out-of-memory
+     kill is posted with the last 50 log lines attached.
 2. `src/nightly.ts` (container): reads the tool's manifest, installs only when a folder's dependency fields change
    (`install-key.ts`), builds the target, runs the suites one after another, compares them with the reference, reruns
    the suspects twice at the end, writes `known.json`, the ratchet and `last-nightly.json`, and bisects new
    regressions (at most 2 and 40 minutes a night).
 
 The state directory: `repo/`, `work/{tool,target,bisect,builds}`, `baselines/`, `history/`, `known.json`,
-`last-nightly.json`, `record-pending.json`, `deps-last.json`, `npm-cache/`, `home/`, `tmp/` (run.sh's messages),
-`run.lock`, `running.json`. History older than `PERF_KEEP_DAYS` is pruned.
+`last-nightly.json`, `record-pending.json`, `deps-last.json`, `npm-cache/`, `home/`. History older than
+`PERF_KEEP_DAYS` is pruned, in the state directory by the container and in `PERF_HOST_DIR/runs` by `run.sh`.

@@ -30,4 +30,7 @@ jobs:
       run: npm test
 
     - name: Shell syntax
-      run: bash -n bin/run.sh
+      run: bash -n bin/run.sh && bash -n bin/host-lib.sh
+
+    - name: Host checks
+      run: bash test/host.test.sh
