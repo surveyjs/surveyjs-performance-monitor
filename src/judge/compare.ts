@@ -12,6 +12,7 @@ import type { KnownState } from "./known.ts";
 import { readKnown, knownEntry, emptyKnown } from "./known.ts";
 import { median } from "../util/stats.ts";
 import { baselineFile, newestBaseline, stateDirOf } from "./state.ts";
+import { pct, fixedMs } from "../util/format.ts";
 
 // Judging a run: verdicts against the reference, the rerun plan, and the final verdicts after reruns.
 export type Verdict = "ok" | "improved" | "suspect" | "regression" | "counter regression" | "slow-process" | "unconfirmed" |
@@ -302,9 +303,8 @@ export function finalize(first: Comparison, input: CompareInput, reruns: Array<R
     failed: verdicts.some((v: ScenarioVerdict) => failingVerdicts.indexOf(v.verdict) > -1) });
 }
 
-const pct = (v: number | undefined): string => (v === undefined || !isFinite(v) ? "" : (v >= 0 ? "+" : "") + (v * 100).toFixed(1) + "%");
 const cell = (s: string): string => s.replace(/\\/g, "\\\\").replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
-const ms = (v: number | undefined): string => (v === undefined || isNaN(v) ? "" : String(Math.round(v * 100) / 100));
+const ms = (v: number | undefined): string => fixedMs(v, 2, "");
 
 export function markdownTable(c: Comparison): string {
   const lines = ["| scenario | reference | median | change | threshold | vs previous | verdict | rerun medians |", "|---|---|---|---|---|---|---|---|"];

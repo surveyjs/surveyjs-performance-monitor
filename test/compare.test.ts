@@ -12,6 +12,7 @@ import { emptyKnown, applyNight, renewKnown, readKnown, writeKnown } from "../sr
 import { bisect, isBadStep, judgeEnds } from "../src/judge/bisect-step.ts";
 import { canonical, ratchetFile, readJson, writeJson, baselineFiles } from "../src/judge/state.ts";
 import { utcStamp } from "../src/util/stamp.ts";
+import { pct, fixedMs } from "../src/util/format.ts";
 
 // Hand-made result files: every verdict, the new-key path, only / skipped / incomplete against missing, a
 // changed rev, the ratchet, the cap, known.json, the bisect step rule.
@@ -208,6 +209,13 @@ describe("compare: the verdict table", () => {
     const n = verdictOf(judge({ result: newKey, counterBaseline: base }), "expressions/load/model");
     expect(n.verdict).toBe("no reference");
     expect(n.reason).toContain("rev 1 -> 2");
+  });
+  test("the table's numbers: changes to 0.1%, ms to 0.01 (a message keeps 0.1 ms and shows ? for none)", () => {
+    expect([pct(0.12345), pct(-0.0004), pct(0), pct(Infinity), pct(undefined)]).toEqual(["+12.3%", "-0.0%", "+0.0%", "", ""]);
+    expect([fixedMs(100.126, 2, ""), fixedMs(NaN, 2, ""), fixedMs(undefined, 2, "")]).toEqual(["100.13", "", ""]);
+    expect([fixedMs(100.16, 1, "?"), fixedMs(100, 1, "?"), fixedMs(undefined, 1, "?")]).toEqual(["100.2", "100", "?"]);
+    const c = judge({ result: result([entry("large/load/model", 110.126)]), baseline: base });
+    expect(markdownTable(c).split("\n")[2]).toBe("| large/load/model | 100 | 110.13 | +10.1% | +25.0% |  | ok |  |");
   });
   test("vs previous only on the same machine key, and the comparison names the previous night", () => {
     const prev = result([entry("large/load/model", 50)], { date: "2026-10-28T03:00:00.000Z" });

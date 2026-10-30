@@ -2,6 +2,7 @@ import type { Comparison, ScenarioVerdict } from "./judge/compare.ts";
 import type { KnownChange } from "./judge/known.ts";
 import type { CommitPr } from "./pr.ts";
 import type { BisectResult } from "./judge/bisect-step.ts";
+import { pct, fixedMs } from "./util/format.ts";
 
 // The Discord messages: a payload and its files, no network. run.sh posts them from the host.
 // Limits (docs.discord.com/developers, checked 2026-10-29): content 2,000 characters, 10 embeds, an embed title 256,
@@ -85,8 +86,7 @@ export function counts(c: Comparison): string {
   return countOrder.filter((v: string) => n[v]).map((v: string) => n[v] + " " + (v === "counter regression" ? "counter" : v)).join(" \u00b7 ");
 }
 
-const pct = (v: number | undefined): string => (v === undefined || !isFinite(v) ? "" : (v >= 0 ? "+" : "") + (v * 100).toFixed(1) + "%");
-const ms = (v: number | undefined): string => (v === undefined || isNaN(v) ? "?" : String(Math.round(v * 10) / 10));
+const ms = (v: number | undefined): string => fixedMs(v, 1, "?");
 
 export function changeLine(v: ScenarioVerdict): string {
   if (v.verdict === "counter regression") {
