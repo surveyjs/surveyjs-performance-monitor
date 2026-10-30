@@ -256,6 +256,13 @@ describe("compare: the verdict table", () => {
     expect(verdictOf(c, "large/load/model").verdict).toBe("no reference");
     expect(verdictOf(c, "expressions/load/model").verdict).toBe("counter regression");
   });
+  test("a new machine key judges counters against the newest baseline's ratchet minimum", () => {
+    const r = result([entry("large/load/model", 500, { counters: { expressionRuns: { value: 100, kind: "work" } } })], { machine: { key: "new-key" } });
+    // The baseline says 100; ok nights on its key brought the counter down to 90, and 100 is a regression since.
+    const counterRatchet: Ratchet = { scenarios: { "large/load/model": { okNights: [], counters: { expressionRuns: 90 } } } };
+    const v = verdictOf(judge({ result: r, counterBaseline: base, counterRatchet: counterRatchet }), "large/load/model");
+    expect(v).toMatchObject({ verdict: "counter regression", counter: "expressionRuns", counterReference: 90 });
+  });
   test("the cap: 20 suspects with a clean calibration rerun the top 6 and end as whole-suite regressions, not noisy", () => {
     const many: { [id: string]: number } = {};
     for (let i = 0; i < 20; i++) many["large/load/s" + i] = 100;

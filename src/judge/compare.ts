@@ -60,8 +60,10 @@ export interface ScenarioVerdict {
 export interface CompareInput {
   result: ResultFile;
   baseline?: Baseline;
-  // The newest baseline of the suite with any machine key, for counters on a new machine (D22).
+  // The newest baseline of the suite with any machine key, for counters on a new machine (D22), and its ratchet: the
+  // counter minimum of the ok nights on that key.
   counterBaseline?: Baseline;
+  counterRatchet?: Ratchet;
   ratchet?: Ratchet;
   known?: KnownState;
   previous?: ResultFile;
@@ -155,7 +157,8 @@ export function judge(input: CompareInput): Comparison {
       verdicts.push(make(entry.id, "no reference", { median: entry.median, reason: "counters not judged: " + cbChange + " since the newest baseline" }));
       continue;
     }
-    const ref = baseline ? referenceOf(suite, entry.id, baseline, ratchet, known) : (counterBase ? referenceOf(suite, entry.id, counterBase, { scenarios: {} }, known) : undefined);
+    const ref = baseline ? referenceOf(suite, entry.id, baseline, ratchet, known) :
+      (counterBase ? referenceOf(suite, entry.id, counterBase, input.counterRatchet || { scenarios: {} }, known) : undefined);
     const counters = judgeCounters(entry, ref, counterBase ? counterBase.scenarios[entry.id] : undefined);
     const counterValues: { [name: string]: number | null } = {};
     counters.forEach((c: CounterVerdict) => { counterValues[c.name] = c.value; });
@@ -324,7 +327,9 @@ export function loadInput(resultFile: string, stateDir: string, previousFile?: s
   const result = readResult(resultFile);
   const baseline = readBaseline(baselineFile(stateDir, result.suite, result.machine.key));
   const newest = baseline ? undefined : newestBaseline(stateDir, result.suite);
-  return { result: result, baseline: baseline, counterBaseline: newest ? readBaseline(newest) : undefined,
+  const counterBaseline = newest ? readBaseline(newest) : undefined;
+  return { result: result, baseline: baseline, counterBaseline: counterBaseline,
+    counterRatchet: counterBaseline ? readRatchet(stateDir, result.suite, counterBaseline.machineKey) : undefined,
     ratchet: readRatchet(stateDir, result.suite, result.machine.key), known: readKnown(stateDir), previous: previousFile ? readResult(previousFile) : undefined };
 }
 
