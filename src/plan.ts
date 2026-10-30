@@ -4,7 +4,7 @@ import type { Manifest } from "./library/manifest.ts";
 import { splitOnly, suitesOf, isExtraId } from "./library/manifest.ts";
 import type { ScenarioVerdict } from "./judge/compare.ts";
 
-// The pure parts of a night (05): which suites run with which ids, the rerun order, last-nightly.json, the bisect choice.
+// The pure parts of a night: which suites run with which ids, the rerun order, last-nightly.json, the bisect choice.
 
 // --only split per suite with the runner's manifest: only suites with a match run; an id in none of the requested
 // suites is an error.
@@ -18,7 +18,7 @@ export function planSuites(m: Manifest, only: Array<string> | null, suites: Arra
   return order.map((s: Suite) => ({ suite: s, only: splitOnly(m, only, s).run })).filter((p: { only: Array<string> }) => p.only.length > 0);
 }
 
-// The environment a rerun gets: the judged run's target builds (04, Reruns: a rerun with another build is refused).
+// The environment a rerun gets: the judged run's target builds (finalize refuses a rerun with another build).
 export function rerunEnv(result: ResultFile): { [name: string]: string } {
   const env: { [name: string]: string } = { PERF_CORE_DIR: result.build.core.dir };
   if (result.build.ui) env.PERF_UI_DIR = result.build.ui.dir;
@@ -47,7 +47,7 @@ export function planReruns(judged: Array<{ suite: Suite, reruns: Array<string>, 
   return steps;
 }
 
-// <state>/last-nightly.json (05, State): lastRun moves on every nightly and gives the commit range of the post;
+// <state>/last-nightly.json: lastRun moves on every nightly and gives the commit range of the post;
 // lastJudged moves only when that suite ran completely, was not noisy and had a reference.
 export interface LastNightly {
   lastRun: { commit: string, date: string, runId: string } | null;
@@ -72,6 +72,46 @@ export function nextLastNightly(prev: LastNightly | null, night: { kind: string,
   return res;
 }
 
+// <state>/record-pending.json: the suites a new machine key left without a baseline, and the record attempts.
+export interface PendingRecord {
+  suites: Array<string>;
+  since: string;
+  attempts?: number;
+}
+
+export interface PendingNight {
+  record: Array<{ suite: Suite, only: Array<string> | null }>;
+  night: Array<{ suite: Suite, only: Array<string> | null }>;
+  // The record uses up one of its two attempts.
+  countAttempt: boolean;
+  note?: string;
+}
+
+// A nightly with a pending record: the pending suites are recorded (at most twice), the other suites run as a night. A
+// busy server (busy: the gate's reason) does not use up an attempt, and the whole night runs instead: a record of noisy
+// runs would be refused, a night still judges the counters.
+export function pendingNight(plan: Array<{ suite: Suite, only: Array<string> | null }>, pending: PendingRecord | null, kind: string,
+  only: Array<string> | null, busy: string | undefined): PendingNight {
+  const record = pending ? plan.filter((p: { suite: Suite }) => pending.suites.indexOf(p.suite) > -1) : [];
+  const res: PendingNight = { record: [], night: plan, countAttempt: false };
+  if (kind !== "nightly" || !pending || only || !record.length) return res;
+  if ((pending.attempts || 0) >= 2) {
+    res.note = "the record for the new machine key failed twice (" + pending.suites.join(", ") + "): run run.sh --record by hand";
+    return res;
+  }
+  if (busy) {
+    res.note = "the record for the new machine key (" + pending.suites.join(", ") + ") did not start: the server was busy (" + busy + "); it is not counted as an attempt";
+    return res;
+  }
+  return { record: record, night: plan.filter((p: { suite: Suite }) => pending.suites.indexOf(p.suite) < 0), countAttempt: true };
+}
+
+// A result without a baseline for its machine key starts a record of the suite only when it measured on that key: a
+// browser suite that failed before its first test has no Chromium yet, and its key ("chromiumnone") is not the machine's.
+export function measuredKey(result: ResultFile): boolean {
+  return result.results.length > 0 && (result.suite === "core" || !!result.machine.chromium);
+}
+
 export interface BisectCandidate {
   suite: Suite;
   id: string;
@@ -94,6 +134,8 @@ export function chooseBisects(candidates: Array<BisectCandidate>, max: number = 
   for (const c of sorted) {
     const covered = chosen.concat(skipped.map((s: { c: BisectCandidate }) => s.c)).filter((x: BisectCandidate) => x.id === c.id && x.suite !== c.suite)[0];
     if (covered) { skipped.push({ c: c, reason: "bisected in " + covered.suite }); continue; }
+    // A scenario with a time and a counter entry, or several counter entries: one bisect, a counter's first.
+    if (chosen.some((x: BisectCandidate) => x.id === c.id && x.suite === c.suite)) { skipped.push({ c: c, reason: "covered: " + c.id + " is bisected" }); continue; }
     const whole = c.verdict.tags.indexOf("whole-suite") > -1;
     if (whole && wholeSuite.has(c.suite)) { skipped.push({ c: c, reason: "whole-suite: one scenario is bisected" }); continue; }
     if (whole && !(c.verdict.rerunMedians && c.verdict.rerunMedians.length)) { skipped.push({ c: c, reason: "whole-suite: not rerun" }); continue; }

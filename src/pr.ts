@@ -1,4 +1,4 @@
-// The PR of a first-parent master commit (05, PR numbers). Subjects come in four shapes: a squash "... (#12145)",
+// The PR of a first-parent master commit. Subjects come in four shapes: a squash "... (#12145)",
 // "Merge pull request #12152 from ..." with the title in the body, direct pushes with no PR ("Release: ...") and
 // back-merges ("Merge branch 'master' of ..."). A bare "#N" is never a PR: "fix #12147 (...) (#12151)" is #12151.
 export const repoUrl = "https://github.com/surveyjs/survey-library";

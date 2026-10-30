@@ -2,8 +2,9 @@ import type { Comparison, ScenarioVerdict } from "./judge/compare.ts";
 import type { KnownChange } from "./judge/known.ts";
 import type { CommitPr } from "./pr.ts";
 import type { BisectResult } from "./judge/bisect-step.ts";
+import { pct, fixedMs } from "./util/format.ts";
 
-// The Discord messages (05, D13): a payload and its files, no network. run.sh posts them from the host.
+// The Discord messages: a payload and its files, no network. run.sh posts them from the host.
 // Limits (docs.discord.com/developers, checked 2026-10-29): content 2,000 characters, 10 embeds, an embed title 256,
 // description 4,096, footer 2,048, and 6,000 characters over all embeds of a message; 20 MiB per file. The number of
 // files per message is not stated there: we attach at most 10.
@@ -85,8 +86,7 @@ export function counts(c: Comparison): string {
   return countOrder.filter((v: string) => n[v]).map((v: string) => n[v] + " " + (v === "counter regression" ? "counter" : v)).join(" \u00b7 ");
 }
 
-const pct = (v: number | undefined): string => (v === undefined || !isFinite(v) ? "" : (v >= 0 ? "+" : "") + (v * 100).toFixed(1) + "%");
-const ms = (v: number | undefined): string => (v === undefined || isNaN(v) ? "?" : String(Math.round(v * 10) / 10));
+const ms = (v: number | undefined): string => fixedMs(v, 1, "?");
 
 export function changeLine(v: ScenarioVerdict): string {
   if (v.verdict === "counter regression") {
@@ -96,8 +96,11 @@ export function changeLine(v: ScenarioVerdict): string {
   if (v.verdict === "missing" || v.verdict === "fixture changed") return "**" + v.verdict + "** `" + v.id + "`" + (v.reason ? " " + escapeText(cut(v.reason, 160)) : "");
   const reruns = v.rerunMedians && v.rerunMedians.length ? ", reruns " + v.rerunMedians.map(ms).join(", ") : "";
   const tags = v.tags.length ? " [" + v.tags.join(", ") + "]" : "";
+  // A time regression with a regressed counter too.
+  const c = v.counter ? v.counters.filter((x: any) => x.name === v.counter)[0] : undefined;
+  const counter = c ? " \u00b7 counter " + v.counter + " " + c.ref + " \u2192 " + c.value : "";
   return (v.verdict === "regression" ? "**regression**" : v.verdict) + " `" + v.id + "` " + ms(v.reference) + " \u2192 " + ms(v.median) + " ms (" + pct(v.change) +
-    (v.threshold !== undefined ? ", threshold " + pct(v.threshold) : "") + reruns + ")" + tags;
+    (v.threshold !== undefined ? ", threshold " + pct(v.threshold) : "") + reruns + ")" + tags + counter;
 }
 
 const rank: { [v: string]: number } = { "regression": 0, "counter regression": 0, "missing": 1, "fixture changed": 1, "unconfirmed": 2, "improved": 3 };

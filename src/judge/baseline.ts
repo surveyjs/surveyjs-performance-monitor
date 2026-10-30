@@ -6,8 +6,9 @@ import type { ResultFile, ResultEntry } from "../library/contract.ts";
 import { readResult, fixtureOfId } from "../library/contract.ts";
 import { baselineFile, ratchetFile, readJson, writeJson, canonical, stateDirOf } from "./state.ts";
 import { readKnown, writeKnown, renewKnown } from "./known.ts";
+import { utcStamp } from "../util/stamp.ts";
 
-// The baseline of a suite on one machine (04): built from record runs, never committed to the repo.
+// The baseline of a suite on one machine key: built from record runs, never committed to the repo.
 export const defaultTolerance = 0.25;
 export const calibrationLimit = 1.15;
 
@@ -47,7 +48,7 @@ export interface Baseline {
 }
 
 export interface BaselineOptions {
-  // Ids to replace in an existing baseline (D22, partial renewal); the other scenarios are kept.
+  // Ids to replace in an existing baseline (a partial renewal, --record --only); the other scenarios are kept.
   update?: Array<string>;
   // kind "local" results are refused unless the baseline is a local one (PERF_STATE_DIR unset).
   allowLocal?: boolean;
@@ -58,6 +59,8 @@ export interface BaselineBuild {
   baseline: Baseline;
   // Scenarios with fewer than 4 runs left after dropping slow ones: record them again (at most twice).
   rerecord: Array<string>;
+  // The ids built from these runs; with update, an id not measured keeps its previous entry and is not among them.
+  renewed: Array<string>;
 }
 
 // noiseTol = clamp(exp(2.5 x sigma) - 1, 0, 0.50), rounded up to 0.05; above 0.50 the scenario is unstable.
@@ -124,35 +127,34 @@ export function buildBaseline(results: Array<ResultFile>, options: BaselineOptio
     if (kept.length < 4) rerecord.push(id);
     scenarios[id] = entry;
   }
-  return { baseline: { schema: 1, suite: suite, machineKey: key, createdAt: now, scenarios: scenarios }, rerecord: rerecord };
+  return { baseline: { schema: 1, suite: suite, machineKey: key, createdAt: now, scenarios: scenarios }, rerecord: rerecord, renewed: ids };
 }
 
-function stamp(date: Date): string {
-  return date.toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
-}
-
-// Writes the baseline; a renewal keeps the old file as <name>.<UTC date>.json, removes the ratchet (D19) and the
-// renewed scenarios' known.json entries (04, Removal). Returns the file and the removed entries.
+// Writes the baseline; a renewal keeps the old file as <name>.<UTC date>.json, removes the ratchet and the renewed
+// scenarios' known.json entries (it accepts their current values). A partial renewal touches only the ids it measured
+// again: an id asked for but not measured keeps its old entry, so its ratchet and its open regressions stay. Returns the
+// file and the removed entries.
 export function writeBaseline(stateDir: string, build: BaselineBuild, options: BaselineOptions = {}): { file: string, knownRemoved: Array<string> } {
   const b = build.baseline;
   const file = baselineFile(stateDir, b.suite, b.machineKey);
-  if (fs.existsSync(file)) fs.copyFileSync(file, file.replace(/\.json$/, "." + stamp(options.now || new Date()) + ".json"));
+  if (fs.existsSync(file)) fs.copyFileSync(file, file.replace(/\.json$/, "." + utcStamp(options.now || new Date()) + "Z.json"));
   writeJson(file, canonical(b));
+  const renewed = options.update ? build.renewed : undefined;
   const ratchet = ratchetFile(stateDir, b.suite, b.machineKey);
   if (fs.existsSync(ratchet)) {
-    if (options.update) {
+    if (renewed) {
       const r = readJson<any>(ratchet, { scenarios: {} });
-      options.update.forEach((id: string) => { delete r.scenarios[id]; });
+      renewed.forEach((id: string) => { delete r.scenarios[id]; });
       writeJson(ratchet, r);
     } else {
       fs.unlinkSync(ratchet);
     }
   }
   const known = readKnown(stateDir);
-  const ids = options.update || Object.keys(b.scenarios);
+  const ids = renewed || Object.keys(b.scenarios);
   const commits: { [id: string]: string | undefined } = {};
   ids.forEach((id: string) => { if (b.scenarios[id]) commits[id] = b.scenarios[id].commit; });
-  const knownRemoved = renewKnown(known, b.suite, commits, options.update);
+  const knownRemoved = renewKnown(known, b.suite, commits, renewed);
   writeKnown(stateDir, known);
   return { file: file, knownRemoved: knownRemoved };
 }

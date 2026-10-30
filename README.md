@@ -152,7 +152,9 @@ list in its post. Until a baseline exists, a night posts its results without tim
 
 `run.sh --record`, or `run.sh --record --only <ids>` for some scenarios. Say why in the channel. A new image (a new
 `@playwright/test` in survey-library, or a new Dockerfile here) is a new machine key: once a baseline exists, the next
-nightly records the suites by itself (at most twice; after that the post asks for a `--record` by hand).
+nightly records the suites by itself (at most twice; after that the post asks for a `--record` by hand) and runs the
+other suites as usual, in one post; it leaves the bisects for the night after. When the gate gave up, the record waits
+for a quiet night and the night runs every suite.
 
 ### On demand
 

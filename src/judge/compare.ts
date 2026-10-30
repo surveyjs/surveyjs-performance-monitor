@@ -12,8 +12,9 @@ import type { KnownState } from "./known.ts";
 import { readKnown, knownEntry, emptyKnown } from "./known.ts";
 import { median } from "../util/stats.ts";
 import { baselineFile, newestBaseline, stateDirOf } from "./state.ts";
+import { pct, fixedMs } from "../util/format.ts";
 
-// Judging a run (04, D10): verdicts against the reference, the rerun plan, and the final verdicts after reruns.
+// Judging a run: verdicts against the reference, the rerun plan, and the final verdicts after reruns.
 export type Verdict = "ok" | "improved" | "suspect" | "regression" | "counter regression" | "slow-process" | "unconfirmed" |
   "not-run" | "missing" | "fixture changed" | "new" | "skipped" | "noisy" | "unstable" | "counterOnly" | "local" | "no reference";
 
@@ -60,8 +61,10 @@ export interface ScenarioVerdict {
 export interface CompareInput {
   result: ResultFile;
   baseline?: Baseline;
-  // The newest baseline of the suite with any machine key, for counters on a new machine (D22).
+  // The newest baseline of the suite with any machine key, for counters on a new machine key, and its ratchet: the
+  // counter minimum of the ok nights on that key.
   counterBaseline?: Baseline;
+  counterRatchet?: Ratchet;
   ratchet?: Ratchet;
   known?: KnownState;
   previous?: ResultFile;
@@ -85,6 +88,11 @@ export function minDeltaOf(suite: string): number {
 
 const fixtureKeyOf = fixtureOfId;
 
+// A scenario with a regressed counter is a counter regression unless its time is confirmed as a regression too.
+function orCounter(v: ScenarioVerdict, verdict: Verdict): Verdict {
+  return verdict !== "regression" && v.counters.some((c: CounterVerdict) => c.verdict === "regression") ? "counter regression" : verdict;
+}
+
 function judgeCounters(entry: ResultEntry, ref: Reference | undefined, base: Baseline["scenarios"][string] | undefined): Array<CounterVerdict> {
   const res: Array<CounterVerdict> = [];
   for (const name in entry.counters) {
@@ -96,7 +104,7 @@ function judgeCounters(entry: ResultEntry, ref: Reference | undefined, base: Bas
     else if (b.unstable) cv.verdict = "unstable";
     else {
       cv.change = r === 0 ? (c.value > 0 ? Infinity : 0) : c.value / r - 1;
-      // work: fail above +2% and +1; dom: reported from +2%, fail above x1.5 and +200 (D21).
+      // work: fail above +2% and +1; dom: reported from +2%, fail above x1.5 and +200.
       if (c.kind === "work" && c.value > r * 1.02 && c.value > r + 1) cv.verdict = "regression";
       if (c.kind === "dom" && c.value > r * 1.5 && c.value > r + 200) cv.verdict = "regression";
       else if (c.kind === "dom" && c.value > r * 1.02) cv.verdict = "dom-note";
@@ -150,7 +158,8 @@ export function judge(input: CompareInput): Comparison {
       verdicts.push(make(entry.id, "no reference", { median: entry.median, reason: "counters not judged: " + cbChange + " since the newest baseline" }));
       continue;
     }
-    const ref = baseline ? referenceOf(suite, entry.id, baseline, ratchet, known) : (counterBase ? referenceOf(suite, entry.id, counterBase, { scenarios: {} }, known) : undefined);
+    const ref = baseline ? referenceOf(suite, entry.id, baseline, ratchet, known) :
+      (counterBase ? referenceOf(suite, entry.id, counterBase, input.counterRatchet || { scenarios: {} }, known) : undefined);
     const counters = judgeCounters(entry, ref, counterBase ? counterBase.scenarios[entry.id] : undefined);
     const counterValues: { [name: string]: number | null } = {};
     counters.forEach((c: CounterVerdict) => { counterValues[c.name] = c.value; });
@@ -171,29 +180,31 @@ export function judge(input: CompareInput): Comparison {
     const tol = Math.max(entry.tolerance === null || entry.tolerance === undefined ? defaultTolerance : entry.tolerance, b.noiseTol || 0);
     const change = entry.median / r.time - 1;
     const threshold = Math.max(tol, minDelta / r.time);
-    const calibrationRatio = Math.max(entry.calibration.before, entry.calibration.after) / b.calibration;
+    // The same statistic on both sides: the baseline keeps the median of its runs' calibration medians (six samples each).
+    const calibrationRatio = entry.calibration.median / b.calibration;
     Object.assign(base, { reference: r.time, timeSource: r.timeSource, referenceSince: r.since, change: change, threshold: threshold,
       tolerance: tol, calibrationRatio: calibrationRatio });
     const k = knownEntry(known, suite, entry.id);
     const samePrevious = input.previous && input.previous.machine.key === result.machine.key ? input.previous : undefined;
     const vsPrev = samePrevious ? samePrevious.results.filter((p: ResultEntry) => p.id === entry.id && p.rev === entry.rev)[0] : undefined;
     if (vsPrev && samePrevious && (samePrevious.fixtures[fixtureKeyOf(entry.id)] || {}).hash === fx.hash) base.vsPrevious = entry.median / vsPrev.median - 1;
-    if (badCounter) {
-      verdicts.push(make(entry.id, "counter regression", Object.assign(base, { counter: badCounter.name, counterReference: badCounter.ref as number })));
-      continue;
-    }
-    if (noisy) { verdicts.push(make(entry.id, "noisy", base)); continue; }
-    if (b.unstable) { verdicts.push(make(entry.id, "unstable", base)); continue; }
+    // A regressed counter (the first one is shown) does not stop the time from being judged: a time suspect is rerun, and
+    // the reruns decide between a regression and a counter regression; a time not judged leaves a counter regression.
+    if (badCounter) Object.assign(base, { counter: badCounter.name, counterReference: badCounter.ref as number });
+    const timeless = (verdict: Verdict): Verdict => (badCounter ? "counter regression" : verdict);
+    if (noisy) { verdicts.push(make(entry.id, timeless("noisy"), base)); continue; }
+    if (b.unstable) { verdicts.push(make(entry.id, timeless("unstable"), base)); continue; }
     if (entry.counterOnly || b.counterOnly) {
-      verdicts.push(make(entry.id, "counterOnly", Object.assign(base, { judgedOk: !!base.countersOk })));
+      verdicts.push(make(entry.id, timeless("counterOnly"), Object.assign(base, { judgedOk: !!base.countersOk })));
       continue;
     }
-    if (calibrationRatio > calibrationLimit) { verdicts.push(make(entry.id, "slow-process", base)); continue; }
+    if (calibrationRatio > calibrationLimit) { verdicts.push(make(entry.id, timeless("slow-process"), base)); continue; }
     const isSuspect = entry.median > r.time * (1 + tol) && entry.median - r.time > minDelta;
     const isImproved = entry.median < r.time / (1 + tol) && r.time - entry.median > minDelta;
-    const okFrozen = !!k && k.kind === "time" && entry.median <= k.ref * (1 + tol);
+    // With an open time entry the reference is its frozen value: a night that is not a suspect against it is ok against it.
+    const okFrozen = !!k && k.kind === "time" && !isSuspect;
     if (isSuspect) verdicts.push(make(entry.id, "suspect", base));
-    else verdicts.push(make(entry.id, isImproved ? "improved" : "ok", Object.assign(base, { judgedOk: true, okAgainstFrozen: okFrozen })));
+    else verdicts.push(make(entry.id, timeless(isImproved ? "improved" : "ok"), Object.assign(base, { judgedOk: true, okAgainstFrozen: okFrozen })));
   }
   // missing: in the reference, not run, not skipped, not unrun, and asked for.
   if (baseline) {
@@ -218,7 +229,7 @@ export function judge(input: CompareInput): Comparison {
   if (slow.length > rerunCap) {
     // High calibrations: the machine, not the code. Times are not judged and nothing is rerun.
     suiteNoisy = true;
-    suspects.concat(slow).forEach((v: ScenarioVerdict) => { v.verdict = "noisy"; v.reason = "over the rerun cap with high calibrations"; });
+    suspects.concat(slow).forEach((v: ScenarioVerdict) => { v.verdict = orCounter(v, "noisy"); v.reason = "over the rerun cap with high calibrations"; });
   } else {
     let top = suspects;
     if (suspects.length > rerunCap) {
@@ -250,15 +261,18 @@ export function finalize(first: Comparison, input: CompareInput, reruns: Array<R
     if (first.reruns.indexOf(v.id) < 0) return v;
     const runs = again.map((c: Comparison) => c.verdicts.filter((x: ScenarioVerdict) => x.id === v.id)[0]).filter((x: any) => !!x);
     const out: ScenarioVerdict = Object.assign({}, v, { rerunMedians: runs.map((x: ScenarioVerdict) => x.median).filter((m: any) => typeof m === "number") as Array<number> });
-    if (runs.length < 2) return Object.assign(out, { verdict: "unconfirmed" as Verdict, reason: "fewer than two reruns" });
-    const unusable = runs.filter((x: ScenarioVerdict) => ["suspect", "ok", "improved"].indexOf(x.verdict) < 0)[0];
-    if (unusable) return Object.assign(out, { verdict: "unconfirmed" as Verdict, reason: "rerun " + unusable.verdict });
+    // A suspect with a regressed counter that the reruns do not confirm on time is a counter regression.
+    const done = (o: ScenarioVerdict): ScenarioVerdict => Object.assign(o, { verdict: orCounter(o, o.verdict) });
+    if (runs.length < 2) return done(Object.assign(out, { verdict: "unconfirmed" as Verdict, reason: "fewer than two reruns" }));
+    // A rerun with the same regressed counter is a counter regression: its time was judged all the same.
+    const unusable = runs.filter((x: ScenarioVerdict) => ["suspect", "ok", "improved"].indexOf(x.verdict) < 0 && !(x.verdict === "counter regression" && x.judgedOk))[0];
+    if (unusable) return done(Object.assign(out, { verdict: "unconfirmed" as Verdict, reason: "rerun " + unusable.verdict }));
     if (v.verdict === "slow-process" && out.rerunMedians!.length && v.reference) {
       // A slow first run says nothing: it is judged on its two clean reruns, and shown and ratcheted with their median.
       const m = median(out.rerunMedians!);
       Object.assign(out, { firstMedian: v.median, median: m, change: m / v.reference - 1 });
     }
-    if (runs.every((x: ScenarioVerdict) => x.verdict === "suspect")) return Object.assign(out, { verdict: "regression" as Verdict });
+    if (runs.every((x: ScenarioVerdict) => x.verdict === "suspect")) return done(Object.assign(out, { verdict: "regression" as Verdict }));
     if (v.verdict === "slow-process") {
       return Object.assign(out, { verdict: runs.every((x: ScenarioVerdict) => x.verdict === "improved") ? "improved" as Verdict : "ok" as Verdict,
         judgedOk: true, okAgainstFrozen: runs.every((x: ScenarioVerdict) => x.okAgainstFrozen) });
@@ -266,8 +280,8 @@ export function finalize(first: Comparison, input: CompareInput, reruns: Array<R
     // Not confirmed: like a slow first run, it is judged on its two clean reruns (median, lastOkCommit, the ratchet, a fixed
     // known.json entry); the suspect median stays as firstMedian.
     const m = median(out.rerunMedians!);
-    return Object.assign(out, { verdict: "ok" as Verdict, reason: "not confirmed by the reruns", firstMedian: v.median, median: m,
-      change: v.reference ? m / v.reference - 1 : out.change, judgedOk: true, okAgainstFrozen: runs.every((x: ScenarioVerdict) => x.okAgainstFrozen) });
+    return done(Object.assign(out, { verdict: "ok" as Verdict, reason: "not confirmed by the reruns", firstMedian: v.median, median: m,
+      change: v.reference ? m / v.reference - 1 : out.change, judgedOk: true, okAgainstFrozen: runs.every((x: ScenarioVerdict) => x.okAgainstFrozen) }));
   });
   // The cap: when the top suspects are confirmed, every suspect of the suite is a whole-suite regression.
   const candidates = verdicts.filter((v: ScenarioVerdict) => v.tags.indexOf("whole-suite-candidate") > -1);
@@ -280,7 +294,7 @@ export function finalize(first: Comparison, input: CompareInput, reruns: Array<R
         v.verdict = "regression";
         v.tags.push("whole-suite");
       } else if (first.reruns.indexOf(v.id) < 0) {
-        v.verdict = "unconfirmed";
+        v.verdict = orCounter(v, "unconfirmed");
         v.reason = "over the rerun cap";
       }
     });
@@ -289,9 +303,8 @@ export function finalize(first: Comparison, input: CompareInput, reruns: Array<R
     failed: verdicts.some((v: ScenarioVerdict) => failingVerdicts.indexOf(v.verdict) > -1) });
 }
 
-const pct = (v: number | undefined): string => (v === undefined || !isFinite(v) ? "" : (v >= 0 ? "+" : "") + (v * 100).toFixed(1) + "%");
 const cell = (s: string): string => s.replace(/\\/g, "\\\\").replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
-const ms = (v: number | undefined): string => (v === undefined || isNaN(v) ? "" : String(Math.round(v * 100) / 100));
+const ms = (v: number | undefined): string => fixedMs(v, 2, "");
 
 export function markdownTable(c: Comparison): string {
   const lines = ["| scenario | reference | median | change | threshold | vs previous | verdict | rerun medians |", "|---|---|---|---|---|---|---|---|"];
@@ -314,7 +327,9 @@ export function loadInput(resultFile: string, stateDir: string, previousFile?: s
   const result = readResult(resultFile);
   const baseline = readBaseline(baselineFile(stateDir, result.suite, result.machine.key));
   const newest = baseline ? undefined : newestBaseline(stateDir, result.suite);
-  return { result: result, baseline: baseline, counterBaseline: newest ? readBaseline(newest) : undefined,
+  const counterBaseline = newest ? readBaseline(newest) : undefined;
+  return { result: result, baseline: baseline, counterBaseline: counterBaseline,
+    counterRatchet: counterBaseline ? readRatchet(stateDir, result.suite, counterBaseline.machineKey) : undefined,
     ratchet: readRatchet(stateDir, result.suite, result.machine.key), known: readKnown(stateDir), previous: previousFile ? readResult(previousFile) : undefined };
 }
 

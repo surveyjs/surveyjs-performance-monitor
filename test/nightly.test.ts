@@ -6,17 +6,17 @@ import { execFileSync } from "node:child_process";
 import { prOf } from "../src/pr.ts";
 import { installKeyOf, installedList, depsDiff } from "../src/install-key.ts";
 import { parseProcStat, busyCores, parseCpuList, parseLoadLine, environmentOf, gateStep, intervalsOf } from "../src/gate.ts";
-import { escapeText, resultMessage, bisectMessage, embedsSize, limits, rangeLines, rangeText } from "../src/discord.ts";
+import { escapeText, resultMessage, bisectMessage, embedsSize, limits, rangeLines, rangeText, changeLine } from "../src/discord.ts";
 import type { SuiteReport } from "../src/discord.ts";
-import { planSuites, planReruns, nextLastNightly, chooseBisects } from "../src/plan.ts";
-import { search, firstParentRange, rangePrs } from "../src/bisect.ts";
+import { planSuites, planReruns, nextLastNightly, chooseBisects, measuredKey, pendingNight } from "../src/plan.ts";
+import { search, firstParentRange, rangePrs, markBisect, bisectDue } from "../src/bisect.ts";
 import { parseArgs, curlArgv, writeMessage, syncRepo } from "../src/nightly.ts";
 import type { Comparison } from "../src/judge/compare.ts";
 import type { Manifest } from "../src/library/manifest.ts";
 import { checkManifest, idsOfSuite } from "../src/library/manifest.ts";
 
-// The unit tests of 05 (Checks): the message builder, pr.ts, the install key and list, gate.ts, the --only split, the
-// bisect search on a fake measure function, last-nightly.json transitions.
+// The unit tests of the night's parts: the message builder, pr.ts, the install key and list, gate.ts, the --only split,
+// the bisect search on a fake measure function, last-nightly.json transitions.
 const tmp = (name: string): string => fs.mkdtempSync(path.join(os.tmpdir(), "perf-" + name + "-"));
 // survey-library's `node perf/manifest.ts` with a fixed machine block.
 const manifest: Manifest = checkManifest(JSON.parse(fs.readFileSync(path.join(__dirname, "testdata", "manifest.json"), "utf8")), "testdata");
@@ -119,7 +119,7 @@ describe("gate.ts", () => {
     expect(env.busiestMinutePinned).toBeCloseTo(0.5);
     expect(env.otherCoresPinned).toBeLessThan(0.25);
     expect(env.oomKills).toBe(1);
-    // R05-F5: one 0.6-core burst of 5 s at the very end of a 3-minute suite is diluted like one in the middle.
+    // One 0.6-core burst of 5 s at the very end of a 3-minute suite is diluted like one in the middle.
     const burst = (at: number): any => {
       const out: Array<string> = [];
       const cpu = [[0, 0], [0, 0], [0, 0], [0, 0]];
@@ -236,6 +236,12 @@ describe("discord.ts", () => {
     expect(b.payload.allowed_mentions).toEqual({ parse: [] });
     expect(b.payload.content).toMatch(/first bad `abcdef012` \[#90004\]\(<https:\/\/github.com\/surveyjs\/survey-library\/pull\/90004>\) spin/);
   });
+  test("a time regression with a regressed counter shows both", () => {
+    const counters = [{ name: "expressionRuns", kind: "work", value: 110, ref: 100, verdict: "regression" }];
+    expect(changeLine(verdict("large/load/model", "regression", { median: 140, change: 0.4, counter: "expressionRuns", counters: counters })))
+      .toBe("**regression** `large/load/model` 100 → 140 ms (+40.0%, threshold +25.0%) · counter expressionRuns 100 → 110");
+    expect(changeLine(verdict("large/load/model", "regression", { median: 140, change: 0.4 }))).toBe("**regression** `large/load/model` 100 → 140 ms (+40.0%, threshold +25.0%)");
+  });
   test("a message directory and the curl argv with the webhook redacted", () => {
     const dir = tmp("msg");
     const src = path.join(dir, "src");
@@ -300,6 +306,43 @@ describe("plan.ts", () => {
     expect(r.skipped.map((x: any) => x.c.suite + ":" + x.c.id)).toEqual(["core:z", "survey-js-ui:x", "react:x", "react:paint"]);
     const w = chooseBisects([c("core", "a", 0.3, ["whole-suite"]), c("core", "b", 0.5, ["whole-suite"]), c("react", "p", 0.4)]);
     expect(w.chosen.map((x: any) => x.id)).toEqual(["b", "p"]);
+    // A time and a counter entry of one scenario: one bisect, the counter's; the other is covered by it.
+    const t = chooseBisects([c("core", "x", 0.3), Object.assign(c("core", "x", 0.3), { counter: "expressionRuns" })]);
+    expect(t.chosen.map((x: any) => x.id + "#" + x.counter)).toEqual(["x#expressionRuns"]);
+    expect(t.skipped.map((x: any) => x.reason)).toEqual(["covered: x is bisected"]);
+  });
+  test("a record-pending night records the pending suites and runs the others; a busy gate runs them all", () => {
+    const plan = planSuites(manifest, null, ["core", "react", "survey-js-ui"]);
+    const pending = { suites: ["react"], since: "d1", attempts: 0 };
+    const suites = (list: Array<any>): Array<string> => list.map((p: any) => p.suite);
+    const ok = pendingNight(plan, pending, "nightly", null, undefined);
+    expect([suites(ok.record), suites(ok.night), ok.countAttempt, ok.note]).toEqual([["react"], ["core", "survey-js-ui"], true, undefined]);
+    // A busy server: no record (a record of noisy runs is refused) and no attempt used, but the night is not lost.
+    const busy = pendingNight(plan, pending, "nightly", null, "gate-timeout");
+    expect([suites(busy.record), suites(busy.night), busy.countAttempt]).toEqual([[], ["core", "react", "survey-js-ui"], false]);
+    expect(busy.note).toMatch(/server was busy \(gate-timeout\)/);
+    const twice = pendingNight(plan, Object.assign({}, pending, { attempts: 2 }), "nightly", null, undefined);
+    expect([suites(twice.record), suites(twice.night), twice.countAttempt]).toEqual([[], ["core", "react", "survey-js-ui"], false]);
+    expect(twice.note).toMatch(/failed twice \(react\)/);
+    // --only, another kind, no pending file, or no pending suite in the plan: an ordinary night.
+    const core = plan.slice(0, 1);
+    for (const n of [pendingNight(core, pending, "nightly", ["large/load/model"], undefined), pendingNight(core, pending, "on-demand", null, undefined),
+      pendingNight(core, null, "nightly", null, undefined), pendingNight(core, pending, "nightly", null, undefined)]) {
+      expect([suites(n.record), suites(n.night), n.countAttempt, n.note]).toEqual([[], ["core"], false, undefined]);
+    }
+    // Every suite pending: the record alone.
+    const all = pendingNight(plan, { suites: ["core", "react", "survey-js-ui"], since: "d1" }, "nightly", null, undefined);
+    expect([suites(all.record).length, all.night.length, all.countAttempt]).toEqual([3, 0, true]);
+  });
+  test("a machine key is new only for a suite that measured on it, with Chromium known for a browser suite", () => {
+    const r = (suite: string, chromium: string | null, measured: boolean): any => ({ suite: suite, machine: { key: "k", chromium: chromium },
+      results: measured ? [{ id: "large/load/model" }] : [] });
+    // A browser suite that failed before its first test: the reporter's key has no Chromium ("chromiumnone").
+    expect(measuredKey(r("react", null, false))).toBe(false);
+    expect(measuredKey(r("react", null, true))).toBe(false);
+    expect(measuredKey(r("survey-js-ui", "140.0.7339.16", false))).toBe(false);
+    expect(measuredKey(r("survey-js-ui", "140.0.7339.16", true))).toBe(true);
+    expect(measuredKey(r("core", null, true))).toBe(true);
   });
 });
 
@@ -338,6 +381,33 @@ describe("bisect.ts", () => {
       { suite: "core", id: "x", reference: 100, tolerance: 0.25, deadline: 25 * 60000, now: () => t, prOf: pr });
     expect(late.status).toBe("timed out");
   });
+  test("known.json bisect state: covered and failed are not due again; the budget is not an attempt", () => {
+    const entry = (): any => ({ kind: "time", ref: 100, since: "d1", sinceCommit: "x", lastOkCommit: "g" });
+    // An error that repeats (a scenario that throws on every commit) takes the slot twice, then leaves the queue.
+    const e = entry();
+    markBisect(e, "error");
+    expect([e.bisect, e.bisectAttempts, bisectDue(e)]).toEqual(["skipped", 1, true]);
+    markBisect(e, "error");
+    expect([e.bisect, e.bisectAttempts, bisectDue(e)]).toEqual(["failed", 2, false]);
+    const t = entry();
+    markBisect(t, "timed out");
+    expect([t.bisect, bisectDue(t)]).toEqual(["skipped", true]);
+    markBisect(t, "timed out");
+    expect(bisectDue(t)).toBe(false);
+    const b = entry();
+    markBisect(b, "skipped (budget)");
+    markBisect(b, "skipped (budget)");
+    markBisect(b, "skipped (budget)");
+    expect([b.bisect, b.bisectAttempts, bisectDue(b)]).toEqual(["skipped", undefined, true]);
+    // Covered by another suite's bisect or by the whole-suite one: not queued again.
+    const c = entry();
+    markBisect(c, "covered");
+    expect([c.bisect, bisectDue(c)]).toEqual(["covered", false]);
+    const f = entry();
+    markBisect(f, "found");
+    expect([f.bisect, bisectDue(f)]).toEqual(["done", false]);
+    expect(bisectDue(entry())).toBe(true);
+  });
   test("the first-parent range and the PRs of a real repository", () => {
     const repo = tmp("repo");
     const g = (...args: Array<string>): string => execFileSync("git", args, { cwd: repo, encoding: "utf8" }).trim();
@@ -355,6 +425,34 @@ describe("bisect.ts", () => {
     expect(() => firstParentRange(repo, shas[3], shas[0])).toThrow(/not an ancestor/);
     const prs = rangePrs(repo, shas[0], shas[3]);
     expect(prs.map((p: any) => p.pr + " " + p.title)).toEqual(["90003 step 3", "90002 the title of 2", "90001 step 1"]);
+    fs.rmSync(repo, { recursive: true, force: true });
+  });
+});
+
+describe("bisect.ts: a back-merge on master", () => {
+  test("the range keeps only commits that contain the good end", () => {
+    const repo = tmp("backmerge");
+    const g = (...args: Array<string>): string => execFileSync("git", ["-c", "user.name=t", "-c", "user.email=t@t"].concat(args), { cwd: repo, encoding: "utf8" }).trim();
+    const commit = (message: string): string => {
+      g("commit", "--allow-empty", "-q", "-m", message);
+      return g("rev-parse", "HEAD");
+    };
+    g("init", "-q", "-b", "master");
+    commit("c0");
+    // origin/master moves on (o1, the night's last ok commit) while a developer commits l1, l2 on a stale local master,
+    // then pulls: "Merge branch 'master' of ..." has the local commits as its first parent (12df0423c in survey-library).
+    g("checkout", "-q", "-b", "local");
+    const l1 = commit("l1");
+    const l2 = commit("l2");
+    g("checkout", "-q", "master");
+    const o1 = commit("o1");
+    g("checkout", "-q", "local");
+    g("merge", "-q", "--no-ff", "-m", "Merge branch 'master' of https://github.com/surveyjs/survey-library", "master");
+    const m = g("rev-parse", "HEAD");
+    const m3 = commit("m3");
+    // l1 and l2 do not have o1: measuring them would bisect commits that miss part of the good end.
+    expect(g("rev-list", "--first-parent", "--reverse", o1 + ".." + m3).split(/\r?\n/)).toEqual([l1, l2, m, m3]);
+    expect(firstParentRange(repo, o1, m3)).toEqual([o1, m, m3]);
     fs.rmSync(repo, { recursive: true, force: true });
   });
 });

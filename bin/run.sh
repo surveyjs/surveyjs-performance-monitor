@@ -165,7 +165,7 @@ post_text() {
   return $rc
 }
 
-# After the lock a run that cannot start says so: a missing message must mean the host did not run (D23).
+# After the lock a run that cannot start says so: a missing message must mean the host did not run.
 fail() { post_text x "❌ perf $KIND not started: $1"; echo "run.sh: $1" >&2; exit 2; }
 
 # --- 1. lock --------------------------------------------------------------------------------------------------------
@@ -299,7 +299,7 @@ case "$KIND" in
   record) T=$RECORD_T ;;
   *) T=$((45 + 30)); [ -n "$BISECT" ] && T=$((T + 40)) ;;
 esac
-# A nightly after a new machine key records (record-pending.json, D22): it gets the record's time.
+# A nightly after a new machine key records (record-pending.json): it gets the record's time.
 [ "$KIND" = nightly ] && [ -f "$STATE/record-pending.json" ] && T=$RECORD_T
 # The run folder is read-only inside: nightly.ts reads the gate result and the load samples there.
 ARGS=(--ref "$REF" --sha "$SHA" --suites "$SUITES" --history "$HIST" --host-run /host-run --image "$IMAGE")

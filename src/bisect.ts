@@ -4,8 +4,9 @@ import { bisect } from "./judge/bisect-step.ts";
 import type { BisectReport } from "./discord.ts";
 import type { CommitPr } from "./pr.ts";
 import { prOf } from "./pr.ts";
+import type { KnownEntry } from "./judge/known.ts";
 
-// The search for the first bad commit (05, D16) with 04's bisect step rule: the range lastOkCommit..current over
+// The search for the first bad commit with the step rule of judge/bisect-step.ts: the range lastOkCommit..current over
 // first-parent master, a time budget for the night, and the PR of the first bad commit.
 export class BudgetError extends Error {
   constructor() {
@@ -14,13 +15,17 @@ export class BudgetError extends Error {
 }
 
 // [good, ...the first-parent commits after it, up to bad], oldest first; refused when good is not an ancestor of bad.
+// Only commits that contain good: after a back-merge ("Merge branch 'master' of ...") the first-parent line runs
+// through a developer's local commits that branched off before good.
 export function firstParentRange(repo: string, good: string, bad: string): Array<string> {
   try {
     git(repo, ["merge-base", "--is-ancestor", good, bad]);
   } catch(e) {
     throw new RangeError(good.substring(0, 9) + " is not an ancestor of " + bad.substring(0, 9));
   }
-  const list = git(repo, ["rev-list", "--first-parent", "--reverse", good + ".." + bad]).split(/\r?\n/).filter((s: string) => !!s);
+  const lines = (args: Array<string>): Array<string> => git(repo, args).split(/\r?\n/).filter((s: string) => !!s);
+  const descendants = new Set<string>(lines(["rev-list", "--ancestry-path", good + ".." + bad]));
+  const list = lines(["rev-list", "--first-parent", "--reverse", good + ".." + bad]).filter((sha: string) => descendants.has(sha));
   return [git(repo, ["rev-parse", good])].concat(list);
 }
 
@@ -48,7 +53,7 @@ export function rangePrs(repo: string, from: string | null, to: string, max: num
 export interface SearchOptions {
   suite: string;
   id: string;
-  reference: number;
+  reference: number | null;
   tolerance: number;
   counter?: boolean;
   depsDiff?: string;
@@ -82,9 +87,22 @@ export async function search(commits: Array<string>, measure: Measure, options: 
   return report;
 }
 
-// The known.json bisect field of a report.
-export function knownBisect(status: BisectReport["status"]): "done" | "narrowed" | "not-reproduced" | "not-in-range" | "skipped" {
-  if (status === "found") return "done";
-  if (status === "narrowed" || status === "not-reproduced" || status === "not-in-range") return status;
-  return "skipped";
+// A bisect that ends in an error or a timeout is tried again on later nights, at most this many times in all.
+export const maxBisectAttempts = 2;
+
+// A known.json entry a night bisects: a new one, or one a past night skipped.
+export function bisectDue(entry: KnownEntry): boolean {
+  return !entry.bisect || entry.bisect === "skipped";
+}
+
+// The known.json bisect field after a report; "covered" for a candidate another bisect of the night stands for. A
+// budget skip is not an attempt: the bisect did not start.
+export function markBisect(entry: KnownEntry, status: BisectReport["status"] | "covered"): void {
+  if (status === "found") entry.bisect = "done";
+  else if (status === "narrowed" || status === "not-reproduced" || status === "not-in-range" || status === "covered") entry.bisect = status;
+  else if (status === "skipped (budget)") entry.bisect = "skipped";
+  else {
+    entry.bisectAttempts = (entry.bisectAttempts || 0) + 1;
+    entry.bisect = entry.bisectAttempts >= maxBisectAttempts ? "failed" : "skipped";
+  }
 }

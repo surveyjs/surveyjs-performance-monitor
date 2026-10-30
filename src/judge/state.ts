@@ -3,7 +3,7 @@ import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { writeJsonAtomic } from "../util/json.ts";
 
-// The state directory (D15, PERF_STATE_DIR): baselines/, history/, known.json, last-nightly.json (the lock is run.sh's
+// The state directory (PERF_STATE_DIR): baselines/, history/, known.json, last-nightly.json (the lock is run.sh's
 // run.lock). Every write is atomic (a temp file, then a rename).
 const serviceRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 
@@ -20,7 +20,7 @@ export function baselineFile(stateDir: string, suite: string, machineKey: string
   return path.join(baselinesDir(stateDir), suite + "." + machineKey + ".json");
 }
 
-// The ratchet of a baseline (D19): renewing the baseline removes it.
+// The ratchet of a baseline: renewing the baseline removes it.
 export function ratchetFile(stateDir: string, suite: string, machineKey: string): string {
   return path.join(baselinesDir(stateDir), suite + "." + machineKey + ".ratchet.json");
 }
@@ -60,7 +60,7 @@ export function baselineFiles(stateDir: string, suite: string): Array<string> {
   return files.map((f: string) => path.join(dir, f)).sort((a: string, b: string) => fs.statSync(b).mtimeMs - fs.statSync(a).mtimeMs);
 }
 
-// The newest baseline of a suite with any machine key: counters are machine-independent (D22).
+// The newest baseline of a suite with any machine key: counters are machine-independent.
 export function newestBaseline(stateDir: string, suite: string): string | undefined {
   return baselineFiles(stateDir, suite)[0];
 }

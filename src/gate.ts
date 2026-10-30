@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 
-// The gate before a night and the load arithmetic after each suite (05, D12). run.sh's sampler writes raw lines to
+// The gate before a night and the load arithmetic after each suite. run.sh's sampler writes raw lines to
 // <history>/load.jsonl; all arithmetic is here:
 // * busy = user + nice + system + irq + softirq + steal (guest time is already inside user; iowait counts as idle);
 // * other work on the pinned cores = their busy time minus the container's cgroup usage;
@@ -177,7 +177,8 @@ export interface EnvironmentOptions {
   requireSamples?: boolean;
 }
 
-// The result file's environment block for one suite (00, Result file), from the sampler lines in [from, to].
+// The result file's environment block for one suite (survey-library's perf/CONTRACT.md), from the sampler lines in
+// [from, to].
 export function environmentOf(samples: Array<LoadSample>, options: EnvironmentOptions): Environment {
   const maxPinned = options.maxPinned === undefined ? defaultLimits.maxPinned : options.maxPinned;
   const maxOther = options.maxOther === undefined ? defaultLimits.maxOther : options.maxOther;

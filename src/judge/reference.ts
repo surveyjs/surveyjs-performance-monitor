@@ -4,7 +4,7 @@ import type { KnownState } from "./known.ts";
 import { knownEntry, knownEntries } from "./known.ts";
 import { ratchetFile, readJson, writeJson } from "./state.ts";
 
-// The reference a run is judged against (D19): the baseline, the ratchet after improvements, or the value frozen in
+// The reference a run is judged against: the baseline, the ratchet after improvements, or the value frozen in
 // known.json while a regression is open. Counters keep a running minimum over ok nights.
 export interface RatchetScenario {
   // The last nightly medians judged ok or improved for this scenario, with the same key, hash and rev.
