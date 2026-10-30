@@ -405,6 +405,9 @@ describe("the bisect step rule", () => {
     const narrowed = await bisect(commits, async(c: string) => (c === "c2" || c === "c3" ? null : commits.indexOf(c) >= 3 ? 150 : 100), { reference: 100, tolerance: 0.25 });
     expect(narrowed).toMatchObject({ result: "narrowed", lastGood: "c1", firstBad: "c4" });
     expect(narrowed.message).toBe("narrowed to c1..c4, unbuildable");
+    // No baseline (an on-demand bisect on a new machine key): equal ends are not reproduced; nothing says "not in range".
+    const noRef = await bisect(commits, async() => 150, { reference: null, tolerance: 0.25 });
+    expect([noRef.result, noRef.message]).toEqual(["not-reproduced", "not reproduced in c0..c5 (no baseline: the ends are compared with each other only)"]);
     const deps = await bisect(commits, async() => 150, { reference: 100, tolerance: 0.25, depsDiff: "typescript 5.4 -> 5.5" });
     expect(deps.message).toContain("typescript 5.4 -> 5.5");
   });

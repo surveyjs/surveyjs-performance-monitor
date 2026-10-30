@@ -24,8 +24,8 @@ export interface BisectResult {
 }
 
 export interface BisectOptions {
-  // The reference and tolerance of the scenario, for the endpoint verdicts.
-  reference: number;
+  // The reference and tolerance of the scenario, for the endpoint verdicts; null without a baseline (on demand).
+  reference: number | null;
   tolerance: number;
   runs?: number;
   // A counter regression: one run per step, bad above the good end x 1.02.
@@ -45,8 +45,10 @@ export function isBadCounterStep(value: number, good: number): boolean {
 }
 
 // The ends differ when the ratio of their medians is at least 1 + tol / 2. When they do not: the bad end not slow now
-// is "not reproduced"; a good end that is slow too is "not in range" (an environment or dependency change).
-export function judgeEnds(good: number, bad: number, reference: number, tolerance: number, counter?: boolean): "differ" | "not-reproduced" | "not-in-range" {
+// is "not reproduced"; a good end that is slow too is "not in range" (an environment or dependency change). Without a
+// reference nothing tells the two apart: not reproduced in this range.
+export function judgeEnds(good: number, bad: number, reference: number | null, tolerance: number, counter?: boolean): "differ" | "not-reproduced" | "not-in-range" {
+  if (reference === null) return (counter ? isBadCounterStep(bad, good) : bad / good >= 1 + tolerance / 2) ? "differ" : "not-reproduced";
   if (counter) {
     if (isBadCounterStep(bad, good)) return "differ";
     return bad <= reference * 1.02 ? "not-reproduced" : "not-in-range";
@@ -74,7 +76,10 @@ export async function bisect(commits: Array<string>, measure: Measure, options: 
   const good: BisectStep = { commit: commits[0], medians: goodMedians, median: median(goodMedians) };
   const bad: BisectStep = { commit: commits[commits.length - 1], medians: badMedians, median: median(badMedians) };
   const ends = judgeEnds(good.median, bad.median, options.reference, options.tolerance, options.counter);
-  if (ends === "not-reproduced") return { result: ends, message: "not reproduced in " + range, good: good, bad: bad, steps: [] };
+  if (ends === "not-reproduced") {
+    return { result: ends, message: "not reproduced in " + range + (options.reference === null ? " (no baseline: the ends are compared with each other only)" : ""),
+      good: good, bad: bad, steps: [] };
+  }
   if (ends === "not-in-range") {
     return { result: ends, message: "regression is not in " + range + ": environment or dependency change" + (options.depsDiff ? " (" + options.depsDiff + ")" : ""), good: good, bad: bad, steps: [] };
   }

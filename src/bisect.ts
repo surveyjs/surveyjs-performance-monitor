@@ -49,7 +49,7 @@ export function rangePrs(repo: string, from: string | null, to: string, max: num
 export interface SearchOptions {
   suite: string;
   id: string;
-  reference: number;
+  reference: number | null;
   tolerance: number;
   counter?: boolean;
   depsDiff?: string;

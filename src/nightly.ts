@@ -706,7 +706,7 @@ function measureOf(ctx: Ctx, suite: Suite, id: string, counter: string | undefin
   };
 }
 
-async function runOneBisect(ctx: Ctx, c: BisectCandidate, good: string, bad: string, deadline: number, reference: number, tolerance: number,
+async function runOneBisect(ctx: Ctx, c: BisectCandidate, good: string, bad: string, deadline: number, reference: number | null, tolerance: number,
   seed?: { sha: string, target: TargetBuild }): Promise<BisectReport> {
   let commits: Array<string>;
   try {
@@ -818,7 +818,7 @@ async function onDemandBisect(ctx: Ctx): Promise<number> {
   const bf = baselineFiles(ctx.state, suite).filter((f: string) => keyPattern.test(path.basename(f).substring(suite.length + 1).replace(/\.json$/, "")))[0];
   const b = bf ? readBaseline(bf) : undefined;
   const s = b ? b.scenarios[id] : undefined;
-  const reference = s ? s.median : 0;
+  const reference = s ? s.median : null;
   const tolerance = s ? Math.max(defaultTolerance, s.noiseTol || 0) : defaultTolerance;
   const c: BisectCandidate = { suite: suite, id: id, verdict: { id: id, verdict: "regression", counters: [], tags: [], judgedOk: false, okAgainstFrozen: false,
     countersOk: false, counterValues: {} }, lastOkCommit: good };
