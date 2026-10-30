@@ -176,7 +176,8 @@ export function judge(input: CompareInput): Comparison {
     const tol = Math.max(entry.tolerance === null || entry.tolerance === undefined ? defaultTolerance : entry.tolerance, b.noiseTol || 0);
     const change = entry.median / r.time - 1;
     const threshold = Math.max(tol, minDelta / r.time);
-    const calibrationRatio = Math.max(entry.calibration.before, entry.calibration.after) / b.calibration;
+    // The same statistic on both sides: the baseline keeps the median of its runs' calibration medians (six samples each).
+    const calibrationRatio = entry.calibration.median / b.calibration;
     Object.assign(base, { reference: r.time, timeSource: r.timeSource, referenceSince: r.since, change: change, threshold: threshold,
       tolerance: tol, calibrationRatio: calibrationRatio });
     const k = knownEntry(known, suite, entry.id);

@@ -120,6 +120,12 @@ describe("compare: the verdict table", () => {
     const dom = judge({ result: result([entry("large/load/model", 100, { counters: { domNodes: { value: 1600, kind: "dom" } } })]), baseline: base });
     expect(verdictOf(dom, "large/load/model").verdict).toBe("counter regression");
   });
+  test("the calibration ratio compares the median of the six samples with the baseline's, not the slower half", () => {
+    // before 10 and after 11.6 (3 samples each) have a median of about 10.8 over the six; the baseline keeps that median.
+    const c = judge({ result: result([entry("large/load/model", 100, { calibration: { median: 10.8, before: 10, after: 11.6 } })]), baseline: base });
+    expect(verdictOf(c, "large/load/model").verdict).toBe("ok");
+    expect(verdictOf(c, "large/load/model").calibrationRatio).toBeCloseTo(1.08, 6);
+  });
   test("missing against not-run, only and skipped; a jsonErrors change is a changed fixture", () => {
     const r = result([entry("large/load/model", 100, { jsonErrors: 3 })], {
       requested: { only: null, notInSuite: ["manyPages/load/model"] },
