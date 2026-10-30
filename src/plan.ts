@@ -72,6 +72,40 @@ export function nextLastNightly(prev: LastNightly | null, night: { kind: string,
   return res;
 }
 
+// <state>/record-pending.json: the suites a new machine key left without a baseline (D22), and the record attempts.
+export interface PendingRecord {
+  suites: Array<string>;
+  since: string;
+  attempts?: number;
+}
+
+export interface PendingNight {
+  record: Array<{ suite: Suite, only: Array<string> | null }>;
+  night: Array<{ suite: Suite, only: Array<string> | null }>;
+  // The record uses up one of its two attempts.
+  countAttempt: boolean;
+  note?: string;
+}
+
+// A nightly with a pending record: the pending suites are recorded (at most twice), the other suites run as a night. A
+// busy server (busy: the gate's reason) does not use up an attempt, and the whole night runs instead: a record of noisy
+// runs would be refused, a night still judges the counters.
+export function pendingNight(plan: Array<{ suite: Suite, only: Array<string> | null }>, pending: PendingRecord | null, kind: string,
+  only: Array<string> | null, busy: string | undefined): PendingNight {
+  const record = pending ? plan.filter((p: { suite: Suite }) => pending.suites.indexOf(p.suite) > -1) : [];
+  const res: PendingNight = { record: [], night: plan, countAttempt: false };
+  if (kind !== "nightly" || !pending || only || !record.length) return res;
+  if ((pending.attempts || 0) >= 2) {
+    res.note = "the record for the new machine key failed twice (" + pending.suites.join(", ") + "): run run.sh --record by hand";
+    return res;
+  }
+  if (busy) {
+    res.note = "the record for the new machine key (" + pending.suites.join(", ") + ") did not start: the server was busy (" + busy + "); it is not counted as an attempt";
+    return res;
+  }
+  return { record: record, night: plan.filter((p: { suite: Suite }) => pending.suites.indexOf(p.suite) < 0), countAttempt: true };
+}
+
 // A result without a baseline for its machine key starts a record of the suite only when it measured on that key: a
 // browser suite that failed before its first test has no Chromium yet, and its key ("chromiumnone") is not the machine's.
 export function measuredKey(result: ResultFile): boolean {

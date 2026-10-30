@@ -8,7 +8,7 @@ import { installKeyOf, installedList, depsDiff } from "../src/install-key.ts";
 import { parseProcStat, busyCores, parseCpuList, parseLoadLine, environmentOf, gateStep, intervalsOf } from "../src/gate.ts";
 import { escapeText, resultMessage, bisectMessage, embedsSize, limits, rangeLines, rangeText, changeLine } from "../src/discord.ts";
 import type { SuiteReport } from "../src/discord.ts";
-import { planSuites, planReruns, nextLastNightly, chooseBisects, measuredKey } from "../src/plan.ts";
+import { planSuites, planReruns, nextLastNightly, chooseBisects, measuredKey, pendingNight } from "../src/plan.ts";
 import { search, firstParentRange, rangePrs, markBisect, bisectDue } from "../src/bisect.ts";
 import { parseArgs, curlArgv, writeMessage, syncRepo } from "../src/nightly.ts";
 import type { Comparison } from "../src/judge/compare.ts";
@@ -310,6 +310,29 @@ describe("plan.ts", () => {
     const t = chooseBisects([c("core", "x", 0.3), Object.assign(c("core", "x", 0.3), { counter: "expressionRuns" })]);
     expect(t.chosen.map((x: any) => x.id + "#" + x.counter)).toEqual(["x#expressionRuns"]);
     expect(t.skipped.map((x: any) => x.reason)).toEqual(["covered: x is bisected"]);
+  });
+  test("a record-pending night records the pending suites and runs the others; a busy gate runs them all", () => {
+    const plan = planSuites(manifest, null, ["core", "react", "survey-js-ui"]);
+    const pending = { suites: ["react"], since: "d1", attempts: 0 };
+    const suites = (list: Array<any>): Array<string> => list.map((p: any) => p.suite);
+    const ok = pendingNight(plan, pending, "nightly", null, undefined);
+    expect([suites(ok.record), suites(ok.night), ok.countAttempt, ok.note]).toEqual([["react"], ["core", "survey-js-ui"], true, undefined]);
+    // A busy server: no record (a record of noisy runs is refused) and no attempt used, but the night is not lost.
+    const busy = pendingNight(plan, pending, "nightly", null, "gate-timeout");
+    expect([suites(busy.record), suites(busy.night), busy.countAttempt]).toEqual([[], ["core", "react", "survey-js-ui"], false]);
+    expect(busy.note).toMatch(/server was busy \(gate-timeout\)/);
+    const twice = pendingNight(plan, Object.assign({}, pending, { attempts: 2 }), "nightly", null, undefined);
+    expect([suites(twice.record), suites(twice.night), twice.countAttempt]).toEqual([[], ["core", "react", "survey-js-ui"], false]);
+    expect(twice.note).toMatch(/failed twice \(react\)/);
+    // --only, another kind, no pending file, or no pending suite in the plan: an ordinary night.
+    const core = plan.slice(0, 1);
+    for (const n of [pendingNight(core, pending, "nightly", ["large/load/model"], undefined), pendingNight(core, pending, "on-demand", null, undefined),
+      pendingNight(core, null, "nightly", null, undefined), pendingNight(core, pending, "nightly", null, undefined)]) {
+      expect([suites(n.record), suites(n.night), n.countAttempt, n.note]).toEqual([[], ["core"], false, undefined]);
+    }
+    // Every suite pending: the record alone.
+    const all = pendingNight(plan, { suites: ["core", "react", "survey-js-ui"], since: "d1" }, "nightly", null, undefined);
+    expect([suites(all.record).length, all.night.length, all.countAttempt]).toEqual([3, 0, true]);
   });
   test("a machine key is new only for a suite that measured on it, with Chromium known for a browser suite", () => {
     const r = (suite: string, chromium: string | null, measured: boolean): any => ({ suite: suite, machine: { key: "k", chromium: chromium },

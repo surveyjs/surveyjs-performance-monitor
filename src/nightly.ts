@@ -20,8 +20,8 @@ import { environmentOf, readLoad, parseCpuList } from "./gate.ts";
 import type { Message, SuiteReport, BisectReport } from "./discord.ts";
 import { resultMessage, bisectMessage, plainMessage, limits, stripAnsi } from "./discord.ts";
 import { installKeyOfDir, needsInstall, writeKey, installedList, depsDiff } from "./install-key.ts";
-import type { BisectCandidate, LastNightly, NightSuite } from "./plan.ts";
-import { planSuites, planReruns, nextLastNightly, chooseBisects, measuredKey } from "./plan.ts";
+import type { BisectCandidate, LastNightly, NightSuite, PendingRecord } from "./plan.ts";
+import { planSuites, planReruns, nextLastNightly, chooseBisects, measuredKey, pendingNight } from "./plan.ts";
 import { repoUrl } from "./pr.ts";
 import { firstParentRange, commitPr, rangePrs, search, markBisect, bisectDue } from "./bisect.ts";
 
@@ -408,24 +408,17 @@ function stateSize(state: string): string {
   }
 }
 
-function tarResults(ctx: Ctx, files: Array<string>): string | undefined {
-  const out = path.join(ctx.history, "results.tar.gz");
+function tarResults(ctx: Ctx, files: Array<string>, name: string = "results.tar.gz"): string | undefined {
+  const out = path.join(ctx.history, name);
   const rel = files.filter((f: string) => fs.existsSync(f)).map((f: string) => path.relative(ctx.history, f).split(path.sep).join("/"));
   if (!rel.length) return undefined;
   try {
-    execFileSync("tar", ["-czf", "results.tar.gz"].concat(rel), { cwd: ctx.history, stdio: "ignore" });
+    execFileSync("tar", ["-czf", name].concat(rel), { cwd: ctx.history, stdio: "ignore" });
     return out;
   } catch(e) {
     log("tar failed: " + String(e).split("\n")[0]);
     return undefined;
   }
-}
-
-// <state>/record-pending.json: the suites a new machine key left without a baseline (D22), and the record attempts.
-interface PendingRecord {
-  suites: Array<string>;
-  since: string;
-  attempts?: number;
 }
 
 interface Judged {
@@ -476,27 +469,29 @@ function depsNote(ctx: Ctx, list: Array<string>): string | undefined {
 async function night(ctx: Ctx): Promise<number> {
   const plan = planSuites(ctx.m, ctx.o.only, ctx.o.suites);
   if (!plan.length) throw new Error("no suite has any of the requested ids");
-  // A new machine key (D22): the next nightly records the pending suites, at most twice; after that the night is judged
-  // as usual (times not judged for those suites) and the post asks for a --record by hand.
+  // A new machine key (D22): the next nightly records the pending suites, at most twice, and runs the other suites as a
+  // night; after two attempts the night is judged as usual (times not judged for those suites) and the post asks for a
+  // --record by hand.
   const pendingFile = path.join(ctx.state, "record-pending.json");
-  const pending = readJson<PendingRecord | null>(pendingFile, null);
-  const notes: Array<string> = [];
-  if (ctx.o.kind === "nightly" && pending && !ctx.o.only) {
-    if ((pending.attempts || 0) < 2) {
-      // A busy server (the gate gave up) does not use up an attempt: record() posts that and returns.
-      if (!gateRefused(ctx)) writeJson(pendingFile, Object.assign({}, pending, { attempts: (pending.attempts || 0) + 1 }));
-      log("new machine key: recording " + pending.suites.join(","));
-      return record(ctx, plan.filter((p: { suite: Suite }) => pending.suites.indexOf(p.suite) > -1), "new machine key: recording");
-    }
-    notes.push("the record for the new machine key failed twice (" + pending.suites.join(", ") + "): run run.sh --record by hand");
+  const pn = pendingNight(plan, readJson<PendingRecord | null>(pendingFile, null), ctx.o.kind, ctx.o.only, gateRefused(ctx));
+  const notes: Array<string> = pn.note ? [pn.note] : [];
+  if (pn.countAttempt) {
+    const pending = readJson<PendingRecord>(pendingFile, { suites: [], since: "" });
+    writeJson(pendingFile, Object.assign({}, pending, { attempts: (pending.attempts || 0) + 1 }));
   }
+  if (pn.record.length) log("new machine key: recording " + pn.record.map((p: { suite: Suite }) => p.suite).join(","));
+  if (pn.record.length && !pn.night.length) return (await record(ctx, pn.record, "new machine key: recording")).code;
   if (!ctx.local) await phase(ctx, "install tool", () => installTool(ctx));
   else checkPlaywright(ctx);
   const target = await phase(ctx, "build target", () => buildTarget(ctx, plan.map((p: { suite: Suite }) => p.suite)));
+  // The record first, on the same build; its extra rounds leave room for the night's suites and reruns.
+  const reserveMs = (pn.night.reduce((n: number, p: { suite: Suite }) => n + ctx.m.suites[p.suite].budgetMin * 1.5, 0) + 30) * 60000;
+  const recorded = pn.record.length ? await record(ctx, pn.record, "new machine key: recording", { target: target, reserveMs: reserveMs }) : undefined;
+  if (recorded) notes.push(...recorded.lines.map((l: string) => l.replace(/\*\*/g, "")));
   const last = readJson<LastNightly | null>(path.join(ctx.state, "last-nightly.json"), null);
   const previousCommit = last && last.lastRun ? last.lastRun.commit : undefined;
   const judged: Array<Judged> = [];
-  for (const p of plan) {
+  for (const p of pn.night) {
     const suite = p.suite;
     if (target.uiFailed[suite]) {
       judged.push({ suite: suite, run: { suite: suite, file: "", status: "build failed", logFile: target.uiFailed[suite] } });
@@ -552,7 +547,7 @@ async function night(ctx: Ctx): Promise<number> {
     }
     writeKnown(ctx.state, known);
     // A pending record keeps its attempts: it is not restarted every night.
-    if (pendingRecord.length && !pending) writeJson(pendingFile, { suites: pendingRecord, since: date, attempts: 0 });
+    if (pendingRecord.length && !fs.existsSync(pendingFile)) writeJson(pendingFile, { suites: pendingRecord, since: date, attempts: 0 });
     // Complete: not stopped, and no scenario failed (a failed one is a hole the next night's "vs previous" would miss).
     const nightSuites: Array<NightSuite> = judged.filter((j: Judged) => !!j.run.result && !!j.final).map((j: Judged) => ({ suite: j.suite,
       complete: !j.run.result!.incomplete && j.run.status === "ok" && j.run.result!.failed.length === 0, noisy: !!j.final!.noisy, hasReference: !!j.baseline, result: j.run.file }));
@@ -568,6 +563,18 @@ async function night(ctx: Ctx): Promise<number> {
   const dn = depsNote(ctx, target.deps);
   if (dn) notes.push(dn);
   if (pendingRecord.length) notes.push("new machine key for " + pendingRecord.join(", ") + ": the next nightly records a baseline");
+  // Bisect (D16): new regressions, and known ones a past night skipped (the budget, an error or a timeout); at most 2 and
+  // 40 minutes a night. A night that recorded a baseline has used the time: they stay due for the next night.
+  const candidates: Array<BisectCandidate> = [];
+  judged.forEach((j: Judged) => {
+    const due = j.known ? j.known.added.concat(j.known.still.filter((s: any) => bisectDue(s.entry))) : [];
+    due.forEach((a: any) => {
+      const v = j.final!.verdicts.filter((x: ScenarioVerdict) => x.id === a.id)[0];
+      if (v) candidates.push({ suite: j.suite, id: a.id, verdict: v, lastOkCommit: a.entry.lastOkCommit, counter: a.entry.kind === "counter" ? a.entry.counter : undefined });
+    });
+  });
+  const bisectNow = ctx.o.kind === "nightly" && !ctx.o.noBisect && candidates.length > 0;
+  if (bisectNow && recorded) notes.push("bisect postponed to the next night: this night recorded a baseline");
   const reports: Array<SuiteReport> = judged.map((j: Judged): SuiteReport => {
     const r: SuiteReport = { suite: j.suite, status: j.run.status, comparison: j.final, known: j.known, unstable: unstableOf(j.baseline) };
     if (j.run.status === "build failed") r.buildLog = { pkg: packageOf(ctx.m, j.suite), tail: errorLines(j.run.logFile, 10) };
@@ -583,6 +590,7 @@ async function night(ctx: Ctx): Promise<number> {
   const sources: { [name: string]: string } = {};
   const files = [summary].concat(tar ? [tar] : []).map((f: string) => path.basename(f));
   files.forEach((name: string) => { sources[name] = path.join(ctx.history, name); });
+  if (recorded) Object.keys(recorded.files).forEach((name: string) => { sources[name] = recorded.files[name]; files.push(name); });
   judged.filter((j: Judged) => j.run.status === "build failed").forEach((j: Judged) => {
     const name = "build-" + packageOf(ctx.m, j.suite) + ".log";
     sources[name] = j.run.logFile;
@@ -596,21 +604,11 @@ async function night(ctx: Ctx): Promise<number> {
   const dir1 = path.join(ctx.history, "discord", "1-result");
   writeMessage(dir1, msg, sources);
   if (ctx.o.dryPost) printDry(dir1);
-  // Bisect (D16): new regressions, and known ones a past night skipped (the budget, an error or a timeout); at most 2 and
-  // 40 minutes a night.
-  const candidates: Array<BisectCandidate> = [];
-  judged.forEach((j: Judged) => {
-    const due = j.known ? j.known.added.concat(j.known.still.filter((s: any) => bisectDue(s.entry))) : [];
-    due.forEach((a: any) => {
-      const v = j.final!.verdicts.filter((x: ScenarioVerdict) => x.id === a.id)[0];
-      if (v) candidates.push({ suite: j.suite, id: a.id, verdict: v, lastOkCommit: a.entry.lastOkCommit, counter: a.entry.kind === "counter" ? a.entry.counter : undefined });
-    });
-  });
-  if (ctx.o.kind === "nightly" && !ctx.o.noBisect && candidates.length) {
+  if (bisectNow && !recorded) {
     fs.writeFileSync(path.join(ctx.history, "bisect-started"), new Date().toISOString() + "\n");
     await phase(ctx, "bisect", () => bisectNight(ctx, candidates, judged, target));
   }
-  return judged.some((j: Judged) => !!j.final && j.final.failed) ? 1 : 0;
+  return Math.max(recorded ? recorded.code : 0, judged.some((j: Judged) => !!j.final && j.final.failed) ? 1 : 0);
 }
 
 // --- bisect ------------------------------------------------------------------------------------------------------
@@ -840,17 +838,30 @@ function gateRefused(ctx: Ctx): string | undefined {
   return gate && gate.ok === false ? gate.reason || "gate" : undefined;
 }
 
-async function record(ctx: Ctx, plan: Array<{ suite: Suite, only: Array<string> | null }>, reason?: string): Promise<number> {
+// A record inside a night (a pending record): the night's build, room left for the night's suites, and no message of
+// its own: its lines and files go into the night's.
+interface InNight {
+  target: TargetBuild;
+  reserveMs: number;
+}
+
+interface RecordOutcome {
+  code: number;
+  lines: Array<string>;
+  files: { [name: string]: string };
+}
+
+async function record(ctx: Ctx, plan: Array<{ suite: Suite, only: Array<string> | null }>, reason?: string, inNight?: InNight): Promise<RecordOutcome> {
   const busy = gateRefused(ctx);
   if (busy) {
     const m = plainMessage("\u23f8\ufe0f record" + (reason ? " (" + reason + ")" : "") + " not started: the server was busy (" + busy + "); it is not counted as an attempt");
     writeMessage(path.join(ctx.history, "discord", "1-result"), m, {});
     if (ctx.o.dryPost) printDry(path.join(ctx.history, "discord", "1-result"));
-    return 0;
+    return { code: 0, lines: [], files: {} };
   }
-  if (!ctx.local) await phase(ctx, "install tool", () => installTool(ctx));
-  else checkPlaywright(ctx);
-  const target = await phase(ctx, "build target", () => buildTarget(ctx, plan.map((p: { suite: Suite }) => p.suite)));
+  if (!inNight && !ctx.local) await phase(ctx, "install tool", () => installTool(ctx));
+  else if (!inNight) checkPlaywright(ctx);
+  const target = inNight ? inNight.target : await phase(ctx, "build target", () => buildTarget(ctx, plan.map((p: { suite: Suite }) => p.suite)));
   const runs: { [suite: string]: Array<ResultFile> } = {};
   const rounds = async(label: string, only: { [suite: string]: Array<string> | null }): Promise<void> => {
     for (let k = 1; k <= 5; k++) {
@@ -905,10 +916,11 @@ async function record(ctx: Ctx, plan: Array<{ suite: Suite, only: Array<string> 
     const todo: { [suite: string]: Array<string> | null } = {};
     Object.keys(builds).forEach((s: string) => { if (builds[s].rerecord.length) todo[s] = builds[s].rerecord; });
     if (!Object.keys(todo).length) break;
-    // An extra round runs only when it fits before run.sh's limit (estimated from round a, by the number of ids).
+    // An extra round runs only when it fits before run.sh's limit (estimated from round a, by the number of ids), with
+    // the night's suites still to come in a pending record.
     const ids = Object.keys(todo).reduce((n: number, s: string) => n + (todo[s] as Array<string>).length, 0);
     const estimate = roundsMs * ids / Math.max(1, roundIds);
-    if (deadline && Date.now() + estimate + 5 * 60000 > deadline) {
+    if (deadline && Date.now() + estimate + 5 * 60000 + (inNight ? inNight.reserveMs : 0) > deadline) {
       lines.push("record again " + again + " skipped: about " + Math.round(estimate / 60000) + " min would not fit before the time limit");
       break;
     }
@@ -942,10 +954,16 @@ async function record(ctx: Ctx, plan: Array<{ suite: Suite, only: Array<string> 
     if (left.length) writeJson(pendingFile, Object.assign({}, pending, { suites: left }));
     else fs.rmSync(pendingFile, { force: true });
   }
-  const summary = path.join(ctx.history, "summary.md");
+  const summary = path.join(ctx.history, inNight ? "record-summary.md" : "summary.md");
   fs.writeFileSync(summary, "# record " + ctx.sha.substring(0, 9) + "\n\n" + lines.join("\n") + "\n");
   const recordDir = path.join(ctx.history, "record");
-  const tar = tarResults(ctx, fs.existsSync(recordDir) ? fs.readdirSync(recordDir).map((f: string) => path.join(recordDir, f)) : []);
+  const tar = tarResults(ctx, fs.existsSync(recordDir) ? fs.readdirSync(recordDir).map((f: string) => path.join(recordDir, f)) : [], inNight ? "record.tar.gz" : "results.tar.gz");
+  if (inNight) {
+    const files: { [name: string]: string } = {};
+    files[path.basename(summary)] = summary;
+    if (tar) files[path.basename(tar)] = tar;
+    return { code: failed ? 1 : 0, lines: ["record" + (reason ? " (" + reason + ")" : "") + (failed ? ": failed" : "") + ":"].concat(lines), files: files };
+  }
   const head = (failed ? "\u274c" : "\ud83d\udccf") + " record" + (reason ? " (" + reason + ")" : "") + " \u00b7 `" + ctx.sha.substring(0, 9) + "` \u00b7 " +
     Math.round((Date.now() - ctx.started.getTime()) / 60000) + " min";
   const m = plainMessage(head + "\n" + lines.join("\n"), [summary].concat(tar ? [tar] : []).map((f: string) => path.basename(f)));
@@ -954,7 +972,7 @@ async function record(ctx: Ctx, plan: Array<{ suite: Suite, only: Array<string> 
   const dir1 = path.join(ctx.history, "discord", "1-result");
   writeMessage(dir1, m, sources);
   if (ctx.o.dryPost) printDry(dir1);
-  return failed ? 1 : 0;
+  return { code: failed ? 1 : 0, lines: lines, files: sources };
 }
 
 // --- housekeeping ------------------------------------------------------------------------------------------------
@@ -1021,7 +1039,7 @@ export async function main(argv: Array<string>): Promise<number> {
   let code = 0;
   try {
     if (o.bisect) code = await onDemandBisect(ctx);
-    else if (o.kind === "record") code = await record(ctx, planSuites(m, o.only, o.suites));
+    else if (o.kind === "record") code = (await record(ctx, planSuites(m, o.only, o.suites))).code;
     else code = await night(ctx);
   } catch(e: any) {
     if (!(e instanceof InfraError)) throw e;
