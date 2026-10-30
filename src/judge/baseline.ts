@@ -58,6 +58,8 @@ export interface BaselineBuild {
   baseline: Baseline;
   // Scenarios with fewer than 4 runs left after dropping slow ones: record them again (at most twice).
   rerecord: Array<string>;
+  // The ids built from these runs; with update, an id not measured keeps its previous entry and is not among them.
+  renewed: Array<string>;
 }
 
 // noiseTol = clamp(exp(2.5 x sigma) - 1, 0, 0.50), rounded up to 0.05; above 0.50 the scenario is unstable.
@@ -124,7 +126,7 @@ export function buildBaseline(results: Array<ResultFile>, options: BaselineOptio
     if (kept.length < 4) rerecord.push(id);
     scenarios[id] = entry;
   }
-  return { baseline: { schema: 1, suite: suite, machineKey: key, createdAt: now, scenarios: scenarios }, rerecord: rerecord };
+  return { baseline: { schema: 1, suite: suite, machineKey: key, createdAt: now, scenarios: scenarios }, rerecord: rerecord, renewed: ids };
 }
 
 function stamp(date: Date): string {
@@ -132,27 +134,30 @@ function stamp(date: Date): string {
 }
 
 // Writes the baseline; a renewal keeps the old file as <name>.<UTC date>.json, removes the ratchet (D19) and the
-// renewed scenarios' known.json entries (04, Removal). Returns the file and the removed entries.
+// renewed scenarios' known.json entries (04, Removal). A partial renewal touches only the ids it measured again: an id
+// asked for but not measured keeps its old entry, so its ratchet and its open regressions stay. Returns the file and the
+// removed entries.
 export function writeBaseline(stateDir: string, build: BaselineBuild, options: BaselineOptions = {}): { file: string, knownRemoved: Array<string> } {
   const b = build.baseline;
   const file = baselineFile(stateDir, b.suite, b.machineKey);
   if (fs.existsSync(file)) fs.copyFileSync(file, file.replace(/\.json$/, "." + stamp(options.now || new Date()) + ".json"));
   writeJson(file, canonical(b));
+  const renewed = options.update ? build.renewed : undefined;
   const ratchet = ratchetFile(stateDir, b.suite, b.machineKey);
   if (fs.existsSync(ratchet)) {
-    if (options.update) {
+    if (renewed) {
       const r = readJson<any>(ratchet, { scenarios: {} });
-      options.update.forEach((id: string) => { delete r.scenarios[id]; });
+      renewed.forEach((id: string) => { delete r.scenarios[id]; });
       writeJson(ratchet, r);
     } else {
       fs.unlinkSync(ratchet);
     }
   }
   const known = readKnown(stateDir);
-  const ids = options.update || Object.keys(b.scenarios);
+  const ids = renewed || Object.keys(b.scenarios);
   const commits: { [id: string]: string | undefined } = {};
   ids.forEach((id: string) => { if (b.scenarios[id]) commits[id] = b.scenarios[id].commit; });
-  const knownRemoved = renewKnown(known, b.suite, commits, options.update);
+  const knownRemoved = renewKnown(known, b.suite, commits, renewed);
   writeKnown(stateDir, known);
   return { file: file, knownRemoved: knownRemoved };
 }

@@ -1,13 +1,16 @@
 import { describe, test, expect } from "vitest";
-import { buildBaseline, noiseTolerance } from "../src/judge/baseline.ts";
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
+import { buildBaseline, noiseTolerance, writeBaseline } from "../src/judge/baseline.ts";
 import type { Baseline } from "../src/judge/baseline.ts";
 import { judge, finalize, markdownTable } from "../src/judge/compare.ts";
 import type { Comparison } from "../src/judge/compare.ts";
 import { advanceRatchet, referenceOf } from "../src/judge/reference.ts";
 import type { Ratchet } from "../src/judge/reference.ts";
-import { emptyKnown, applyNight, renewKnown } from "../src/judge/known.ts";
+import { emptyKnown, applyNight, renewKnown, readKnown, writeKnown } from "../src/judge/known.ts";
 import { bisect, isBadStep, judgeEnds } from "../src/judge/bisect-step.ts";
-import { canonical } from "../src/judge/state.ts";
+import { canonical, ratchetFile, readJson, writeJson } from "../src/judge/state.ts";
 
 // Hand-made result files (04, Checks): every verdict, the new-key path, only / skipped / incomplete against missing, a
 // changed rev, the ratchet, the cap, known.json, the bisect step rule.
@@ -62,6 +65,26 @@ describe("baseline", () => {
   test("a counter that differs between the runs is unstable", () => {
     const runs = [0, 1, 2, 3, 4].map((i: number) => result([entry("large/load/model", 100, { counters: { expressionRuns: { value: 100 + (i % 2), kind: "work" } } })], { kind: "record" }));
     expect(buildBaseline(runs).baseline.scenarios["large/load/model"].counters.expressionRuns.unstable).toBe(true);
+  });
+  test("a partial renewal clears the ratchet and known.json only for the ids it measured again", () => {
+    const state = fs.mkdtempSync(path.join(os.tmpdir(), "perf-renew-"));
+    const two = [0, 1, 2, 3, 4].map((i: number) => result([entry("large/load/model", 100 + i), entry("expressions/load/model", 100 + i)], { kind: "record" }));
+    const first = buildBaseline(two);
+    writeBaseline(state, first);
+    writeJson(ratchetFile(state, "core", KEY), { scenarios: { "large/load/model": { okNights: [], counters: { expressionRuns: 90 } },
+      "expressions/load/model": { okNights: [], counters: { expressionRuns: 90 } } } });
+    const known = readKnown(state);
+    known.entries.core = { "large/load/model": { kind: "time", ref: 100, since: "d1", sinceCommit: "x", lastOkCommit: null },
+      "expressions/load/model": { kind: "time", ref: 100, since: "d1", sinceCommit: "x", lastOkCommit: null } };
+    writeKnown(state, known);
+    // --record --only both ids, but expressions/load/model was not measured (failed in every round): its entry stays the old one.
+    const one = [0, 1, 2, 3, 4].map((i: number) => result([entry("large/load/model", 80 + i)], { kind: "record" }));
+    const update = ["large/load/model", "expressions/load/model"];
+    const { knownRemoved } = writeBaseline(state, buildBaseline(one, { update: update }, first.baseline), { update: update });
+    expect(knownRemoved).toEqual(["large/load/model"]);
+    expect(Object.keys(readKnown(state).entries.core)).toEqual(["expressions/load/model"]);
+    expect(Object.keys(readJson<any>(ratchetFile(state, "core", KEY), null).scenarios)).toEqual(["expressions/load/model"]);
+    fs.rmSync(state, { recursive: true, force: true });
   });
 });
 
