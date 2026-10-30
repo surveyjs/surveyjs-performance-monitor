@@ -6,6 +6,7 @@ import type { ResultFile, ResultEntry } from "../library/contract.ts";
 import { readResult, fixtureOfId } from "../library/contract.ts";
 import { baselineFile, ratchetFile, readJson, writeJson, canonical, stateDirOf } from "./state.ts";
 import { readKnown, writeKnown, renewKnown } from "./known.ts";
+import { utcStamp } from "../util/stamp.ts";
 
 // The baseline of a suite on one machine key: built from record runs, never committed to the repo.
 export const defaultTolerance = 0.25;
@@ -129,10 +130,6 @@ export function buildBaseline(results: Array<ResultFile>, options: BaselineOptio
   return { baseline: { schema: 1, suite: suite, machineKey: key, createdAt: now, scenarios: scenarios }, rerecord: rerecord, renewed: ids };
 }
 
-function stamp(date: Date): string {
-  return date.toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
-}
-
 // Writes the baseline; a renewal keeps the old file as <name>.<UTC date>.json, removes the ratchet and the renewed
 // scenarios' known.json entries (it accepts their current values). A partial renewal touches only the ids it measured
 // again: an id asked for but not measured keeps its old entry, so its ratchet and its open regressions stay. Returns the
@@ -140,7 +137,7 @@ function stamp(date: Date): string {
 export function writeBaseline(stateDir: string, build: BaselineBuild, options: BaselineOptions = {}): { file: string, knownRemoved: Array<string> } {
   const b = build.baseline;
   const file = baselineFile(stateDir, b.suite, b.machineKey);
-  if (fs.existsSync(file)) fs.copyFileSync(file, file.replace(/\.json$/, "." + stamp(options.now || new Date()) + ".json"));
+  if (fs.existsSync(file)) fs.copyFileSync(file, file.replace(/\.json$/, "." + utcStamp(options.now || new Date()) + "Z.json"));
   writeJson(file, canonical(b));
   const renewed = options.update ? build.renewed : undefined;
   const ratchet = ratchetFile(stateDir, b.suite, b.machineKey);

@@ -4,6 +4,7 @@ import { spawn, execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { git, headCommit } from "./util/git.ts";
 import { writeJsonAtomic } from "./util/json.ts";
+import { utcStamp } from "./util/stamp.ts";
 import type { Suite, ResultFile, ResultEntry } from "./library/contract.ts";
 import { annotate } from "./library/contract.ts";
 import type { Manifest } from "./library/manifest.ts";
@@ -96,10 +97,6 @@ class InfraError extends Error {
     this.log = log;
     this.what = what;
   }
-}
-
-function stamp(d: Date): string {
-  return d.toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "");
 }
 
 // A ref of a local run: origin/<ref> when that exists (run.sh passes shas on the server), else as given.
@@ -1029,7 +1026,7 @@ export async function main(argv: Array<string>): Promise<number> {
   const repo = o.repo ? path.resolve(o.repo) : o.runner ? tool : path.join(state, "repo");
   const sha = o.sha || resolveRef(repo, o.bisect ? o.bisect.substring(o.bisect.indexOf("..") + 2) : o.ref);
   const started = new Date();
-  const runId = stamp(started) + "-" + sha.substring(0, 7) + "-" + (o.bisect ? "bisect" : o.kind);
+  const runId = utcStamp(started) + "-" + sha.substring(0, 7) + "-" + (o.bisect ? "bisect" : o.kind);
   const history = o.history ? path.resolve(o.history) : path.join(state, "history", runId);
   if (!o.history && fs.existsSync(history)) throw new Error("history directory exists: " + history);
   fs.mkdirSync(history, { recursive: true });
