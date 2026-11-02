@@ -12,6 +12,9 @@ Group=perf
 Environment=PERF_STATE_DIR=/srv/surveyjs-performance-monitor
 Environment=PERF_HOST_DIR=/var/lib/surveyjs-performance-monitor-host
 ExecStart=/opt/surveyjs-performance-monitor/bin/run.sh --nightly
-TimeoutStartSec=5h
+# A nightly that records a baseline by itself: the gate's wait (PERF_GATE_MAX_MIN, 60 min by default), the image and
+# prepare (about 15 min) and run.sh's record limit (5 x the sum of the suites' budgetMin + 45). At a sum of 40 that is
+# 60 + 15 + 245 = 320 min, over 5h: systemd must not stop the service before run.sh's own timeout.
+TimeoutStartSec=6h
 TimeoutStopSec=90
 KillMode=mixed
