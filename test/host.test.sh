@@ -87,6 +87,36 @@ expect_fail "inside: the parent" inside "$t" "$state"
 ln -s "$state" "$t/state-link"
 expect_ok "real resolves a link" test "$(real "$t/state-link")" = "$state"
 
+# The budget in prepare.log, which the prepare container wrote: a whole line, 10 to 120, the last one; else 26.
+log="$host/runs/r1/prepare.log"
+budget() { printf '%b' "$1" > "$log"; budget_of "$log" 2>/dev/null; }
+expect_ok "budget: a plain line" test "$(budget 'prepared\nbudget: 30\n')" = 30
+expect_ok "budget: leading zeros are decimal" test "$(budget 'budget: 040\n')" = 40
+for junk in 'budget: abc' 'budget: -5' 'budget:30' 'budget: 3 0' 'budget: 1e2'; do
+  expect_ok "budget: junk '$junk' gives 26" test "$(budget "$junk\n")" = 26
+done
+for n in 0 9 121 999; do
+  expect_ok "budget: $n is out of range, 26" test "$(budget "budget: $n\n")" = 26
+done
+expect_ok "budget: no line gives 26" test "$(budget 'prepared\n')" = 26
+expect_ok "budget: an empty log gives 26" test "$(budget '')" = 26
+expect_ok "budget: a missing log gives 26" test "$(budget_of "$t/none/prepare.log" 2>/dev/null)" = 26
+expect_ok "  and succeeds" budget ''
+expect_ok "  with a warning" test -n "$(budget_of "$t/none/prepare.log" 2>&1 >/dev/null)"
+expect_ok "budget: the last line counts" test "$(budget 'budget: 20\nbudget: 40\nbudget: x\n')" = 40
+for line in 'x budget: 30' '[03:00:01] budget: 30' ' budget: 30' 'budget: 30 ' 'budget: 30x' 'budget: 30\r' 'budget: 1000'; do
+  expect_ok "budget: '$line' does not count" test "$(budget "$line\n")" = 26
+done
+expect_ok "budget: a line among binary bytes counts" test "$(budget '\0\1\2\nbudget: 30\n')" = 30
+
+# The container's limit: the old numbers at a budget of 26.
+expect_ok "limit: record at 26" test "$(limit_min 26 record)" = 175
+expect_ok "limit: nightly at 26" test "$(limit_min 26 nightly)" = 115
+expect_ok "limit: on demand at 26" test "$(limit_min 26 on-demand)" = 75
+expect_ok "limit: on-demand bisect at 26" test "$(limit_min 26 on-demand bisect)" = 115
+expect_ok "limit: record at 40" test "$(limit_min 40 record)" = 245
+expect_ok "limit: on demand at 27 rounds up" test "$(limit_min 27 on-demand)" = 77
+
 # run.sh refuses folders the containers could write, before it takes the lock or runs docker.
 runsh() { PERF_STATE_DIR="$1" PERF_HOST_DIR="$2" PERF_ENV_FILE="$3" bash "$here/../bin/run.sh" --dry-post 2>&1; }
 refused() { local name="$1" pattern="$2"; shift 2; local text; text=$(runsh "$@"); if [ $? = 2 ] && [[ "$text" == *"$pattern"* ]]; then ok "$name"; else bad "$name: $text"; fi; }

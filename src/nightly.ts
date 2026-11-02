@@ -248,6 +248,12 @@ export function syncRepo(repo: string, mirror: string): void {
   git(repo, ["fetch", "--prune", "--quiet", "origin"]);
 }
 
+// The budgets of all the manifest's suites in whole minutes, whatever --suites says: run.sh sets the container's limit
+// from it (its `budget: <B>` line in prepare.log).
+export function budgetSum(m: Manifest): number {
+  return Math.ceil(Object.keys(m.suites).reduce((n: number, s: string) => n + m.suites[s].budgetMin, 0));
+}
+
 // run.sh's prepare step, in a container without network before the gate: the clone, the tool at master, and the
 // options checked against the tool's manifest, so a typo is not found an hour later as a crash.
 function prepare(o: Options, state: string): number {
@@ -257,6 +263,8 @@ function prepare(o: Options, state: string): number {
   syncRepo(repo, path.resolve(o.mirror as string));
   prepareSlot(repo, tool, o.toolSha as string, false);
   const m = loadManifest(tool);
+  // A whole line with no time stamp: the host matches it exactly.
+  console.log("budget: " + budgetSum(m));
   planSuites(m, o.bisect ? (o.only as Array<string>).slice(0, 1) : o.only, o.suites);
   log("prepared: tool " + (o.toolSha as string).substring(0, 9) + ", runner contract " + m.contract + "; options ok");
   return 0;

@@ -30,3 +30,31 @@ stage() {
   done < "$out/files.txt"
   echo "$out"
 }
+
+# budget_of <prepare.log>: the sum of the suites' budgets in minutes, from the last whole `budget: <B>` line of the log,
+# 10 to 120; otherwise 26 (10 + 8 + 8, the budgets before) with a warning. The prepare container wrote the log: grep
+# and arithmetic only.
+budget_of() {
+  local b
+  b=$(grep -aE '^budget: [0-9]{1,3}$' "$1" 2>/dev/null | tail -n 1 | sed 's/^budget: //')
+  [ -n "$b" ] && b=$((10#$b))
+  if [ -n "$b" ] && [ "$b" -ge 10 ] && [ "$b" -le 120 ]; then
+    echo "$b"
+    return 0
+  fi
+  echo "host-lib: no budget line of 10 to 120 minutes in $1: using 26" >&2
+  echo 26
+}
+
+# limit_min <budget> <record|nightly|on-demand> [bisect]: the container's time limit in minutes. The suites take 1.5 times
+# their budgets and the build 6 (45 at 26); a record runs 5 rounds plus 45; a night or a bisect gets 40 for the bisect,
+# and every run 30 to spare.
+limit_min() {
+  local b="$1" s
+  s=$(( (3 * b + 1) / 2 + 6 ))
+  case "$2" in
+    record) echo $((5 * b + 45)) ;;
+    nightly) echo $((s + 40 + 30)) ;;
+    *) [ -n "${3:-}" ] && s=$((s + 40)); echo $((s + 30)) ;;
+  esac
+}

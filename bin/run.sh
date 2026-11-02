@@ -275,6 +275,8 @@ docker run --rm --network none --user "$(id -u):$(id -g)" -v "$STATE:$STATE" -v 
   tail -n 5 "$RUN/prepare.log" >&2
   fail "prepare failed: the options are not valid, or the tool could not be updated (runs/$RUN_ID/prepare.log on the host)"
 }
+# The sum of the tool's suite budgets, which prepare printed: the container's time limit follows it.
+B=$(budget_of "$RUN/prepare.log")
 
 # --- 9. gate --------------------------------------------------------------------------------------------------------
 
@@ -293,14 +295,9 @@ fi
 
 # --- 10. the container ----------------------------------------------------------------------------------------------
 
-RECORD_T=$((5 * (10 + 8 + 8) + 15 + 30))
-case "$KIND" in
-  nightly) T=$((45 + 40 + 30)) ;;
-  record) T=$RECORD_T ;;
-  *) T=$((45 + 30)); [ -n "$BISECT" ] && T=$((T + 40)) ;;
-esac
+T=$(limit_min "$B" "$KIND" ${BISECT:+bisect})
 # A nightly after a new machine key records (record-pending.json): it gets the record's time.
-[ "$KIND" = nightly ] && [ -f "$STATE/record-pending.json" ] && T=$RECORD_T
+[ "$KIND" = nightly ] && [ -f "$STATE/record-pending.json" ] && T=$(limit_min "$B" record)
 # The run folder is read-only inside: nightly.ts reads the gate result and the load samples there.
 ARGS=(--ref "$REF" --sha "$SHA" --suites "$SUITES" --history "$HIST" --host-run /host-run --image "$IMAGE")
 [ "$KIND" = nightly ] && ARGS+=(--nightly)

@@ -143,7 +143,8 @@ a missing morning message means the host did not run. Without systemd, use cron:
 ### The first etalon
 
 Once the server is set up: `run.sh --record` (5 interleaved rounds of the three suites: about 1.5 hours at the
-steady-state suite times; the limit is 175 minutes). Each suite's baseline is written as soon as its 5 rounds are in;
+steady-state suite times; the limit is 5 × the sum of the suites' `budgetMin` + 45 minutes, 175 at budgets of 10, 8
+and 8). Each suite's baseline is written as soon as its 5 rounds are in;
 scenarios with fewer than 4 clean runs are recorded again, at most twice, and only while the extra rounds fit in the
 limit. A noisy run is left out, and a record does not start when the gate gave up. Check the spread and the `unstable`
 list in its post. Until a baseline exists, a night posts its results without time verdicts.
@@ -183,7 +184,8 @@ checkout <tag>`. The tests themselves come from survey-library's `master`, which
 1. `run.sh` (host): takes `run.lock`, posts a stuck or unfinished previous run, fetches the mirror, builds the image if
    needed (Playwright's version from survey-library's `package.json` on `master`), then:
    * the prepare container: the state directory's clone fetches from the mirror, `work/tool` moves to `master`, and
-     `nightly.ts` checks the options against the tool's manifest;
+     `nightly.ts` checks the options against the tool's manifest and prints the sum of its suites' budgets
+     (`budget: <B>`), from which `run.sh` sets the night container's time limit;
    * the gate; the night container with the load sampler beside it;
    * posts `history/<run>/discord/1-result` and `2-bisect` through its outbox. A crash, a timeout or an out-of-memory
      kill is posted with the last 50 log lines attached.
