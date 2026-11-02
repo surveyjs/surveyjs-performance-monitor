@@ -10,7 +10,7 @@ import { escapeText, resultMessage, bisectMessage, embedsSize, limits, rangeLine
 import type { SuiteReport } from "../src/discord.ts";
 import { planSuites, planReruns, nextLastNightly, chooseBisects, measuredKey, pendingNight } from "../src/plan.ts";
 import { search, firstParentRange, rangePrs, markBisect, bisectDue } from "../src/bisect.ts";
-import { parseArgs, curlArgv, writeMessage, syncRepo } from "../src/nightly.ts";
+import { parseArgs, curlArgv, writeMessage, syncRepo, budgetSum } from "../src/nightly.ts";
 import type { Comparison } from "../src/judge/compare.ts";
 import type { Manifest } from "../src/library/manifest.ts";
 import { checkManifest, idsOfSuite } from "../src/library/manifest.ts";
@@ -464,6 +464,16 @@ describe("prepare", () => {
     const o = parseArgs(["--prepare", "--mirror", "/mirror", "--tool-sha", "abc", "--only", "large/load/model"]);
     expect([o.prepare, o.mirror, o.toolSha, o.only]).toEqual([true, "/mirror", "abc", ["large/load/model"]]);
     expect(parseArgs(["--host-run", "/host-run"]).hostRun).toBe("/host-run");
+  });
+  test("the budget run.sh reads is the sum of all the suites' budgets", () => {
+    expect(budgetSum(manifest)).toBe(26);
+    const raised: Manifest = JSON.parse(JSON.stringify(manifest));
+    raised.suites.core.budgetMin = 20;
+    raised.suites.react.budgetMin = 10;
+    raised.suites["survey-js-ui"].budgetMin = 10;
+    expect(budgetSum(raised)).toBe(40);
+    raised.suites.react.budgetMin = 9.5;
+    expect(budgetSum(raised)).toBe(40);
   });
   test("the state directory's clone takes the mirror's origin refs and tags, and follows the mirror", () => {
     const dir = tmp("prepare");
