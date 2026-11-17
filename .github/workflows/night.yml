@@ -1,0 +1,392 @@
+# The night: the nightly performance report of survey-library, run on GitHub Actions. One plan job reads the
+# repository and decides the builds and the measuring jobs; build jobs build today and the older commits; one measuring
+# job per scenario runs the pairs on its own worker; the report job writes the one Discord message; the history job
+# keeps the report files on the `history` branch. The spec is
+# docs/superpowers/specs/2026-11-17-github-actions-night-design.md.
+#
+# The schedule acts only while the repository variable PERF_SCHEDULE is `on`. A manual dispatch works regardless.
+#
+# The webhook (the secret PERF_DISCORD_WEBHOOK) lives only in the send step of the post job, a job that runs no library
+# code. "Re-run failed jobs" on a failed post re-runs only post. During the trial the
+# secret points to a test channel; its value is swapped at the switch to the real channel.
+#
+# The runner context is not available in `env`, so each job's first step sets RUNNER_DIR through GITHUB_ENV.
+name: night
+
+on:
+  schedule:
+    - cron: "0 1 * * *"
+  workflow_dispatch:
+    inputs:
+      kind:
+        description: "nightly or on-demand"
+        type: choice
+        options: [nightly, on-demand]
+        default: nightly
+      ref:
+        description: "Commit or branch of the library to measure"
+        type: string
+        default: ""
+      label:
+        description: "Label of an on-demand run"
+        type: string
+        default: ""
+      suites:
+        description: "Suites to run (comma or space separated), empty for all"
+        type: string
+        default: ""
+      only:
+        description: "Scenario ids to run (comma or space separated), empty for all"
+        type: string
+        default: ""
+      dry-post:
+        description: "Do not post to Discord"
+        type: boolean
+        default: false
+
+permissions: {}
+
+env:
+  PERF_PROJECT: survey-library
+  PERF_PROJECTS_DIR: ${{ github.workspace }}/projects
+  PERF_REPEATS: "5"
+  NODE_VERSION: 24.15.0
+  INPUT_KIND: ${{ inputs.kind || 'nightly' }}
+  INPUT_REF: ${{ inputs.ref }}
+  INPUT_LABEL: ${{ inputs.label }}
+  INPUT_SUITES: ${{ inputs.suites }}
+  INPUT_ONLY: ${{ inputs.only }}
+
+concurrency:
+  group: ${{ (github.event_name == 'schedule' || inputs.kind == 'nightly') && 'night-survey-library' || format('on-demand-{0}', github.run_id) }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    if: github.event_name != 'schedule' || vars.PERF_SCHEDULE == 'on'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    outputs:
+      jobs: ${{ steps.plan.outputs.jobs }}
+      reference: ${{ steps.plan.outputs.reference }}
+      older: ${{ steps.plan.outputs.older }}
+      kind: ${{ steps.plan.outputs.kind }}
+      runner_sha: ${{ steps.plan.outputs.runner_sha }}
+      cache_key: ${{ steps.plan.outputs.cache_key }}
+      cache_paths: ${{ steps.plan.outputs.cache_paths }}
+    steps:
+      - name: Runner folder
+        run: echo "RUNNER_DIR=$RUNNER_TEMP/runner" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Plan
+        id: plan
+        run: node src/gh/main.ts plan --work "$RUNNER_TEMP/work" --runner-dir "$RUNNER_DIR" --out plan-out
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: plan
+          path: plan-out/
+          if-no-files-found: ignore
+          overwrite: true
+          retention-days: 90
+
+  build-today:
+    needs: plan
+    if: needs.plan.result == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    env:
+      ROLE: ${{ fromJSON(needs.plan.outputs.reference).role }}
+    steps:
+      - name: Runner folder
+        run: echo "RUNNER_DIR=$RUNNER_TEMP/runner" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: plan
+          path: ${{ runner.temp }}/plan
+      - name: Build
+        run: node src/gh/main.ts build --plan "$RUNNER_TEMP/plan/plan.json" --role "$ROLE" --work "$RUNNER_TEMP/work" --out "$RUNNER_TEMP/out"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ env.ROLE }}
+          path: ${{ runner.temp }}/out/build/
+          overwrite: true
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: buildlog-${{ env.ROLE }}
+          path: |
+            ${{ runner.temp }}/out/build-record.json
+            ${{ runner.temp }}/out/logs/
+          if-no-files-found: ignore
+          overwrite: true
+          retention-days: 90
+
+  build-older:
+    needs: plan
+    if: needs.plan.result == 'success' && needs.plan.outputs.older != '[]'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.older) }}
+    env:
+      ROLE: ${{ matrix.role }}
+    steps:
+      - name: Runner folder
+        run: echo "RUNNER_DIR=$RUNNER_TEMP/runner" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: plan
+          path: ${{ runner.temp }}/plan
+      - name: Build
+        run: node src/gh/main.ts build --plan "$RUNNER_TEMP/plan/plan.json" --role "$ROLE" --work "$RUNNER_TEMP/work" --out "$RUNNER_TEMP/out"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ env.ROLE }}
+          path: ${{ runner.temp }}/out/build/
+          overwrite: true
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: buildlog-${{ env.ROLE }}
+          path: |
+            ${{ runner.temp }}/out/build-record.json
+            ${{ runner.temp }}/out/logs/
+          if-no-files-found: ignore
+          overwrite: true
+          retention-days: 90
+
+  tool:
+    needs: plan
+    if: needs.plan.result == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    continue-on-error: true
+    permissions:
+      contents: read
+    steps:
+      - name: Runner folder
+        run: echo "RUNNER_DIR=$RUNNER_TEMP/runner" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: plan
+          path: ${{ runner.temp }}/plan
+      - name: Runner checkout
+        run: node src/gh/main.ts runner --plan "$RUNNER_TEMP/plan/plan.json" --dir "$RUNNER_DIR"
+      - uses: actions/cache@v4
+        id: cache
+        with:
+          path: ${{ needs.plan.outputs.cache_paths }}
+          key: ${{ needs.plan.outputs.cache_key }}
+      - name: Install the tool
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: node src/gh/main.ts tool --plan "$RUNNER_TEMP/plan/plan.json" --runner "$RUNNER_DIR" --logs "$RUNNER_TEMP/toollogs"
+
+  measure:
+    name: measure ${{ matrix.key }}
+    needs: [plan, build-today, build-older, tool]
+    if: ${{ !cancelled() && needs.plan.result == 'success' && needs.build-today.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      max-parallel: ${{ needs.plan.outputs.kind == 'on-demand' && 40 || 60 }}
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.jobs) }}
+    env:
+      KEY: ${{ matrix.key }}
+    steps:
+      - name: Runner folder
+        run: echo "RUNNER_DIR=$RUNNER_TEMP/runner" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: plan
+          path: ${{ runner.temp }}/plan
+      - name: Runner checkout
+        run: node src/gh/main.ts runner --plan "$RUNNER_TEMP/plan/plan.json" --dir "$RUNNER_DIR"
+      - uses: actions/cache/restore@v4
+        id: cache
+        with:
+          path: ${{ needs.plan.outputs.cache_paths }}
+          key: ${{ needs.plan.outputs.cache_key }}
+      - name: Install the tool
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: node src/gh/main.ts tool --plan "$RUNNER_TEMP/plan/plan.json" --runner "$RUNNER_DIR" --logs "$RUNNER_TEMP/toollogs"
+      - name: Browser dependencies
+        if: matrix.browser
+        run: (cd "$RUNNER_DIR" && npx --no-install playwright install-deps chromium)
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: build-*
+          path: ${{ runner.temp }}/builds
+      - name: Measure
+        run: node src/gh/main.ts measure --plan "$RUNNER_TEMP/plan/plan.json" --key "$KEY" --runner "$RUNNER_DIR" --builds "$RUNNER_TEMP/builds" --out m-out --cores 2,3
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: measure-${{ matrix.key }}
+          path: m-out/
+          if-no-files-found: ignore
+          overwrite: true
+          retention-days: 90
+
+  report:
+    needs: [plan, build-today, build-older, measure]
+    if: ${{ always() && needs.plan.result != 'skipped' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      actions: read
+    env:
+      RUNNER_SHA: ${{ needs.plan.outputs.runner_sha }}
+    steps:
+      - name: Runner folder
+        run: echo "RUNNER_DIR=$RUNNER_TEMP/runner" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: plan
+          path: r/plan
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: buildlog-*
+          path: r/builds
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: measure-*
+          path: r/measures
+      - name: Jobs of this run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --paginate "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/attempts/$GITHUB_RUN_ATTEMPT/jobs?per_page=100" --jq '.jobs[] | {name, html_url, conclusion}' > r/jobs.jsonl || true
+      - name: Runner checkout
+        if: needs.plan.outputs.runner_sha != ''
+        continue-on-error: true
+        run: node src/gh/main.ts runner --plan r/plan/plan.json --dir "$RUNNER_DIR"
+      - uses: actions/cache/restore@v4
+        if: needs.plan.outputs.runner_sha != ''
+        continue-on-error: true
+        with:
+          path: ${{ needs.plan.outputs.cache_paths }}
+          key: ${{ needs.plan.outputs.cache_key }}
+      - name: Browser dependencies
+        if: needs.plan.outputs.runner_sha != ''
+        continue-on-error: true
+        run: (cd "$RUNNER_DIR" && npx --no-install playwright install-deps chromium)
+      - name: Report
+        env:
+          RESULT_PLAN: ${{ needs.plan.result }}
+          RESULT_BUILD_TODAY: ${{ needs.build-today.result }}
+          RESULT_BUILD_OLDER: ${{ needs.build-older.result }}
+          RESULT_MEASURE: ${{ needs.measure.result }}
+        run: PERF_CHROME_ROOT="$HOME/.cache/ms-playwright" node src/gh/main.ts report --plan-dir r/plan --builds r/builds --measures r/measures --out r-out --jobs r/jobs.jsonl --lib "$RUNNER_TEMP/lib"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: report
+          path: r-out/
+          if-no-files-found: ignore
+          overwrite: true
+          retention-days: 90
+
+  post:
+    needs: [report]
+    if: ${{ always() && needs.report.result == 'success' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: report
+          path: r-out
+      - name: Send
+        env:
+          PERF_DISCORD_WEBHOOK: ${{ secrets.PERF_DISCORD_WEBHOOK }}
+        run: node src/gh/main.ts send --dir r-out/discord/1-result ${{ inputs['dry-post'] && '--dry' || '' }}
+
+  history:
+    needs: [plan, report]
+    if: ${{ always() && needs.plan.result != 'skipped' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - name: Runner folder
+        run: echo "RUNNER_DIR=$RUNNER_TEMP/runner" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: report
+          path: h
+      - name: History
+        run: node src/gh/main.ts history --from h/history
+      - name: Keep the schedule alive
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X PUT "repos/$GITHUB_REPOSITORY/actions/workflows/night.yml/enable"

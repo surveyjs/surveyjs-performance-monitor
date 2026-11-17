@@ -1,0 +1,5 @@
+{
+  "name": "fake-runner",
+  "private": true,
+  "type": "module"
+}

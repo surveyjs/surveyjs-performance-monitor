@@ -1,0 +1,11 @@
+{
+  "name": "survey-library",
+  "repo": "https://github.com/surveyjs/survey-library",
+  "branch": "master",
+  "build": {
+    "core": { "dir": "packages/survey-core", "steps": ["build", "build:i18n"], "uiSteps": ["build:icons"], "out": "build" },
+    "ui": { "dir": "packages/{package}", "script": "build", "out": "build" }
+  },
+  "tool": { "dirs": [".", "packages/survey-core"], "optional": ["perf/react19", "perf/vue3", "perf/angular"] },
+  "discordEnv": "PERF_DISCORD_WEBHOOK"
+}

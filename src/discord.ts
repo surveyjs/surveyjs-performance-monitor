@@ -1,8 +1,13 @@
-import type { Comparison, ScenarioVerdict } from "./judge/compare.ts";
-import type { KnownChange } from "./judge/known.ts";
+import * as fs from "node:fs";
+import * as path from "node:path";
 import type { CommitPr } from "./pr.ts";
-import type { BisectResult } from "./judge/bisect-step.ts";
-import { pct, fixedMs } from "./util/format.ts";
+import type { BuildSpec, Role } from "./versions.ts";
+import type { Project } from "./project.ts";
+import type { SuiteMatrix, Row } from "./report.ts";
+import { verdictOf } from "./report.ts";
+import { overviewText } from "./overview.ts";
+import { pct, fixedMs, stripAnsi, dateUtc } from "./util/format.ts";
+import { writeJsonAtomic } from "./util/json.ts";
 
 // The Discord messages: a payload and its files, no network. run.sh posts them from the host.
 // Limits (docs.discord.com/developers, checked 2026-10-29): content 2,000 characters, 10 embeds, an embed title 256,
@@ -10,8 +15,7 @@ import { pct, fixedMs } from "./util/format.ts";
 // files per message is not stated there: we attach at most 10.
 export const limits = { content: 2000, embeds: 10, title: 256, description: 4096, footer: 2048, total: 6000, files: 10, fileBytes: 20 * 1024 * 1024 };
 export const maxRangeLines = 15;
-export const maxChanges = 8;
-export const maxPrevious = 5;
+export const maxSuiteLines = 8;
 
 export interface Embed {
   title?: string;
@@ -23,7 +27,7 @@ export interface Embed {
 export interface Payload {
   content: string;
   embeds: Array<Embed>;
-  allowed_mentions: { parse: Array<string>, roles?: Array<string> };
+  allowed_mentions: { parse: [] };
   attachments?: Array<{ id: number, filename: string }>;
 }
 
@@ -32,9 +36,6 @@ export interface Message {
   // File names, in order: files[0], files[1], ...
   files: Array<string>;
 }
-
-// Terminal colour codes (a Playwright error message, a build log).
-export const stripAnsi = new RegExp(String.fromCharCode(27) + "\\[[0-9;]*[A-Za-z]", "g");
 
 // Untrusted text (commit subjects, labels, refs, log lines): Markdown escaped, URLs wrapped in <...> so they neither
 // format nor unfurl. allowed_mentions stops pings; "<" is escaped too, so a mention cannot even render.
@@ -46,7 +47,7 @@ export function escapeText(text: string): string {
 }
 
 function cut(text: string, max: number): string {
-  return text.length <= max ? text : text.substring(0, max - 1) + "\u2026";
+  return text.length <= max ? text : text.substring(0, max - 1) + "…";
 }
 
 // Lines that fit max characters, then "+N more"; hidden counts items left out before (the 15-line cut of the range).
@@ -77,189 +78,151 @@ export function rangeText(commits: Array<CommitPr>, max: number): string {
   return fitLines(rangeLines(commits), max, Math.max(0, commits.length - maxRangeLines));
 }
 
-export const countOrder = ["ok", "improved", "regression", "counter regression", "noisy", "slow-process", "unconfirmed", "not-run", "missing",
-  "fixture changed", "new", "skipped", "unstable", "counterOnly", "no reference", "local"];
-
-export function counts(c: Comparison): string {
-  const n: { [v: string]: number } = {};
-  c.verdicts.forEach((v: ScenarioVerdict) => { n[v.verdict] = (n[v.verdict] || 0) + 1; });
-  return countOrder.filter((v: string) => n[v]).map((v: string) => n[v] + " " + (v === "counter regression" ? "counter" : v)).join(" \u00b7 ");
-}
-
-const ms = (v: number | undefined): string => fixedMs(v, 1, "?");
-
-export function changeLine(v: ScenarioVerdict): string {
-  if (v.verdict === "counter regression") {
-    const c = v.counters.filter((x: any) => x.name === v.counter)[0];
-    return "**counter** `" + v.id + "` " + v.counter + " " + (c ? c.ref + " \u2192 " + c.value : "");
-  }
-  if (v.verdict === "missing" || v.verdict === "fixture changed") return "**" + v.verdict + "** `" + v.id + "`" + (v.reason ? " " + escapeText(cut(v.reason, 160)) : "");
-  const reruns = v.rerunMedians && v.rerunMedians.length ? ", reruns " + v.rerunMedians.map(ms).join(", ") : "";
-  const tags = v.tags.length ? " [" + v.tags.join(", ") + "]" : "";
-  // A time regression with a regressed counter too.
-  const c = v.counter ? v.counters.filter((x: any) => x.name === v.counter)[0] : undefined;
-  const counter = c ? " \u00b7 counter " + v.counter + " " + c.ref + " \u2192 " + c.value : "";
-  return (v.verdict === "regression" ? "**regression**" : v.verdict) + " `" + v.id + "` " + ms(v.reference) + " \u2192 " + ms(v.median) + " ms (" + pct(v.change) +
-    (v.threshold !== undefined ? ", threshold " + pct(v.threshold) : "") + reruns + ")" + tags + counter;
-}
-
-const rank: { [v: string]: number } = { "regression": 0, "counter regression": 0, "missing": 1, "fixture changed": 1, "unconfirmed": 2, "improved": 3 };
-
-// The changes against the reference: failures first, then unconfirmed, then improvements, each by the size of the change.
-export function changes(c: Comparison): Array<ScenarioVerdict> {
-  return c.verdicts.filter((v: ScenarioVerdict) => rank[v.verdict] !== undefined)
-    .sort((a: ScenarioVerdict, b: ScenarioVerdict) => rank[a.verdict] - rank[b.verdict] || Math.abs(b.change || 0) - Math.abs(a.change || 0));
-}
-
-export interface SuiteReport {
-  suite: string;
-  // "ok" or what went wrong before a comparison: "build failed", "timed out", "failed", "skipped".
-  status: string;
-  comparison?: Comparison;
-  known?: KnownChange;
-  // A known entry's first bad commit, by id, for the "still regressed" lines.
-  firstBad?: { [id: string]: CommitPr | undefined };
-  unstable?: Array<string>;
-  buildLog?: { pkg: string, tail: Array<string> };
-  notes?: Array<string>;
-}
-
-export function suiteEmbed(r: SuiteReport, max: number): Embed {
-  const c = r.comparison;
-  const lines: Array<string> = [];
-  if (r.status !== "ok") lines.push("**" + r.status + "**");
-  if (r.buildLog) lines.push("`build-" + r.buildLog.pkg + ".log`, last lines:", "```", ...r.buildLog.tail.slice(-10).map((l: string) => cut(l.replace(/`/g, "'"), 150)), "```");
-  (r.notes || []).forEach((n: string) => lines.push(escapeText(n)));
-  if (c) {
-    if (c.newMachineKey) lines.push("new machine key `" + c.machineKey + "`: counters against the newest baseline, times not judged");
-    const ch = changes(c);
-    if (ch.length) {
-      lines.push("__Against the reference__");
-      ch.slice(0, maxChanges).forEach((v: ScenarioVerdict) => lines.push(changeLine(v)));
-      if (ch.length > maxChanges) lines.push("+" + (ch.length - maxChanges) + " more");
-    }
-    const prev = c.verdicts.filter((v: ScenarioVerdict) => v.vsPrevious !== undefined && Math.abs(v.vsPrevious) >= 0.1)
-      .sort((a: ScenarioVerdict, b: ScenarioVerdict) => Math.abs(b.vsPrevious!) - Math.abs(a.vsPrevious!));
-    if (prev.length && c.previous) {
-      lines.push("__Against the previous night__ (" + c.previous.date.substring(0, 10) + ")");
-      prev.slice(0, maxPrevious).forEach((v: ScenarioVerdict) => lines.push("`" + v.id + "` " + pct(v.vsPrevious)));
-    }
-    (r.known ? r.known.still : []).forEach((s: any) => {
-      const fb = r.firstBad ? r.firstBad[s.id] : undefined;
-      lines.push("still regressed since " + s.entry.since.substring(0, 10) + ": `" + s.id + "`" +
-        (fb ? " (first bad " + fb.sha.substring(0, 9) + (fb.pr ? " [#" + fb.pr + "](" + fb.url + ")" : "") + ")" : ""));
-    });
-    const rolling = c.verdicts.filter((v: ScenarioVerdict) => v.timeSource === "rolling");
-    if (rolling.length) lines.push("reference: rolling since " + rolling.map((v: ScenarioVerdict) => (v.referenceSince || "").substring(0, 10) + " `" + v.id + "`").join(", "));
-  }
-  if (r.unstable && r.unstable.length) lines.push("unstable: " + r.unstable.map((id: string) => "`" + id + "`").join(", "));
-  const failed = c ? c.failed : r.status !== "ok" && r.status !== "skipped";
-  return { title: cut(r.suite + (c ? ": " + counts(c) : ""), limits.title), description: fitLines(lines, max), color: failed ? 0xd83c3e : 0x2da44e };
-}
-
-export interface ResultMessageInput {
-  kind: string;
-  label: string;
-  ref: string;
-  commit: string;
-  date: string;
-  durationMin: number;
-  range: Array<CommitPr>;
-  rangeFrom?: string | null;
-  suites: Array<SuiteReport>;
-  notes: Array<string>;
-  roleId?: string;
-  newRegression: boolean;
-  footer: string;
-  files: Array<string>;
-}
-
-export function statusIcon(suites: Array<SuiteReport>): string {
-  if (suites.some((s: SuiteReport) => (s.comparison ? s.comparison.failed : s.status !== "ok" && s.status !== "skipped"))) return "\u274c";
-  const warn = ["unconfirmed", "noisy", "slow-process", "not-run", "no reference"];
-  if (suites.some((s: SuiteReport) => s.status !== "ok" || (s.comparison && s.comparison.verdicts.some((v: ScenarioVerdict) => warn.indexOf(v.verdict) > -1)))) return "\u26a0\ufe0f";
-  return "\u2705";
-}
-
 function withAttachments(payload: Payload, files: Array<string>): Message {
   const list = files.slice(0, limits.files);
   payload.attachments = list.map((f: string, i: number) => ({ id: i, filename: f.split(/[\\/]/).pop() as string }));
   return { payload: payload, files: list };
 }
 
-// Shrinks descriptions until the embeds fit 6,000 characters in all.
-function fitTotal(embeds: Array<Embed>): Array<Embed> {
-  const size = (): number => embeds.reduce((s: number, e: Embed) => s + (e.title || "").length + (e.description || "").length + (e.footer ? e.footer.text.length : 0), 0);
-  while(size() > limits.total) {
-    const longest = embeds.reduce((a: Embed, b: Embed) => ((b.description || "").length > (a.description || "").length ? b : a));
-    const lines = (longest.description || "").split("\n");
-    longest.description = fitLines(lines.slice(0, Math.max(1, lines.length - 2)), limits.description);
-    if (lines.length <= 1) longest.description = cut(longest.description, Math.max(1, (longest.description || "").length - (size() - limits.total)));
+const WARN = "⚠️";
+const ABBR: Partial<Record<Role, string>> = { yesterday: "y", week: "w", month: "m", base: "base" };
+const compareRole = (kind: "nightly" | "on-demand"): Role => (kind === "nightly" ? "yesterday" : "base");
+
+function icon(kind: "nightly" | "on-demand", matrices: SuiteMatrix[]): string {
+  const cmp = compareRole(kind);
+  const failed = matrices.some((m: SuiteMatrix) => m.failed.length > 0 || m.failedToday.length > 0 || Object.keys(m.incomplete).length > 0 || m.notRun.length > 0);
+  if (failed) return WARN;
+  return matrices.some((m: SuiteMatrix) => (m.up[cmp] || 0) > 0) ? "🔺" : "📊";
+}
+
+function median(v: number): string {
+  return fixedMs(v, v < 10 ? 2 : v < 100 ? 1 : 0, "?");
+}
+
+function scenarioLine(m: SuiteMatrix, row: Row): string {
+  const today = row.cells[m.roles[0]];
+  const parts = m.roles.slice(1).map((role: Role): string | undefined => {
+    const c = row.cells[role];
+    if (!c) return undefined;
+    const label = ABBR[role] || role;
+    if (c.mark === "same") return label + " =";
+    if (c.mark === "n/a") return label + " n/a";
+    if (c.mark) return label + " " + c.mark;
+    const v = verdictOf(row, role, m.suite);
+    const badge = v === "up" ? "🔴 " : v === "down" ? "🟢 " : "";
+    // A counterOnly row is judged by its work counters: the first one that changed, not its time.
+    if (row.counterOnly && v) return label + " " + badge + "work: " + (c.counterDiffs[0] || "changed");
+    return label + " " + badge + pct(c.delta);
+  }).filter((p: string | undefined): p is string => p !== undefined);
+  return "`" + row.id.replace(/`/g, "'") + "`" + (today && today.median !== undefined ? " " + median(today.median) + " ms" : "") + (parts.length ? " · " + parts.join(" · ") : "");
+}
+
+function suiteEmbed(m: SuiteMatrix, cmp: Role, max: number): Embed | undefined {
+  const hot = m.rows.filter((r: Row) => verdictOf(r, cmp, m.suite) !== undefined);
+  if (hot.length === 0 && m.failed.length === 0) return undefined;
+  const lines: string[] = [];
+  for (const f of m.failed) {
+    const log = f.log ? path.basename(f.log) : "";
+    lines.push("**" + f.role + ": " + f.kind + "**" + (log ? " · `" + log + "`" : ""));
+    lines.push(escapeText(cut(f.reason, 200)));
+    if (f.tail && f.tail.length > 0) lines.push("```\n" + f.tail.slice(-5).map((l: string) => cut(l.replace(stripAnsi, "").replace(/`/g, "'"), 150)).join("\n") + "\n```");
   }
-  return embeds;
+  // Slower first; then the rows judged by time, the largest change first, then the counterOnly rows (their time says
+  // nothing).
+  const slower = (r: Row): number => (verdictOf(r, cmp, m.suite) === "up" ? 1 : 0);
+  const byCounters = (r: Row): number => (r.counterOnly ? 1 : 0);
+  const delta = (r: Row): number => (r.counterOnly ? 0 : Math.abs((r.cells[cmp] as { delta?: number }).delta || 0));
+  hot.sort((a: Row, b: Row) => slower(b) - slower(a) || byCounters(a) - byCounters(b) || delta(b) - delta(a));
+  hot.slice(0, maxSuiteLines).forEach((r: Row) => lines.push(scenarioLine(m, r)));
+  if (hot.length > maxSuiteLines) lines.push("… +" + (hot.length - maxSuiteLines) + " in " + m.suite + ".md");
+  const up = m.up[cmp] || 0;
+  const down = m.down[cmp] || 0;
+  const counts = [up ? up + " slower" : "", down ? down + " faster" : ""].filter((s: string) => !!s).join(" · ");
+  return { title: cut(m.suite + (counts ? " · " + counts + " vs " + (ABBR[cmp] === "y" ? "yesterday" : cmp) : ""), limits.title),
+    description: fitLines(lines, Math.min(limits.description, max)), color: m.failed.length > 0 ? 0xd83c3e : up > 0 ? 0xc9686a : 0x5f9e74 };
 }
 
-export function resultMessage(m: ResultMessageInput): Message {
-  const head = statusIcon(m.suites) + " " + escapeText(m.kind) + (m.label && m.label !== m.kind ? " \u00b7 " + escapeText(m.label) : "") + " \u00b7 " + escapeText(m.ref) +
-    " \u00b7 `" + m.commit.substring(0, 9) + "` \u00b7 " + m.date.substring(0, 16).replace("T", " ") + " UTC \u00b7 " + Math.round(m.durationMin) + " min";
-  const countsLine = m.suites.map((s: SuiteReport) => "**" + s.suite + "** " + (s.comparison ? counts(s.comparison) : s.status)).join("\n");
-  const mention = m.newRegression && m.roleId ? "\n<@&" + m.roleId + "> new regression" : "";
-  const notes = m.notes.length ? "\n" + m.notes.map(escapeText).join("\n") : "";
-  const content = cut(head + "\n" + countsLine + notes, limits.content - mention.length) + mention;
-  const embeds: Array<Embed> = [];
-  if (m.range.length) {
-    embeds.push({ title: "Commits since " + (m.rangeFrom ? m.rangeFrom.substring(0, 9) : "the last run") + " (" + m.range.length + ")",
-      description: rangeText(m.range, 2400) });
+const size = (e: Embed): number => (e.title || "").length + (e.description || "").length + (e.footer ? e.footer.text.length : 0);
+
+export interface ReportInput {
+  project: Project;
+  kind: "nightly" | "on-demand";
+  label?: string;
+  date: Date;
+  durationMin: number;
+  specs: BuildSpec[];
+  matrices: SuiteMatrix[];
+  commits: CommitPr[];
+  depsNote?: string;
+  notes?: string[];
+  overview: boolean;
+  files: string[];
+}
+
+export function reportMessage(i: ReportInput): Message {
+  const head = icon(i.kind, i.matrices) + " " + (i.kind === "nightly" ? "nightly" : "on-demand" + (i.label ? " · " + escapeText(i.label) : ""));
+  const lines = [head, ...(i.notes || []).map(escapeText)];
+  // Spec, sections 2 and 5: the dependencies that changed since the compared build are a line of content (the embeds may
+  // be hidden).
+  if (i.depsNote) lines.push(escapeText("deps vs " + compareRole(i.kind) + ": " + i.depsNote));
+  if (!i.overview) lines.push(...overviewText(i.matrices), "overview.png failed");
+  const content = cut(lines.join("\n"), limits.content);
+
+  const embeds: Embed[] = [];
+  const buildLines = i.specs.map((s: BuildSpec) => "**" + s.role + "** [" + s.sha.slice(0, 9) + "](" + i.project.repo + "/commit/" + s.sha + ") · " + dateUtc(s.date) +
+    (s.sameAs ? " · = " + s.sameAs : ""));
+  embeds.push({ title: "Builds", description: fitLines(buildLines, 1500) });
+  if (i.commits.length > 0) {
+    embeds.push({ title: i.kind === "nightly" ? "Commits since yesterday (" + i.commits.length + ")" : "Commits base..branch (" + i.commits.length + ")",
+      description: rangeText(i.commits, 2400) });
   }
-  const used = embeds.reduce((s: number, e: Embed) => s + (e.title || "").length + (e.description || "").length, 0);
-  const room = Math.floor((limits.total - used - 100 - m.footer.length) / Math.max(1, m.suites.length));
-  m.suites.slice(0, limits.embeds - embeds.length).forEach((s: SuiteReport) => embeds.push(suiteEmbed(s, Math.min(limits.description, Math.max(200, room)))));
-  if (embeds.length) embeds[embeds.length - 1].footer = { text: cut(m.footer, limits.footer) };
-  const allowed: Payload["allowed_mentions"] = { parse: [] };
-  if (mention) allowed.roles = [m.roleId as string];
-  return withAttachments({ content: content, embeds: fitTotal(embeds), allowed_mentions: allowed }, m.files);
+  const used = embeds.reduce((s: number, e: Embed) => s + size(e), 0);
+  const cmp = compareRole(i.kind);
+  const room = Math.max(200, Math.floor((limits.total - used - 100) / Math.max(1, i.matrices.length)));
+  const suites: Embed[] = [];
+  for (const m of i.matrices) {
+    const e = suiteEmbed(m, cmp, room);
+    if (e) suites.push(e);
+  }
+  suites.splice(Math.max(0, limits.embeds - embeds.length));
+  // Over 6,000 characters in all: the suites at the end go first.
+  while(suites.length > 0 && used + suites.reduce((s: number, e: Embed) => s + size(e), 0) > limits.total) suites.pop();
+  return withAttachments({ content: content, embeds: embeds.concat(suites), allowed_mentions: { parse: [] } }, i.files);
 }
 
-export interface BisectReport {
-  suite: string;
-  id: string;
-  status: "found" | "narrowed" | "not-reproduced" | "not-in-range" | "timed out" | "skipped (budget)" | "error";
-  message: string;
-  result?: BisectResult;
-  firstBad?: CommitPr;
-  durationMin?: number;
-}
-
-// The second message: always posted when a bisect was due, whatever its outcome.
-export function bisectMessage(reports: Array<BisectReport>, head: { kind: string, commit: string }, files: Array<string>): Message {
-  const icon = reports.some((r: BisectReport) => r.status === "found") ? "\ud83d\udd0e" : "\u26a0\ufe0f";
-  const content = cut(icon + " bisect \u00b7 " + escapeText(head.kind) + " \u00b7 `" + head.commit.substring(0, 9) + "`\n" + reports.map((r: BisectReport) => {
-    const fb = r.firstBad;
-    const what = r.status === "found" && fb ? "first bad `" + fb.sha.substring(0, 9) + "` " + (fb.pr ? "[#" + fb.pr + "](<" + fb.url + ">) " : "<" + fb.url + "> ") + escapeText(cut(fb.title, 120)) :
-      escapeText(r.status + ": " + r.message);
-    return "**" + r.suite + "** `" + r.id + "`: " + what;
-  }).join("\n"), limits.content);
-  const embeds = reports.slice(0, limits.embeds).map((r: BisectReport): Embed => {
-    const res = r.result;
-    const lines: Array<string> = [];
-    if (res && res.good && res.bad) {
-      lines.push("good `" + res.good.commit.substring(0, 9) + "` " + res.good.medians.map(ms).join(", ") + " \u2192 median " + ms(res.good.median));
-      lines.push("bad `" + res.bad.commit.substring(0, 9) + "` " + res.bad.medians.map(ms).join(", ") + " \u2192 median " + ms(res.bad.median));
-    }
-    (res ? res.steps : []).forEach((s: any) => lines.push((s.bad ? "bad " : "good ") + "`" + s.commit.substring(0, 9) + "` " + s.medians.map(ms).join(", ") + " \u2192 " + ms(s.median)));
-    if (res && res.unbuildable && res.unbuildable.length) lines.push("unbuildable: " + res.unbuildable.map((s: string) => "`" + s.substring(0, 9) + "`").join(", "));
-    if (r.durationMin !== undefined) lines.push(Math.round(r.durationMin) + " min");
-    return { title: cut(r.suite + " " + r.id + ": " + r.status, limits.title), description: fitLines(lines, 900) };
-  });
-  return withAttachments({ content: content, embeds: fitTotal(embeds), allowed_mentions: { parse: [] } }, files);
-}
-
-// run.sh's own posts and the infrastructure failures of nightly.ts use fixed templates with no untrusted text.
+// run.sh's own posts and the infrastructure failures use fixed templates with no untrusted text.
 export function plainMessage(text: string, files: Array<string> = []): Message {
   return withAttachments({ content: cut(text, limits.content), embeds: [], allowed_mentions: { parse: [] } }, files);
 }
 
-// The size a message's embeds count against the 6,000 limit.
-export function embedsSize(p: Payload): number {
-  return p.embeds.reduce((s: number, e: Embed) => s + (e.title || "").length + (e.description || "").length + (e.footer ? e.footer.text.length : 0), 0);
+// A message directory: the files, files.txt (their order), payload.json, then "ready" for run.sh.
+export function writeMessage(dir: string, m: Message, sources: Record<string, string>): void {
+  fs.mkdirSync(dir, { recursive: true });
+  const names: Array<string> = [];
+  m.files.forEach((f: string) => {
+    const name = path.basename(f);
+    const src = sources[name] || f;
+    if (!fs.existsSync(src) || fs.statSync(src).size > limits.fileBytes) return;
+    if (path.resolve(src) !== path.resolve(dir, name)) fs.copyFileSync(src, path.join(dir, name));
+    names.push(name);
+  });
+  m.payload.attachments = names.map((n: string, i: number) => ({ id: i, filename: n }));
+  writeJsonAtomic(path.join(dir, "payload.json"), m.payload);
+  fs.writeFileSync(path.join(dir, "files.txt"), names.join("\n") + (names.length ? "\n" : ""));
+  fs.writeFileSync(path.join(dir, "ready"), new Date().toISOString() + "\n");
+}
+
+// The exact curl argv run.sh uses, with the webhook replaced by <webhook> (--dry-post).
+export function curlArgv(dir: string): Array<string> {
+  const names = fs.readFileSync(path.join(dir, "files.txt"), "utf8").split(/\r?\n/).filter((s: string) => !!s);
+  const argv = ["curl", "--fail-with-body", "-sS", "-D", "<hdr>", "-K", "<(printf 'url = \"%s\"\\n' '<webhook>?wait=true')",
+    "-F", "payload_json=<payload.json;type=application/json"];
+  names.forEach((n: string, i: number) => argv.push("-F", "files[" + i + "]=@" + n));
+  return argv;
+}
+
+export function printDry(dir: string): void {
+  console.log("\n--- dry post " + path.basename(dir) + " (cd " + dir + ") ---");
+  console.log(curlArgv(dir).join(" "));
+  console.log(fs.readFileSync(path.join(dir, "payload.json"), "utf8"));
 }

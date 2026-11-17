@@ -1,0 +1,11 @@
+{
+  "name": "other",
+  "repo": "https://github.com/example/other-lib",
+  "branch": "main",
+  "build": {
+    "core": { "dir": "lib/core", "steps": ["compile"], "uiSteps": [], "out": "dist" },
+    "ui": { "dir": "lib/{package}", "script": "compile", "out": "dist" }
+  },
+  "tool": { "dirs": [".", "lib/core"], "optional": [] },
+  "discordEnv": "PERF_DISCORD_WEBHOOK_OTHER"
+}

@@ -1,22 +1,21 @@
 {
-  "contract": 1,
-  "resultSchema": 1,
-  "calibrationOnlyId": "calibration",
+  "contract": 2,
+  "resultSchema": 2,
   "suites": {
     "core": {
       "ids": [
         "calculations/answer/first",
-        "calculations/answer/next10",
+        "calculations/answer/next3",
         "calculations/load/model",
         "complexLogic/answer/first",
-        "complexLogic/answer/next10",
+        "complexLogic/answer/next3",
         "complexLogic/load/design",
         "complexLogic/load/model",
         "complexLogic/output/data",
         "complexLogic/output/dispose",
         "complexLogic/output/toJSON",
         "expressions/answer/first",
-        "expressions/answer/next10",
+        "expressions/answer/next3",
         "expressions/load/model",
         "large/load/design",
         "large/load/model",
@@ -50,23 +49,17 @@
         "records-10k/records/sort-reverse@orders",
         "records-1k/load/data",
         "records-1k/load/model",
-        "records-1k/records/add-row@orders",
-        "records-1k/records/edit-cell@orders",
-        "records-1k/records/filter-change@orders",
-        "records-1k/records/filter-clear@orders",
         "records-1k/records/filter-set@orders",
-        "records-1k/records/first-visit@orders",
-        "records-1k/records/last@orders",
         "records-1k/records/next@orders",
         "records-1k/records/next@ordersPanel",
-        "records-1k/records/prev@orders",
-        "records-1k/records/remove-row@orders",
         "records-1k/records/sort-1@orders",
         "records-1k/records/sort-1@ordersPanel",
-        "records-1k/records/sort-3@orders",
-        "records-1k/records/sort-reverse@orders"
+        "records-plain/records/next@panelsPaged",
+        "records-plain/records/sort-1@orders30",
+        "records-plain/records/sort-1@ordersPaged",
+        "records-plain/records/sort-1@panels30",
+        "records-plain/records/sort-1@panelsPaged"
       ],
-      "budgetMin": 10,
       "cwd": "packages/survey-core",
       "script": "perf/core/run.ts",
       "args": []
@@ -91,9 +84,13 @@
         "records-10k/records/next@orders",
         "records-10k/records/sort-header@orders",
         "records-1k/load/paint",
-        "records-1k/records/next@ordersPanel"
+        "records-1k/records/next@ordersPanel",
+        "records-plain/records/next@panelsPaged",
+        "records-plain/records/sort-1@panels30",
+        "records-plain/records/sort-1@panelsPaged",
+        "records-plain/records/sort-header@orders30",
+        "records-plain/records/sort-header@ordersPaged"
       ],
-      "budgetMin": 8,
       "cwd": "packages/survey-react-ui",
       "script": "node_modules/@playwright/test/cli.js",
       "args": [
@@ -119,7 +116,6 @@
         "manyPages/load/paint",
         "manyPages/pages/locale",
         "manyPages/pages/next10",
-        "manyPages/pages/preview",
         "records-10k/load/paint",
         "records-10k/records/add-row@orders",
         "records-10k/records/edit-cell@orders",
@@ -128,9 +124,13 @@
         "records-10k/records/next@orders",
         "records-10k/records/sort-header@orders",
         "records-1k/load/paint",
-        "records-1k/records/next@ordersPanel"
+        "records-1k/records/next@ordersPanel",
+        "records-plain/records/next@panelsPaged",
+        "records-plain/records/sort-1@panels30",
+        "records-plain/records/sort-1@panelsPaged",
+        "records-plain/records/sort-header@orders30",
+        "records-plain/records/sort-header@ordersPaged"
       ],
-      "budgetMin": 8,
       "cwd": "packages/survey-js-ui",
       "script": "node_modules/@playwright/test/cli.js",
       "args": [
@@ -145,16 +145,74 @@
         "packages/survey-react-ui/src",
         "packages/survey-react-ui/entries"
       ]
+    },
+    "vue3": {
+      "ids": [
+        "calculations/load/paint",
+        "complexLogic/answer/type",
+        "complexLogic/load/paint",
+        "expressions/load/paint",
+        "large/load/paint",
+        "manyPages/load/paint",
+        "manyPages/pages/next10",
+        "records-10k/load/paint",
+        "records-10k/records/edit-cell@orders",
+        "records-10k/records/sort-header@orders",
+        "records-1k/load/paint",
+        "records-plain/records/sort-header@orders30",
+        "records-plain/records/sort-header@ordersPaged"
+      ],
+      "cwd": "packages/survey-vue3-ui",
+      "script": "node_modules/@playwright/test/cli.js",
+      "args": [
+        "test",
+        "-c",
+        "playwright.perf.config.ts"
+      ],
+      "package": "survey-vue3-ui",
+      "buildFile": "survey-vue3-ui.umd.js",
+      "src": [
+        "packages/survey-vue3-ui/src"
+      ]
+    },
+    "angular": {
+      "ids": [
+        "calculations/load/paint",
+        "complexLogic/answer/type",
+        "complexLogic/load/paint",
+        "expressions/load/paint",
+        "large/load/paint",
+        "manyPages/load/paint",
+        "manyPages/pages/next10",
+        "records-10k/load/paint",
+        "records-10k/records/edit-cell@orders",
+        "records-10k/records/sort-header@orders",
+        "records-1k/load/paint",
+        "records-plain/records/sort-header@orders30",
+        "records-plain/records/sort-header@ordersPaged"
+      ],
+      "cwd": "packages/survey-angular-ui",
+      "script": "node_modules/@playwright/test/cli.js",
+      "args": [
+        "test",
+        "-c",
+        "playwright.perf.config.ts"
+      ],
+      "package": "survey-angular-ui",
+      "buildFile": "fesm2015/survey-angular-ui.js",
+      "src": [
+        "packages/survey-angular-ui/src"
+      ]
     }
   },
   "machine": {
-    "key": "linux-6-test-cpu-8c-node24-chromiumnone-surveyjs-perf-1.60.0-abc1234-cpus4-7",
+    "key": "linux-6-amd-epyc-rome-processor-16c-node24-chromiumnone",
     "os": "linux-6",
-    "cpu": "Test CPU",
-    "cores": 8,
-    "availableParallelism": 8,
-    "node": "24.12.0",
+    "cpu": "AMD EPYC-Rome Processor",
+    "cores": 16,
+    "availableParallelism": 16,
+    "node": "24.15.0",
     "chromium": null,
-    "extra": "surveyjs-perf:1.60.0-abc1234-cpus4-7"
+    "extra": ""
   }
 }

@@ -1,63 +1,72 @@
 {
-  "schema": 1,
+  "schema": 2,
   "suite": "core",
   "kind": "nightly",
   "label": "nightly",
-  "ref": "origin/master",
-  "commit": "933e52f78ffd0068ff21d2d3149967faea95285f",
+  "ref": null,
+  "commit": "5f275a7d8daa4ae5a499c5d5302964474fd78e62",
   "previousCommit": null,
-  "date": "2026-10-30T11:39:31.142Z",
+  "date": "2026-11-13T17:20:51.636Z",
   "requested": {
     "only": [
       "large/load/model",
-      "manyPages/pages/prev"
+      "complexLogic/output/dispose",
+      "records-1k/records/next@orders"
     ],
     "notInSuite": []
   },
   "incomplete": null,
   "build": {
     "core": {
-      "dir": "/srv/surveyjs-performance-monitor/work/target/packages/survey-core/build",
-      "version": "3.2.3",
-      "commit": "933e52f78ffd0068ff21d2d3149967faea95285f",
-      "mtime": "2026-10-30T11:29:30.419Z"
+      "dir": "/tmp/claude-0/-opt-surveyjs-performance-monitor/19ca0ef6-5013-4ead-a5d5-f5582f739945/scratchpad/v2/mount/sl/packages/survey-core/build",
+      "version": "3.2.5",
+      "commit": "5f275a7d8daa4ae5a499c5d5302964474fd78e62",
+      "mtime": "2026-11-13T17:20:20.375Z"
     },
     "deps": {
-      "fingerprint": "3e8ea56a7f829ed2959de481bf0846e4baa94c60",
+      "fingerprint": "f00b31992d7de170787b47003adeae39f71bf26f",
       "versions": {
         "@rollup/plugin-terser": "0.4.4",
-        "@rollup/plugin-typescript": "12.3.0",
+        "@rollup/plugin-typescript": "12.3.1",
         "esbuild": "0.21.5",
-        "rollup": "4.62.4",
-        "terser": "5.49.2",
+        "rollup": "4.68.3",
+        "terser": "5.51.2",
         "typescript": "5.8.3"
       }
     }
   },
   "machine": {
-    "key": "linux-6-test-cpu-8c-node24-chromiumnone-surveyjs-perf-1.60.0-abc1234-cpus4-7",
+    "key": "linux-6-amd-epyc-rome-processor-16c-node24-chromiumnone",
     "os": "linux-6",
-    "cpu": "Test CPU",
-    "cores": 8,
-    "availableParallelism": 8,
-    "node": "24.12.0",
+    "cpu": "AMD EPYC-Rome Processor",
+    "cores": 16,
+    "availableParallelism": 16,
+    "node": "24.15.0",
     "chromium": null,
-    "extra": "surveyjs-perf:1.60.0-abc1234-cpus4-7"
+    "extra": ""
   },
   "environment": null,
   "fixtures": {
+    "complexLogic": {
+      "hash": "565995357a50f9b6ef03b4785ca6b03e8522e5c9",
+      "options": {
+        "seed": 4300
+      }
+    },
     "large": {
       "hash": "37138655cb9666f10de65a408c25e0c26659eac5",
       "options": {
         "seed": 4114
       }
     },
-    "manyPages": {
-      "hash": "9b56ace25e34d61806f63fa02fb7e814b9633bf7",
+    "records-1k": {
+      "hash": "428e7412aa101db3a03f98cbd0270bbbbbf4e9f0",
+      "dataHash": "dce094a5885089d0f9c8648762ed1bfb323f7084",
       "options": {
-        "seed": 300,
-        "pages": 300,
-        "questionsPerPage": 15
+        "seed": 1000,
+        "records": 1000,
+        "pages": 30,
+        "customers": 200
       }
     }
   },
@@ -65,26 +74,68 @@
   "failed": [],
   "results": [
     {
+      "id": "complexLogic/output/dispose",
+      "rev": 1,
+      "unit": "ms",
+      "samples": [
+        52.16,
+        61.35,
+        51.52,
+        63.29,
+        52.85
+      ],
+      "median": 52.85,
+      "min": 51.52,
+      "max": 63.29,
+      "mad": 1.33,
+      "counters": {
+        "conditionRuns": {
+          "value": 0,
+          "kind": "work"
+        },
+        "expressionRuns": {
+          "value": 0,
+          "kind": "work"
+        },
+        "rowsCreated": {
+          "value": 0,
+          "kind": "work"
+        },
+        "panelsCreated": {
+          "value": 0,
+          "kind": "work"
+        },
+        "disposed": {
+          "value": 1,
+          "kind": "work"
+        }
+      },
+      "info": {
+        "kept": 5,
+        "warmups": 2,
+        "wallMs": 54692,
+        "heapMB": 24,
+        "gc": true
+      },
+      "jsonErrors": 0,
+      "tolerance": null,
+      "local": false
+    },
+    {
       "id": "large/load/model",
       "rev": 1,
       "unit": "ms",
       "samples": [
-        609.07,
-        563.36,
-        659.12,
-        609.65,
-        604.22,
-        664.47
+        1575.37,
+        1556.21,
+        1581.63,
+        1574.85,
+        1550.59
       ],
-      "median": 609.36,
-      "min": 563.36,
-      "max": 664.47,
-      "mad": 25.57,
-      "calibration": {
-        "median": 10.97,
-        "before": 11.23,
-        "after": 10.49
-      },
+      "median": 1574.85,
+      "min": 1550.59,
+      "max": 1581.63,
+      "mad": 6.78,
       "counters": {
         "conditionRuns": {
           "value": 2220,
@@ -104,10 +155,10 @@
         }
       },
       "info": {
-        "kept": 6,
+        "kept": 5,
         "warmups": 2,
-        "wallMs": 5277,
-        "heapMB": 30,
+        "wallMs": 11428,
+        "heapMB": 22,
         "gc": true
       },
       "jsonErrors": 0,
@@ -115,39 +166,27 @@
       "local": false
     },
     {
-      "id": "manyPages/pages/prev",
-      "rev": 1,
+      "id": "records-1k/records/next@orders",
+      "rev": 2,
       "unit": "ms",
       "samples": [
-        18.81,
-        16.2,
-        15.95,
-        15.88,
-        17.05,
-        17.4,
-        17.31,
-        18.02,
-        18.99,
-        17.56,
-        17.57,
-        17.53
+        163.93,
+        147.31,
+        161.56,
+        155.15,
+        157.5
       ],
-      "median": 17.47,
-      "min": 15.88,
-      "max": 18.99,
-      "mad": 0.49,
-      "calibration": {
-        "median": 13.46,
-        "before": 12.47,
-        "after": 14.1
-      },
+      "median": 157.5,
+      "min": 147.31,
+      "max": 163.93,
+      "mad": 4.06,
       "counters": {
         "conditionRuns": {
-          "value": 0,
+          "value": 20,
           "kind": "work"
         },
         "expressionRuns": {
-          "value": 0,
+          "value": 2010,
           "kind": "work"
         },
         "rowsCreated": {
@@ -158,26 +197,29 @@
           "value": 0,
           "kind": "work"
         },
-        "currentPageNo": {
-          "value": 5,
+        "shown": {
+          "value": 20,
           "kind": "work"
         },
-        "visiblePages": {
-          "value": 300,
+        "pageIndex": {
+          "value": 1,
+          "kind": "work"
+        },
+        "records": {
+          "value": 1000,
           "kind": "work"
         }
       },
       "info": {
-        "kept": 12,
+        "kept": 5,
         "warmups": 2,
-        "wallMs": 1298,
-        "heapMB": 85,
+        "wallMs": 3472,
+        "heapMB": 45,
         "gc": true
       },
       "jsonErrors": 0,
       "tolerance": null,
-      "local": false,
-      "repeat": 5
+      "local": false
     }
   ]
 }

@@ -38,3 +38,32 @@ export function listInstalled(packageDir: string): Array<string> {
   }
   return res;
 }
+
+// The full name@version list of several package folders, sorted, for the build notes and the diff between two builds.
+export function installedList(dirs: Array<string>): Array<string> {
+  const all = new Set<string>();
+  dirs.forEach((dir: string) => listInstalled(dir).forEach((p: string) => all.add(p)));
+  return Array.from(all).sort();
+}
+
+// "rollup 4.34.8 -> 4.35.0, +left-pad@1.3.0, -right-pad@1.0.0", at most `max` items.
+export function depsDiff(before: Array<string>, after: Array<string>, max: number = 12): string {
+  const split = (list: Array<string>): { [name: string]: string } => {
+    const res: { [name: string]: string } = {};
+    list.forEach((p: string) => {
+      const at = p.lastIndexOf("@");
+      res[p.substring(0, at)] = p.substring(at + 1);
+    });
+    return res;
+  };
+  const a = split(before);
+  const b = split(after);
+  const items: Array<string> = [];
+  Object.keys(b).sort().forEach((name: string) => {
+    if (a[name] === undefined) items.push("+" + name + "@" + b[name]);
+    else if (a[name] !== b[name]) items.push(name + " " + a[name] + " -> " + b[name]);
+  });
+  Object.keys(a).sort().forEach((name: string) => { if (b[name] === undefined) items.push("-" + name + "@" + a[name]); });
+  if (items.length <= max) return items.join(", ");
+  return items.slice(0, max).join(", ") + ", +" + (items.length - max) + " more";
+}

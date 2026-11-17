@@ -2,59 +2,64 @@ import { describe, test, expect } from "vitest";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { checkManifest, loadManifest, splitOnly, suitesOf, packageOf, uiSourceDirs } from "../src/library/manifest.ts";
-import type { Suite, ResultEntry } from "../src/library/contract.ts";
-import { readResult, fixtureOfId, SUITES } from "../src/library/contract.ts";
-import type { ScenarioVerdict } from "../src/judge/compare.ts";
-import { judge } from "../src/judge/compare.ts";
+import { checkManifest, readResult, suitesOf, isBrowser, planSuites } from "../src/contract.ts";
+import type { ResultEntry } from "../src/contract.ts";
 
-// survey-library's runner contract (perf/CONTRACT.md there) as this server reads it: a real manifest and a real core
-// result file (its local paths and machine replaced), and the version checks.
-const testdata = (name: string): string => path.join(__dirname, "testdata", name);
+// survey-library's runner contract 2 (perf/CONTRACT.md there) as this server reads it: a real manifest and a real core
+// result file (the machine block is the container's), and the version checks.
+const testdata = (name: string): string => path.join(import.meta.dirname, "testdata", name);
 const manifestJson = (): any => JSON.parse(fs.readFileSync(testdata("manifest.json"), "utf8"));
 
-describe("the runner contract", () => {
-  test("the manifest: every suite, its ids and packages; unknown versions are refused", () => {
-    const m = checkManifest(manifestJson(), "testdata");
-    SUITES.forEach((s: Suite) => expect(m.suites[s].ids.length).toBeGreaterThan(0));
-    expect(m.suites.core.script).toBe("perf/core/run.ts");
-    expect(packageOf(m, "react")).toBe("survey-react-ui");
-    expect(() => packageOf(m, "core")).toThrow(/no package/);
-    expect(uiSourceDirs(m, "survey-js-ui")).toEqual(["packages/survey-js-ui/", "packages/survey-react-ui/"]);
-    expect(suitesOf(m, "records-10k/records/next@orders")).toEqual(["core", "react", "survey-js-ui"]);
-    expect(splitOnly(m, ["large/load/paint", "large/load/model"], "core")).toEqual({ run: ["large/load/model"], notInSuite: ["large/load/paint"] });
-    expect(() => splitOnly(m, ["large/load/nothing"], "core")).toThrow(/in no suite/);
-    expect(() => checkManifest(Object.assign(manifestJson(), { contract: 2 }), "x")).toThrow(/runner contract 2/);
-    expect(() => checkManifest(Object.assign(manifestJson(), { resultSchema: 2 }), "x")).toThrow(/schema 2/);
-    const noUi = manifestJson();
-    delete noUi.suites["survey-js-ui"];
-    expect(() => checkManifest(noUi, "x")).toThrow(/no suite survey-js-ui/);
+describe("the runner contract 2", () => {
+  test("a real contract-2 manifest is accepted", () => {
+    const m = checkManifest(manifestJson(), "x");
+    expect(suitesOf(m)).toEqual(["core", "react", "survey-js-ui", "vue3", "angular"]);
+    expect(isBrowser(m.suites.core)).toBe(false);
+    expect(isBrowser(m.suites.react)).toBe(true);
   });
-  test("a real core result file reads and is judged; another schema is refused", () => {
+  test("other contracts and schemas are refused", () => {
+    expect(() => checkManifest(Object.assign(manifestJson(), { contract: 1 }), "x")).toThrow(/runner contract 1, monitor knows 2/);
+    expect(() => checkManifest(Object.assign(manifestJson(), { contract: 3 }), "x")).toThrow(/runner contract 3/);
+    expect(() => checkManifest(Object.assign(manifestJson(), { resultSchema: 1 }), "x")).toThrow(/result schema 1, monitor reads 2/);
+    expect(() => checkManifest(Object.assign(manifestJson(), { suites: {} }), "x")).toThrow(/no suites/);
+  });
+  test("an extra suite is just another suite", () => {
+    const j = manifestJson();
+    j.suites.svelte = Object.assign({}, j.suites.react, { package: "survey-svelte-ui" });
+    const m = checkManifest(j, "x");
+    expect(suitesOf(m).slice(-1)).toEqual(["svelte"]);
+  });
+  test("a real schema-2 result reads; schema 1 is refused", () => {
     const r = readResult(testdata("result-core.json"));
-    expect(r.results.map((e: ResultEntry) => e.id)).toEqual(["large/load/model", "manyPages/pages/prev"]);
-    const c = judge({ result: r });
-    expect(c.newMachineKey).toBe(true);
-    expect(c.verdicts.map((v: ScenarioVerdict) => v.verdict)).toEqual(["no reference", "no reference"]);
+    expect(r.results.length).toBe(3);
+    r.results.forEach((e: ResultEntry) => expect(e).not.toHaveProperty("calibration"));
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "perf-contract-"));
     const file = path.join(dir, "result.json");
-    fs.writeFileSync(file, JSON.stringify(Object.assign({}, r, { schema: 2 })));
-    expect(() => readResult(file)).toThrow(/schema 2/);
+    fs.writeFileSync(file, JSON.stringify(Object.assign({}, r, { schema: 1 })));
+    expect(() => readResult(file)).toThrow(/result schema 1/);
+    // A schema-2 file without the three lists would break the report of every suite: it is refused here, so the night
+    // marks only that suite "suite failed: unreadable result file" (runner.ts).
+    for (const key of ["results", "failed", "skipped"]) {
+      for (const v of [undefined, null, "x", {}]) {
+        const broken: Record<string, unknown> = JSON.parse(JSON.stringify(r));
+        if (v === undefined) delete broken[key];
+        else broken[key] = v;
+        fs.writeFileSync(file, JSON.stringify(broken));
+        expect(() => readResult(file)).toThrow(new RegExp(key + " is not a list"));
+      }
+    }
+    fs.writeFileSync(file, "null");
+    expect(() => readResult(file)).toThrow(/not an object/);
     fs.rmSync(dir, { recursive: true, force: true });
   });
-  test("the fixture of an id is everything before the group", () => {
-    expect(fixtureOfId("records-10k/records/next@orders")).toBe("records-10k");
-    expect(fixtureOfId("extra/my-survey/load/model")).toBe("extra/my-survey");
-    expect(() => fixtureOfId("large")).toThrow(/Not a scenario id/);
-  });
-  // SURVEY_LIBRARY_DIR=<a survey-library checkout>: its perf/manifest.ts, run the way a night runs it.
-  test.skipIf(!process.env.SURVEY_LIBRARY_DIR)("the manifest of a survey-library checkout", () => {
-    const dir = path.resolve(process.env.SURVEY_LIBRARY_DIR as string);
-    const m = loadManifest(dir);
-    SUITES.forEach((s: Suite) => {
-      expect(m.suites[s].ids.length).toBeGreaterThan(0);
-      expect(fs.existsSync(path.join(dir, m.suites[s].cwd))).toBe(true);
-      expect(fs.existsSync(path.join(dir, m.suites[s].script))).toBe(true);
-    });
+  test("planSuites", () => {
+    const m = checkManifest(manifestJson(), "x");
+    const all = planSuites(m, null, null);
+    expect(all.length).toBe(suitesOf(m).length);
+    all.forEach((p) => expect(p.only).toBeNull());
+    expect(planSuites(m, ["large/load/model"], null)).toEqual([{ suite: "core", only: ["large/load/model"] }]);
+    expect(() => planSuites(m, ["nope/x/y"], null)).toThrow(/in no suite: nope\/x\/y/);
+    expect(() => planSuites(m, null, ["vue"])).toThrow(/unknown suite vue/);
+    expect(() => planSuites(m, ["large/load/paint"], ["core"])).toThrow(/none of the requested ids/);
   });
 });
