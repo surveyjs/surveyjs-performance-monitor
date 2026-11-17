@@ -79,16 +79,16 @@ jobs:
     steps:
       - name: Runner folder
         run: echo "RUNNER_DIR=$RUNNER_TEMP/runner" >> "$GITHUB_ENV"
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Plan
         id: plan
         run: node src/gh/main.ts plan --work "$RUNNER_TEMP/work" --runner-dir "$RUNNER_DIR" --out plan-out
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: plan
@@ -109,25 +109,25 @@ jobs:
     steps:
       - name: Runner folder
         run: echo "RUNNER_DIR=$RUNNER_TEMP/runner" >> "$GITHUB_ENV"
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: plan
           path: ${{ runner.temp }}/plan
       - name: Build
         run: node src/gh/main.ts build --plan "$RUNNER_TEMP/plan/plan.json" --role "$ROLE" --work "$RUNNER_TEMP/work" --out "$RUNNER_TEMP/out"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: build-${{ env.ROLE }}
           path: ${{ runner.temp }}/out/build/
           overwrite: true
           retention-days: 7
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: buildlog-${{ env.ROLE }}
@@ -154,25 +154,25 @@ jobs:
     steps:
       - name: Runner folder
         run: echo "RUNNER_DIR=$RUNNER_TEMP/runner" >> "$GITHUB_ENV"
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: plan
           path: ${{ runner.temp }}/plan
       - name: Build
         run: node src/gh/main.ts build --plan "$RUNNER_TEMP/plan/plan.json" --role "$ROLE" --work "$RUNNER_TEMP/work" --out "$RUNNER_TEMP/out"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: build-${{ env.ROLE }}
           path: ${{ runner.temp }}/out/build/
           overwrite: true
           retention-days: 7
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: buildlog-${{ env.ROLE }}
@@ -194,19 +194,19 @@ jobs:
     steps:
       - name: Runner folder
         run: echo "RUNNER_DIR=$RUNNER_TEMP/runner" >> "$GITHUB_ENV"
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: plan
           path: ${{ runner.temp }}/plan
       - name: Runner checkout
         run: node src/gh/main.ts runner --plan "$RUNNER_TEMP/plan/plan.json" --dir "$RUNNER_DIR"
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         id: cache
         with:
           path: ${{ needs.plan.outputs.cache_paths }}
@@ -220,7 +220,7 @@ jobs:
     needs: [plan, build-today, build-older, tool]
     if: ${{ !cancelled() && needs.plan.result == 'success' && needs.build-today.result == 'success' }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 90
     permissions:
       contents: read
     strategy:
@@ -233,19 +233,19 @@ jobs:
     steps:
       - name: Runner folder
         run: echo "RUNNER_DIR=$RUNNER_TEMP/runner" >> "$GITHUB_ENV"
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: plan
           path: ${{ runner.temp }}/plan
       - name: Runner checkout
         run: node src/gh/main.ts runner --plan "$RUNNER_TEMP/plan/plan.json" --dir "$RUNNER_DIR"
-      - uses: actions/cache/restore@v4
+      - uses: actions/cache/restore@v6
         id: cache
         with:
           path: ${{ needs.plan.outputs.cache_paths }}
@@ -256,13 +256,13 @@ jobs:
       - name: Browser dependencies
         if: matrix.browser
         run: (cd "$RUNNER_DIR" && npx --no-install playwright install-deps chromium)
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           pattern: build-*
           path: ${{ runner.temp }}/builds
       - name: Measure
         run: node src/gh/main.ts measure --plan "$RUNNER_TEMP/plan/plan.json" --key "$KEY" --runner "$RUNNER_DIR" --builds "$RUNNER_TEMP/builds" --out m-out --cores 2,3
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: measure-${{ matrix.key }}
@@ -284,23 +284,23 @@ jobs:
     steps:
       - name: Runner folder
         run: echo "RUNNER_DIR=$RUNNER_TEMP/runner" >> "$GITHUB_ENV"
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         continue-on-error: true
         with:
           name: plan
           path: r/plan
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         continue-on-error: true
         with:
           pattern: buildlog-*
           path: r/builds
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         continue-on-error: true
         with:
           pattern: measure-*
@@ -313,7 +313,7 @@ jobs:
         if: needs.plan.outputs.runner_sha != ''
         continue-on-error: true
         run: node src/gh/main.ts runner --plan r/plan/plan.json --dir "$RUNNER_DIR"
-      - uses: actions/cache/restore@v4
+      - uses: actions/cache/restore@v6
         if: needs.plan.outputs.runner_sha != ''
         continue-on-error: true
         with:
@@ -330,7 +330,7 @@ jobs:
           RESULT_BUILD_OLDER: ${{ needs.build-older.result }}
           RESULT_MEASURE: ${{ needs.measure.result }}
         run: PERF_CHROME_ROOT="$HOME/.cache/ms-playwright" node src/gh/main.ts report --plan-dir r/plan --builds r/builds --measures r/measures --out r-out --jobs r/jobs.jsonl --lib "$RUNNER_TEMP/lib"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: report
@@ -347,13 +347,13 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: report
           path: r-out
@@ -373,11 +373,11 @@ jobs:
     steps:
       - name: Runner folder
         run: echo "RUNNER_DIR=$RUNNER_TEMP/runner" >> "$GITHUB_ENV"
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         continue-on-error: true
         with:
           name: report

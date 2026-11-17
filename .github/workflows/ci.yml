@@ -10,15 +10,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: Use Node.js 24.x
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v7
       with:
         node-version: 24.x
 
     - name: Install
       run: npm install
+
+    - name: Workflow lint
+      run: |
+        curl -sSfL https://github.com/rhysd/actionlint/releases/download/v1.7.7/actionlint_1.7.7_linux_amd64.tar.gz | tar -xz actionlint
+        ./actionlint .github/workflows/*.yml
 
     - name: Lint
       run: npm run lint
@@ -30,7 +35,7 @@ jobs:
       run: npm test
 
     - name: Shell syntax
-      run: bash -n bin/run.sh && bash -n bin/host-lib.sh
+      run: for f in bin/*.sh bin/perf-hold; do bash -n "$f" || exit 1; done
 
     - name: Host checks
       run: bash test/host.test.sh
