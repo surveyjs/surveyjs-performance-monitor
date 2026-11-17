@@ -18,27 +18,6 @@ on:
     - cron: "0 1 * * *"
   workflow_dispatch:
     inputs:
-      kind:
-        description: "nightly or on-demand"
-        type: choice
-        options: [nightly, on-demand]
-        default: nightly
-      ref:
-        description: "Commit or branch of the library to measure"
-        type: string
-        default: ""
-      label:
-        description: "Label of an on-demand run"
-        type: string
-        default: ""
-      suites:
-        description: "Suites to run (comma or space separated), empty for all"
-        type: string
-        default: ""
-      only:
-        description: "Scenario ids to run (comma or space separated), empty for all"
-        type: string
-        default: ""
       dry-post:
         description: "Do not post to Discord"
         type: boolean
@@ -51,14 +30,9 @@ env:
   PERF_PROJECTS_DIR: ${{ github.workspace }}/projects
   PERF_REPEATS: "5"
   NODE_VERSION: 24.15.0
-  INPUT_KIND: ${{ inputs.kind || 'nightly' }}
-  INPUT_REF: ${{ inputs.ref }}
-  INPUT_LABEL: ${{ inputs.label }}
-  INPUT_SUITES: ${{ inputs.suites }}
-  INPUT_ONLY: ${{ inputs.only }}
 
 concurrency:
-  group: ${{ (github.event_name == 'schedule' || inputs.kind == 'nightly') && 'night-survey-library' || format('on-demand-{0}', github.run_id) }}
+  group: night-survey-library
   cancel-in-progress: false
 
 jobs:
@@ -72,7 +46,6 @@ jobs:
       jobs: ${{ steps.plan.outputs.jobs }}
       reference: ${{ steps.plan.outputs.reference }}
       older: ${{ steps.plan.outputs.older }}
-      kind: ${{ steps.plan.outputs.kind }}
       runner_sha: ${{ steps.plan.outputs.runner_sha }}
       cache_key: ${{ steps.plan.outputs.cache_key }}
       cache_paths: ${{ steps.plan.outputs.cache_paths }}
@@ -225,7 +198,7 @@ jobs:
       contents: read
     strategy:
       fail-fast: false
-      max-parallel: ${{ needs.plan.outputs.kind == 'on-demand' && 40 || 60 }}
+      max-parallel: 60
       matrix:
         include: ${{ fromJSON(needs.plan.outputs.jobs) }}
     env:
