@@ -1,5 +1,5 @@
-// The report's matrix from the measuring jobs' files: pair.json and the result file of every run. The same SuiteMatrix
-// the server builds (src/report.ts), so the markdown, the verdicts and the Discord message stay as they are.
+// The report's matrix from the measuring jobs' files: pair.json and the result file of every run. The SuiteMatrix
+// of src/report.ts, which the markdown, the verdicts and the Discord message read.
 // A false alarm is worse than a miss: a highlight needs the pooled delta and every repeat's own medians over the
 // threshold in the same direction, and partial data never gives one.
 import * as fs from "node:fs";
@@ -15,7 +15,7 @@ import { median } from "../util/stats.ts";
 import { stripAnsi } from "../util/format.ts";
 
 // `today` and `build` hold the measured runs (the steps with a median), in repeat order.
-export interface LoadedPair { role: Role, today: ResultFile[], build: ResultFile[], stop?: Stop, sec: { today: number, build: number } }
+export interface LoadedPair { role: Role, today: ResultFile[], build: ResultFile[], stop?: Stop }
 
 export type Missing = "worker failed" | "cancelled";
 
@@ -31,9 +31,8 @@ export function loadScenario(dir: string, id: string, missing?: Missing): Scenar
     pf = JSON.parse(fs.readFileSync(path.join(dir, PAIR), "utf8")) as PairFile | null;
     if (!pf || typeof pf !== "object" || !pf.end || !Array.isArray(pf.pairs)) return gone;
     for (const p of pf.pairs) {
-      const lp: LoadedPair = { role: p.role, today: [], build: [], sec: { today: 0, build: 0 } };
+      const lp: LoadedPair = { role: p.role, today: [], build: [] };
       for (const s of p.steps) {
-        lp.sec[s.side] += s.sec;
         if (s.median === undefined) continue;
         lp[s.side].push(readResult(path.join(dir, s.file)));
       }
@@ -59,8 +58,8 @@ const entriesOf = (files: ResultFile[], id: string): ResultEntry[] =>
 // build) is shown by it, a role without one by its pairs.
 export function pairMatrix(suite: string, roles: Role[], outcomes: Partial<Record<Role, Outcome>>, scenarios: ScenarioInput[], repeats: number): SuiteMatrix {
   const m: SuiteMatrix = {
-    suite: suite, roles: roles, rows: [], up: {}, down: {}, noisy: [], failed: [], failedToday: [], incomplete: {}, incompleteReason: {},
-    notRun: [], notRunReason: {}, na: {}, flagged: {}, sec: {}
+    suite: suite, roles: roles, rows: [], up: {}, down: {}, failed: [], failedToday: [], incomplete: {}, incompleteReason: {},
+    notRun: [], notRunReason: {}, na: {}, flagged: {}
   };
   const ref = roles[0];
   for (const role of roles) {
@@ -113,7 +112,7 @@ export function pairMatrix(suite: string, roles: Role[], outcomes: Partial<Recor
         }
       } else {
         const p = sc.pairs.find((x: LoadedPair) => x.role === role);
-        c = pairCell(sc.id, role, p, row, suite, repeats, m, naCount, notRun, ref);
+        c = pairCell(sc.id, role, p, row, suite, repeats, naCount, notRun);
       }
       row.cells[role] = c;
     }
@@ -130,8 +129,8 @@ export function pairMatrix(suite: string, roles: Role[], outcomes: Partial<Recor
 }
 
 // One older build's cell of a scenario from its pair; the rules of the plan, in order.
-function pairCell(id: string, role: Role, p: LoadedPair | undefined, row: Row, suite: string, repeats: number, m: SuiteMatrix,
-  naCount: (role: Role, reason: string) => void, notRun: (role: Role, c: Cell, reason: string) => Cell, ref: Role): Cell {
+function pairCell(id: string, role: Role, p: LoadedPair | undefined, row: Row, suite: string, repeats: number,
+  naCount: (role: Role, reason: string) => void, notRun: (role: Role, c: Cell, reason: string) => Cell): Cell {
   const empty = (): Cell => ({ flags: [], counterDiffs: [] });
   if (!p) return empty();
   const t = entriesOf(p.today, id);
@@ -152,8 +151,6 @@ function pairCell(id: string, role: Role, p: LoadedPair | undefined, row: Row, s
         c.rerun = (c.repeats as Repeat[]).every((r: Repeat) => timeVerdict(r.build, r.delta, suite) === v) ? "confirmed" : "unconfirmed";
       }
     }
-    m.sec[role] = (m.sec[role] || 0) + p.sec.build;
-    m.sec[ref] = (m.sec[ref] || 0) + p.sec.today;
     return c;
   }
   const stop = p.stop;

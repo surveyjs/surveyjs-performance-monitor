@@ -2,8 +2,8 @@ import * as path from "node:path";
 import * as fs from "node:fs";
 import { execFileSync } from "node:child_process";
 
-// The runner contract of the project's perf suites (perf/CONTRACT.md in survey-library): the versions this server
-// reads, the manifest and the result file. The project writes these; the server only reads them.
+// The runner contract of the project's perf suites (perf/CONTRACT.md in survey-library): the versions this monitor
+// reads, the manifest and the result file. The project writes these; the monitor only reads them.
 export const knownContract = 2;
 export const knownResultSchema = 2;
 
@@ -78,8 +78,8 @@ export interface ResultFile {
   incomplete: { reason: "timeout" | "killed", unrun: Array<string> } | null;
   build: { core: BuildPart, ui?: BuildPart, deps: { fingerprint: string | null, versions: { [name: string]: string } } };
   machine: MachineInfo;
-  // null from the runner; the night's runner.ts writes its block here.
-  environment: { noisy?: boolean, [k: string]: unknown } | null;
+  // null from the runner.
+  environment: { [k: string]: unknown } | null;
   fixtures: { [key: string]: { hash: string, dataHash?: string, options: unknown } };
   skipped: Array<{ id: string, reason: string }>;
   // Scenarios that threw (a check, jsonErrors on the runner's build): the result has no entry for them.
@@ -126,28 +126,4 @@ export function suitesOf(m: Manifest): Array<string> {
 
 export function isBrowser(sm: SuiteManifest): boolean {
   return !!sm.package;
-}
-
-// Which suites run and with which ids. `only` (null: all ids) restricts the ids: an id in no suite is an error, a suite
-// runs the ids it has and a suite with none is left out. `suites` (null: all) restricts the suites.
-export function planSuites(m: Manifest, only: Array<string> | null, suites: Array<string> | null): Array<{ suite: string, only: Array<string> | null }> {
-  const all = suitesOf(m);
-  const unknownSuite = (suites || []).find((s: string) => all.indexOf(s) < 0);
-  if (unknownSuite !== undefined) throw new Error("unknown suite " + unknownSuite);
-  if (only) {
-    const lost = only.filter((id: string) => !all.some((s: string) => m.suites[s].ids.indexOf(id) > -1));
-    if (lost.length > 0) throw new Error("ids that are in no suite: " + lost.join(", "));
-  }
-  const chosen = suites ? all.filter((s: string) => suites.indexOf(s) > -1) : all;
-  const plan: Array<{ suite: string, only: Array<string> | null }> = [];
-  for (const suite of chosen) {
-    if (!only) {
-      plan.push({ suite: suite, only: null });
-      continue;
-    }
-    const ids = only.filter((id: string) => m.suites[suite].ids.indexOf(id) > -1);
-    if (ids.length > 0) plan.push({ suite: suite, only: Array.from(new Set(ids)) });
-  }
-  if (plan.length === 0) throw new Error("none of the requested ids is in the requested suites");
-  return plan;
 }

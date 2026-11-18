@@ -1,16 +1,15 @@
 # The night: the nightly performance report of survey-library, run on GitHub Actions. One plan job reads the
 # repository and decides the builds and the measuring jobs; build jobs build today and the older commits; one measuring
 # job per scenario runs the pairs on its own worker; the report job writes the one Discord message; the history job
-# keeps the report files on the `history` branch. The spec is
-# docs/superpowers/specs/2026-11-17-github-actions-night-design.md.
+# keeps the report files on the `history` branch.
 #
 # The schedule acts only while the repository variable PERF_SCHEDULE is `on`. A manual dispatch works regardless.
 #
 # The webhook (the secret PERF_DISCORD_WEBHOOK) lives only in the send step of the post job, a job that runs no library
-# code. "Re-run failed jobs" on a failed post re-runs only post. During the trial the
-# secret points to a test channel; its value is swapped at the switch to the real channel.
+# code. "Re-run failed jobs" re-runs the failed jobs and the jobs that depend on them; when only post failed, only post
+# runs again.
 #
-# The runner context is not available in `env`, so each job's first step sets RUNNER_DIR through GITHUB_ENV.
+# The runner context is not available in `env`, so each job that needs it sets RUNNER_DIR in its first step through GITHUB_ENV.
 name: night
 
 on:
@@ -27,7 +26,6 @@ permissions: {}
 
 env:
   PERF_PROJECT: survey-library
-  PERF_PROJECTS_DIR: ${{ github.workspace }}/projects
   PERF_REPEATS: "5"
   NODE_VERSION: 24.15.0
 
@@ -80,8 +78,6 @@ jobs:
     env:
       ROLE: ${{ fromJSON(needs.plan.outputs.reference).role }}
     steps:
-      - name: Runner folder
-        run: echo "RUNNER_DIR=$RUNNER_TEMP/runner" >> "$GITHUB_ENV"
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
@@ -125,8 +121,6 @@ jobs:
     env:
       ROLE: ${{ matrix.role }}
     steps:
-      - name: Runner folder
-        run: echo "RUNNER_DIR=$RUNNER_TEMP/runner" >> "$GITHUB_ENV"
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
@@ -193,7 +187,7 @@ jobs:
     needs: [plan, build-today, build-older, tool]
     if: ${{ !cancelled() && needs.plan.result == 'success' && needs.build-today.result == 'success' }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 90
+    timeout-minutes: 120
     permissions:
       contents: read
     strategy:
@@ -252,8 +246,6 @@ jobs:
     permissions:
       contents: read
       actions: read
-    env:
-      RUNNER_SHA: ${{ needs.plan.outputs.runner_sha }}
     steps:
       - name: Runner folder
         run: echo "RUNNER_DIR=$RUNNER_TEMP/runner" >> "$GITHUB_ENV"
@@ -302,7 +294,7 @@ jobs:
           RESULT_BUILD_TODAY: ${{ needs.build-today.result }}
           RESULT_BUILD_OLDER: ${{ needs.build-older.result }}
           RESULT_MEASURE: ${{ needs.measure.result }}
-        run: PERF_CHROME_ROOT="$HOME/.cache/ms-playwright" node src/gh/main.ts report --plan-dir r/plan --builds r/builds --measures r/measures --out r-out --jobs r/jobs.jsonl --lib "$RUNNER_TEMP/lib"
+        run: node src/gh/main.ts report --plan-dir r/plan --builds r/builds --measures r/measures --out r-out --jobs r/jobs.jsonl --lib "$RUNNER_TEMP/lib"
       - uses: actions/upload-artifact@v7
         if: always()
         with:
@@ -344,8 +336,6 @@ jobs:
       contents: write
       actions: write
     steps:
-      - name: Runner folder
-        run: echo "RUNNER_DIR=$RUNNER_TEMP/runner" >> "$GITHUB_ENV"
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:

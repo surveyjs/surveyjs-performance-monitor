@@ -2,7 +2,7 @@ import { describe, test, expect } from "vitest";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { suiteEnv, suiteCommand, runSuite, slotRunners, contractVars } from "../src/runner.ts";
+import { suiteEnv, suiteCommand, runSuite } from "../src/runner.ts";
 import type { Build } from "../src/builds.ts";
 import { checkManifest, loadManifest } from "../src/contract.ts";
 import type { Manifest } from "../src/contract.ts";
@@ -32,7 +32,7 @@ async function fake(o: { fake?: Record<string, string>, slot?: string | null, si
   }
   try {
     const outcome = await runSuite({ runner: fakeRunner, m: loadManifest(fakeRunner), suite: "core", build: build, file: file, logFile: logFile,
-      env: params(file), hostRun: dir, local: true, slot: o.slot, signal: o.signal });
+      env: params(file), slot: o.slot, signal: o.signal });
     return { outcome: outcome, file: file, logFile: logFile };
   } finally {
     for (const [k, v] of Object.entries(saved)) {
@@ -69,7 +69,7 @@ describe("suiteEnv", () => {
     expect(clean.PERF_OUT_DIR).toBeUndefined();
     expect(clean.PERF_MACHINE_EXTRA).toBeUndefined();
     expect(clean.HOME).toBe("/h");
-    expect(Object.keys(clean).filter((k: string) => /^PERF_/.test(k)).every((k: string) => contractVars.indexOf(k) > -1)).toBe(true);
+    expect(Object.keys(clean).filter((k: string) => /^PERF_/.test(k)).sort()).toEqual(["PERF_CORE_DIR", "PERF_KIND", "PERF_LABEL", "PERF_ONLY", "PERF_REF", "PERF_RESULT_FILE", "PERF_TARGET_COMMIT", "PERF_UI_DIR"]);
   });
 });
 
@@ -102,7 +102,7 @@ describe("suiteCommand", () => {
 });
 
 describe("runSuite", () => {
-  test("runSuite annotates the environment", async () => {
+  test("runSuite returns the result and its log", async () => {
     const { outcome, file, logFile } = await fake();
     expect(outcome.kind).toBe("result");
     if (outcome.kind !== "result") return;
@@ -110,7 +110,6 @@ describe("runSuite", () => {
     expect(outcome.sec).toBeGreaterThan(0);
     expect(outcome.result.results.map((e) => e.id)).toEqual(["a/one", "a/two", "b/three"]);
     const written = JSON.parse(fs.readFileSync(file, "utf8"));
-    expect(written.environment.noisy).toBe(false);
     expect(written.kind).toBe("nightly");
     expect(written.build.core.dir).toBe("/b/survey-core");
     expect(written.fake.runner).toBe(fakeRunner);
@@ -138,31 +137,5 @@ describe("runSuite", () => {
     if (outcome.kind !== "result") return;
     expect(outcome.result.incomplete?.reason).toBe("timeout");
     expect(outcome.result.incomplete?.unrun).toEqual(["a/one", "a/two", "b/three"]);
-  });
-});
-
-describe("slotRunners", () => {
-  test("each slot gets its own runner copy", () => {
-    const t = tmp();
-    const runner = path.join(t, "tool");
-    const work = path.join(t, "work");
-    fs.mkdirSync(path.join(runner, "node_modules", "x"), { recursive: true });
-    fs.writeFileSync(path.join(runner, "node_modules", "x", "index.js"), "module.exports = 1;\n");
-    fs.mkdirSync(path.join(runner, "perf", "results", ".cache"), { recursive: true });
-    fs.writeFileSync(path.join(runner, "perf", "results", ".cache", "a.js"), "a\n");
-    fs.mkdirSync(work);
-    const slots = slotRunners(runner, work, 3);
-    expect(slots).toEqual([path.join(work, "slot-1"), path.join(work, "slot-2"), path.join(work, "slot-3")]);
-    const ino = fs.statSync(path.join(runner, "node_modules", "x", "index.js")).ino;
-    for (const s of slots) {
-      expect(fs.statSync(path.join(s, "node_modules", "x", "index.js")).ino).toBe(ino);
-      expect(fs.existsSync(path.join(s, "perf", "results"))).toBe(false);
-      expect(fs.existsSync(path.join(s, "perf"))).toBe(true);
-    }
-    expect(fs.existsSync(path.join(runner, "perf", "results", ".cache", "a.js"))).toBe(true);
-    fs.mkdirSync(path.join(slots[0], "perf", "results", ".cache"), { recursive: true });
-    fs.writeFileSync(path.join(slots[0], "perf", "results", ".cache", "bundle"), "1");
-    expect(fs.existsSync(path.join(slots[1], "perf", "results", ".cache", "bundle"))).toBe(false);
-    expect(fs.existsSync(path.join(runner, "perf", "results", ".cache", "bundle"))).toBe(false);
   });
 });

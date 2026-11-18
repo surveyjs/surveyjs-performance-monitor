@@ -17,7 +17,7 @@ const specs: BuildSpec[] = [
   { role: "week", sha: "c".repeat(40), date: "2026-11-05T08:00:00Z" },
   { role: "month", sha: "d".repeat(40), date: "2026-10-13T08:00:00Z" }
 ];
-const base = { project: project, kind: "nightly" as const, date: new Date("2026-11-12T09:37:00Z"), durationMin: 87, specs: specs, matrices: [matrix("core")], commits: [], overview: true, files: ["overview.png"] };
+const base = { project: project, specs: specs, matrices: [matrix("core")], commits: [], overview: true, files: ["overview.png"] };
 const make = (o: Record<string, unknown> = {}) => reportMessage({ ...base, ...o } as any);
 const embedText = (m: ReturnType<typeof make>) => m.payload.embeds.map((e) => (e.title || "") + (e.description || "")).join("");
 
@@ -111,12 +111,6 @@ describe("reportMessage", () => {
     expect(m.payload.attachments!.length).toBeLessThanOrEqual(limits.files);
     expect(m.files[0]).toBe("overview.png");
   });
-  test("on-demand", () => {
-    const m = matrix("core", { roles: ["branch", "base"], rows: [hotRow("a", "base")], up: { base: 1 } });
-    const r = make({ kind: "on-demand", label: "my-branch", matrices: [m], specs: [{ role: "branch", sha: "a".repeat(40), date: "2026-11-12T08:00:00Z" }, { role: "base", sha: "b".repeat(40), date: "2026-11-01T08:00:00Z" }] });
-    expect(r.payload.content).toBe("🔺 on-demand · my-branch");
-    expect(embedText(r)).toContain("base 🔴 +31%");
-  });
   test("a failed column attaches its log and shows the tail", () => {
     const m = matrix("core", { failed: [{ role: "week", kind: "build failed", reason: "survey-core does not build", log: "/x/build-week-survey-core.log", tail: ["ERR! x", "ERR! y"] }] });
     const files = ["overview.png", "core.md", "results.tar.gz", "build-week-survey-core.log"];
@@ -133,28 +127,24 @@ describe("reportMessage", () => {
     expect(e.description).toContain("**month: suite failed**");
   });
   test("the dependency changes of today against yesterday are a line of content, not of the builds embed", () => {
-    const m = make({ notes: ["gate: host not quiet after 60 min"], depsNote: "rollup 4.34.8 -> 4.35.0, +left_pad@1.3.0" });
-    expect(m.payload.content).toBe("📊 nightly\ngate: host not quiet after 60 min\ndeps vs yesterday: rollup 4.34.8 -\\> 4.35.0, +left\\_pad@1.3.0");
+    const m = make({ notes: ["stopped by a signal: 5 of 12 runs not run"], depsNote: "rollup 4.34.8 -> 4.35.0, +left_pad@1.3.0" });
+    expect(m.payload.content).toBe("📊 nightly\nstopped by a signal: 5 of 12 runs not run\ndeps vs yesterday: rollup 4.34.8 -\\> 4.35.0, +left\\_pad@1.3.0");
     expect(embedText(m)).not.toContain("rollup");
-    const d = make({ kind: "on-demand", depsNote: "rollup 4.34.8 -> 4.35.0", specs: [{ role: "branch", sha: "a".repeat(40), date: "2026-11-12T08:00:00Z" }, { role: "base", sha: "b".repeat(40), date: "2026-11-01T08:00:00Z" }],
-      matrices: [matrix("core", { roles: ["branch", "base"] })] });
-    expect(d.payload.content.split("\n")[1]).toBe("deps vs base: rollup 4.34.8 -\\> 4.35.0");
     expect(make().payload.content).toBe("📊 nightly");
   });
   test("notes are shown", () => {
-    expect(make({ notes: ["stopped by a signal: 5 of 12 runs not run"] }).payload.content.split("\n")[1]).toBe("stopped by a signal: 5 of 12 runs not run");
+    expect(make({ notes: ["cancelled: 2 scenarios not measured"] }).payload.content.split("\n")[1]).toBe("cancelled: 2 scenarios not measured");
   });
 });
 
 describe("messages on disk", () => {
-  test("writeMessage writes ready last", () => {
+  test("writeMessage writes the files, files.txt and payload.json", () => {
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "msg-"));
     const src = path.join(dir, "src");
     fs.mkdirSync(src);
     fs.writeFileSync(path.join(src, "a.txt"), "a");
     const out = path.join(dir, "1-result");
     writeMessage(out, plainMessage("hi", ["a.txt", "gone.txt"]), { "a.txt": path.join(src, "a.txt") });
-    expect(fs.existsSync(path.join(out, "ready"))).toBe(true);
     expect(fs.readFileSync(path.join(out, "files.txt"), "utf8")).toBe("a.txt\n");
     expect(JSON.parse(fs.readFileSync(path.join(out, "payload.json"), "utf8")).attachments).toEqual([{ id: 0, filename: "a.txt" }]);
     expect(fs.readFileSync(path.join(out, "a.txt"), "utf8")).toBe("a");

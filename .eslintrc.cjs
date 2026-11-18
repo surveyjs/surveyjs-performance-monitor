@@ -19,7 +19,7 @@ module.exports = {
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended"
   ],
-  "ignorePatterns": ["node_modules/", "results/"],
+  "ignorePatterns": ["node_modules/"],
   "rules": {
     "indent": ["error", 2, { "SwitchCase": 1 }],
     "semi": ["error", "always"],

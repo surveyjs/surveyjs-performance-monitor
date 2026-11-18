@@ -175,7 +175,7 @@ async function cmdTool(a: Args, env: NodeJS.ProcessEnv): Promise<number> {
   const project = projectOf(env, plan.project);
   const runner = a.values["--runner"];
   try {
-    await installTool(npmFor({ work: path.dirname(runner), logs: a.values["--logs"], local: true }), runner, project);
+    await installTool(npmFor({ logs: a.values["--logs"] }), runner, project);
     return 0;
   } catch(e) {
     console.error(messageOf(e));
@@ -261,7 +261,6 @@ function readJobs(file: string | undefined): JobInfo[] | undefined {
 async function cmdReport(a: Args, env: NodeJS.ProcessEnv): Promise<number> {
   const planFile = path.join(a.values["--plan-dir"], "plan.json");
   const plan = readJson<RunPlan | null>(planFile, null);
-  const kind = env.INPUT_KIND === "on-demand" ? "on-demand" : "nightly";
   let lib: string | undefined;
   if (plan && a.values["--lib"]) {
     try {
@@ -275,7 +274,8 @@ async function cmdReport(a: Args, env: NodeJS.ProcessEnv): Promise<number> {
   const k = await runReport({
     planDir: a.values["--plan-dir"], buildsDir: a.values["--builds"], measuresDir: a.values["--measures"], out: a.values["--out"],
     results: { plan: env.RESULT_PLAN || "", buildToday: env.RESULT_BUILD_TODAY || "", buildOlder: env.RESULT_BUILD_OLDER || "", measure: env.RESULT_MEASURE || "" },
-    kind: kind, runUrl: runUrl, projectsDir: projectsDir(env), now: new Date(), jobs: readJobs(a.values["--jobs"]), lib: lib,
+    kind: "nightly", runUrl: runUrl, projectsDir: projectsDir(env), now: new Date(), jobs: readJobs(a.values["--jobs"]), lib: lib,
+    // Chromium under Playwright's own folder; a test points PERF_CHROME_ROOT elsewhere.
     chrome: chromePath(env.PERF_CHROME_ROOT),
   });
   console.log(k);

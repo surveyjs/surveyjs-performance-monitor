@@ -1,9 +1,6 @@
 import { describe, test, expect } from "vitest";
-import fs from "node:fs";
-import os from "node:os";
-import path from "node:path";
 import { execFileSync } from "node:child_process";
-import { nightlyBuilds, onDemandBuilds, cloneRepo } from "../src/versions.ts";
+import { nightlyBuilds } from "../src/versions.ts";
 import { prOf, commitRange } from "../src/pr.ts";
 import { InfraError } from "../src/errors.ts";
 import { git } from "../src/util/git.ts";
@@ -79,36 +76,11 @@ describe("nightlyBuilds", () => {
     expect(b.map((x) => subj(repo, x.sha))).toEqual(a.map((x) => subj(repo, x.sha)));
     expect(() => nightlyBuilds(repo, start, "master")).toThrow(InfraError);
     expect(() => nightlyBuilds(repo, start, "master")).toThrow(/no origin\/master in the repo/);
-    const sha = git(repo, ["rev-parse", "HEAD"]);
-    expect(onDemandBuilds(repo, sha, "main").map((x) => x.role)).toEqual(["branch", "base"]);
   });
 
   test("an option-like branch is not read as a git flag", () => {
     const repo = set();
     expect(() => nightlyBuilds(repo, start, "--all")).toThrow(/no origin\/--all in the repo/);
-  });
-});
-
-describe("onDemandBuilds", () => {
-  test("on-demand: branch and its merge-base", () => {
-    const repo = repoWith([{ date: "2026-11-04T12:00:00Z", subject: "base" }, { date: "2026-11-05T12:00:00Z", subject: "m1" }]);
-    const base = git(repo, ["rev-parse", "HEAD~1"]);
-    git(repo, ["checkout", "-q", "-b", "feature", base]);
-    execFileSync("git", ["-c", "user.name=t", "-c", "user.email=t@e", "commit", "-q", "--allow-empty", "-m", "f1"], { cwd: repo });
-    execFileSync("git", ["-c", "user.name=t", "-c", "user.email=t@e", "commit", "-q", "--allow-empty", "-m", "f2"], { cwd: repo });
-    const tip = git(repo, ["rev-parse", "HEAD"]);
-    const b = onDemandBuilds(repo, tip, "master");
-    expect(b.map((x) => x.role)).toEqual(["branch", "base"]);
-    expect(b[0].sha).toBe(tip);
-    expect(b[1].sha).toBe(base);
-    expect(b[1].sameAs).toBeUndefined();
-  });
-
-  test("base equal to the branch is sameAs", () => {
-    const repo = repoWith([{ date: "2026-11-04T12:00:00Z", subject: "base" }]);
-    const sha = git(repo, ["rev-parse", "HEAD"]);
-    const b = onDemandBuilds(repo, sha, "master");
-    expect(b[1].sameAs).toBe("branch");
   });
 });
 
@@ -129,19 +101,5 @@ describe("pr", () => {
     const url = "https://github.com/acme/widgets";
     expect(prOf("abc", "fix: x (#12)", undefined, url).url).toBe(url + "/pull/12");
     expect(prOf("abc", "plain", undefined, url).url).toBe(url + "/commit/abc");
-  });
-});
-
-describe("cloneRepo", () => {
-  test("a clone of the mirror has origin/<branch> and the tags", () => {
-    const mirror = set();
-    git(mirror, ["tag", "v1.0.0"]);
-    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "perf-clone-"));
-    const dir = path.join(tmp, "repo");
-    cloneRepo(mirror, dir);
-    expect(git(dir, ["rev-parse", "origin/master"])).toBe(git(mirror, ["rev-parse", "master"]));
-    expect(git(dir, ["rev-parse", "v1.0.0^{commit}"])).toBe(git(mirror, ["rev-parse", "v1.0.0^{commit}"]));
-    expect(nightlyBuilds(dir, start, "master").map((x) => x.sha)).toEqual(nightlyBuilds(mirror, start, "master").map((x) => x.sha));
-    expect(() => cloneRepo(mirror, dir)).toThrow();
   });
 });

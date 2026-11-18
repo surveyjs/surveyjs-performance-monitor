@@ -2,12 +2,12 @@ import { describe, test, expect } from "vitest";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { cellParts, overviewHtml, overviewText, overviewHeight, chromePath, renderPng, renderWithin, heightOf } from "../src/overview.ts";
+import { cellParts, overviewHtml, overviewText, overviewHeight, chromePath, renderPng, heightOf, widthOf } from "../src/overview.ts";
 import { durationText } from "../src/util/format.ts";
 import { matrix, hotRow } from "./helpers/matrix.ts";
 
 const html = (matrices = [matrix("core")], extra: Record<string, unknown> = {}) =>
-  overviewHtml({ project: "survey-library", kind: "nightly", sha: "7c92c9c4a1234", date: new Date("2026-11-12T09:37:00Z"), durationMin: 87, matrices: matrices, ...extra } as any);
+  overviewHtml({ project: "survey-library", sha: "7c92c9c4a1234", date: new Date("2026-11-12T09:37:00Z"), durationMin: 87, matrices: matrices, ...extra } as any);
 
 describe("cellParts", () => {
   test("a cell lists slower, faster and n/a, only the non-zero ones", () => {
@@ -24,8 +24,8 @@ describe("cellParts", () => {
     expect(overviewText([sf])[0]).toContain("7d suite failed");
     expect(cellParts(matrix("core", { notRun: ["month"] }), "month")).toEqual([{ text: "not run", cls: "na" }]);
     expect(cellParts(matrix("core", { incomplete: { week: 3 } }), "week")[0].text).toBe("incomplete 3");
-    const noisy = cellParts(matrix("core", { up: { week: 1 }, noisy: ["week"], flagged: { week: 2 } }), "week");
-    expect(noisy.slice(-2)).toEqual([{ text: "noisy", cls: "na" }, { text: "2 ⚑", cls: "na" }]);
+    const flagged = cellParts(matrix("core", { up: { week: 1 }, flagged: { week: 2 } }), "week");
+    expect(flagged).toEqual([{ text: "1 slower", cls: "bad" }, { text: "2 ⚑", cls: "na" }]);
   });
 });
 
@@ -63,24 +63,19 @@ describe("today without a result", () => {
     expect(html([m])).toContain('<td class="s">core <span class="fail">· 1 failed</span> <span class="fail">· today incomplete 3</span></td>');
     expect(overviewText([m])[0]).toBe("**core** · 1 failed · today incomplete 3 · 1d — · 7d 1 slower · 30d —");
   });
-  test("on demand the reference is the branch", () => {
-    const m = matrix("core", { roles: ["branch", "base"], failed: [{ role: "branch", kind: "build failed", reason: "r" }] });
-    expect(cellParts(m, "base")).toEqual([{ text: "no branch", cls: "na" }]);
-    expect(overviewText([m])).toEqual(["**core** · branch build failed · base no branch"]);
-  });
 });
 
 describe("overviewHtml", () => {
-  test("the table: SUITE · 1D · 7D · 30D with fixed widths", () => {
+  test("the table: SUITE · 1D · 7D · 30D, every cell on one line", () => {
     const h = html();
     expect(h).toContain("<th>suite</th><th>1d</th><th>7d</th><th>30d</th>");
-    expect(h).toContain("table-layout:fixed");
-    expect(h).toContain('<col style="width:28%"><col style="width:23%"><col style="width:23%"><col style="width:26%">');
-    // A long cell wraps between its parts inside its column instead of running into the next one (I3).
-    expect(h).toMatch(/td\{[^}]*white-space:normal/);
-    expect(h).toMatch(/td span\{white-space:nowrap\}/);
+    // A cell never wraps: the columns follow their content and a busy night makes the picture wider.
+    expect(h).toContain("table-layout:auto");
+    expect(h).not.toContain("<colgroup");
+    expect(h).not.toContain("table-layout:fixed");
+    expect(h).toMatch(/td\{[^}]*white-space:nowrap/);
+    expect(h).toMatch(/body\{[^}]*width:max-content;min-width:728px/);
     expect(html([matrix("core", { up: { week: 2 }, down: { week: 1 } })])).toContain('2 slower</span>&nbsp;<span class="na">·</span> <span class="good">1 faster</span>');
-    expect(html([matrix("core", { roles: ["branch", "base"] })], { kind: "on-demand" })).toContain("<th>base</th>");
   });
   test("failed on today stands next to the suite", () => {
     const f = html([matrix("core", { failedToday: [{ id: "a", error: "e" }, { id: "b", error: "e" }] })]);
@@ -145,6 +140,20 @@ describe("the measured height", () => {
   });
 });
 
+describe("the measured width", () => {
+  test("widthOf reads the width the measuring script wrote on <html>", () => {
+    expect(widthOf('<html lang="x" data-height="321" data-width="900"><head></head><body></body></html>')).toBe(900);
+    expect(widthOf('<html data-width="728">')).toBe(728);
+    expect(widthOf('<html data-width="4000">')).toBe(4000);
+    expect(widthOf("<html><head></head><body>data-width=\"900\"</body></html>")).toBeNull();
+    expect(widthOf("")).toBeNull();
+    expect(widthOf('<html data-height="321">')).toBeNull();
+    expect(widthOf('<html data-width="727">')).toBeNull();
+    expect(widthOf('<html data-width="4001">')).toBeNull();
+    expect(widthOf('<html data-width="9e2">')).toBeNull();
+  });
+});
+
 describe("renderPng", () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "png-"));
   function fake(name: string, body: string): string {
@@ -188,7 +197,7 @@ describe("measuring, then the screenshot", () => {
     "  fs.writeFileSync(e.FAKE_ARGV + '.page', fs.readFileSync(page, 'utf8'));\n" +
     "  if (e.FAKE_DUMP === 'fail') process.exit(1);\n" +
     "  if (e.FAKE_DUMP === 'hang') sleep();\n" +
-    "  else process.stdout.write('<html data-height=\"' + (e.FAKE_HEIGHT || '321') + '\"><head></head><body></body></html>\\n');\n" +
+    "  else process.stdout.write('<html data-height=\"' + (e.FAKE_HEIGHT || '321') + '\"' + (e.FAKE_WIDTH ? ' data-width=\"' + e.FAKE_WIDTH + '\"' : '') + '><head></head><body></body></html>\\n');\n" +
     "} else {\n" +
     "  const o = a.find((x) => x.startsWith('--screenshot=')).slice(13);\n" +
     "  if (e.FAKE_SHOT === 'hang' && !fs.existsSync(e.FAKE_SHOT_ONCE)) { fs.writeFileSync(e.FAKE_SHOT_ONCE, ''); sleep(); }\n" +
@@ -198,7 +207,7 @@ describe("measuring, then the screenshot", () => {
   const argvFile = path.join(dir, "argv.jsonl");
   const calls = (): Array<Array<string>> => fs.readFileSync(argvFile, "utf8").split("\n").filter((l) => !!l).map((l) => JSON.parse(l));
   const env = (vars: Record<string, string>): void => {
-    for (const k of ["FAKE_DUMP", "FAKE_SHOT", "FAKE_HEIGHT"]) delete process.env[k];
+    for (const k of ["FAKE_DUMP", "FAKE_SHOT", "FAKE_HEIGHT", "FAKE_WIDTH"]) delete process.env[k];
     Object.assign(process.env, { FAKE_ARGV: argvFile, FAKE_SHOT_ONCE: path.join(dir, "shot-once") }, vars);
     fs.rmSync(argvFile, { force: true });
     fs.rmSync(path.join(dir, "shot-once"), { force: true });
@@ -207,24 +216,25 @@ describe("measuring, then the screenshot", () => {
   const log = path.join(dir, "r.log");
   const page = "<!doctype html><html><head></head><body><table></table>\n</body></html>\n";
 
-  test("the window takes the height measured in Chromium", async () => {
-    env({ FAKE_HEIGHT: "321" });
+  test("the window takes the height and the width measured in Chromium", async () => {
+    env({ FAKE_HEIGHT: "321", FAKE_WIDTH: "905" });
     expect(await renderPng(page, out, { chrome: chrome, rows: 3, logFile: log })).toBe(true);
     const [dump, shot] = calls();
     expect(dump).toContain("--dump-dom");
-    expect(shot).toContain("--window-size=728,321");
+    expect(dump).toContain("--window-size=728," + overviewHeight(3));
+    expect(shot).toContain("--window-size=905,321");
     // The same flags apart from what each pass writes.
     const same = (a: Array<string>): Array<string> => a.filter((x) => x !== "--dump-dom" && !x.startsWith("--screenshot=") && !x.startsWith("file://") && !x.startsWith("--window-size="));
     expect(same(dump)).toEqual(same(shot));
     // The same page with the measuring script; it is gone afterwards and the page that was shot is the page.
     const measured = fs.readFileSync(argvFile + ".page", "utf8");
     expect(measured.replace(/<script>[^<]*<\/script>\n/, "")).toBe(page);
-    expect(measured).toMatch(/<script>[^<]*data-height[^<]*<\/script>\n<\/body>/);
+    expect(measured).toMatch(/<script>[^<]*data-height[^<]*data-width[^<]*<\/script>\n<\/body>/);
     expect(fs.readdirSync(path.dirname(out)).sort()).toEqual(["overview.html", "overview.png"]);
     expect(fs.readFileSync(path.join(path.dirname(out), "overview.html"), "utf8")).toBe(page);
   });
 
-  test("a measuring pass that fails or hangs leaves the formula's height", async () => {
+  test("a measuring pass that fails or hangs leaves the formula's height and 728 px", async () => {
     env({ FAKE_DUMP: "fail" });
     expect(await renderPng(page, out, { chrome: chrome, rows: 3, logFile: log })).toBe(true);
     expect(calls()[1]).toContain("--window-size=728," + overviewHeight(3));
@@ -236,21 +246,9 @@ describe("measuring, then the screenshot", () => {
     env({ FAKE_HEIGHT: "nonsense" });
     expect(await renderPng(page, out, { chrome: chrome, rows: 1, logFile: log })).toBe(true);
     expect(calls()[1]).toContain("--window-size=728," + overviewHeight(1));
-  });
-
-  test("a SIGTERM during the render stops Chromium at once, then 10 s are left for one more try", async () => {
-    env({ FAKE_SHOT: "hang" });
-    const night = new AbortController();
-    const t0 = Date.now();
-    const running = renderWithin(page, out, { chrome: chrome, rows: 3, logFile: log }, night.signal, { budget: 60000, afterStop: 3000 });
-    await new Promise<void>((resolve) => { const t = setInterval(() => { if (fs.existsSync(path.join(dir, "shot-once"))) { clearInterval(t); resolve(); } }, 20); });
-    night.abort();
-    expect(await running).toBe(true);
-    expect(Date.now() - t0).toBeLessThan(10000);
-    expect(calls().filter((a) => a.some((x) => x.startsWith("--screenshot="))).length).toBe(2);
-    // Stopped before the render: one try within the short budget.
-    env({});
-    expect(await renderWithin(page, out, { chrome: chrome, rows: 3, logFile: log }, night.signal, { budget: 60000, afterStop: 3000 })).toBe(true);
-    expect(calls().filter((a) => a.some((x) => x.startsWith("--screenshot="))).length).toBe(1);
+    // A width the page could not have: 728 (the height is taken as measured).
+    env({ FAKE_HEIGHT: "321", FAKE_WIDTH: "100" });
+    expect(await renderPng(page, out, { chrome: chrome, rows: 1, logFile: log })).toBe(true);
+    expect(calls()[1]).toContain("--window-size=728,321");
   });
 });

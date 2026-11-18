@@ -51,7 +51,7 @@ describe("the project config", () => {
     expect(() => loadProject(real, "nope")).toThrow(/unknown project nope/);
   });
   test("the projects folder", () => {
-    expect(projectsDir({})).toBe("/monitor/projects");
+    expect(projectsDir({})).toBe(path.join(import.meta.dirname, "..", "projects"));
     expect(projectsDir({ PERF_PROJECTS_DIR: "/p" })).toBe("/p");
     const dir = fs.mkdtempSync(path.join(os.tmpdir(), "perf-project-"));
     expect(() => loadProject(dir, "../x")).toThrow(/unknown project/);

@@ -1,199 +1,104 @@
 # surveyjs-performance-monitor
 
-The nightly performance server of survey-library. Every night a Docker container on the perf server builds
-survey-library's `master`, runs its performance suites (survey-core alone in Node, React 19 and survey-js-ui in headless
-Chromium), compares them with a reference, posts the result to Discord and bisects a new regression to its PR.
+The nightly performance report of survey-library, run on GitHub Actions (`.github/workflows/night.yml`, code in
+`src/gh/`).
 
-The suites (fixtures, scenarios, the runners) live in survey-library under `perf/`. This repository runs and judges
-them through survey-library's runner contract (`perf/CONTRACT.md` there): `node perf/manifest.ts` names the suites,
-their ids, budgets and commands, and every suite run writes one result file.
+## What the night does
 
-## Layout
+Every night it builds four versions of the project: today (midnight UTC of the run's day), yesterday, a week ago and a
+month ago. It measures them with the performance suites of the project's current `master` (the runner contract,
+`perf/CONTRACT.md` there; only `contract === 2` and `resultSchema === 2` are accepted) and posts one report to Discord:
+for each scenario, how much today's build changed against the three older ones.
 
-| path | what |
-|---|---|
-| `src/nightly.ts` | the container side of a run: installs, builds, suites, compare, reruns, Discord payloads, state, bisect |
-| `src/judge/` | baseline, the reference ratchet, compare, `known.json`, the bisect step rule |
-| `src/library/` | survey-library's runner contract: the manifest and the result file |
-| `src/plan.ts`, `bisect.ts`, `discord.ts`, `gate.ts`, `install-key.ts`, `pr.ts` | the night's plan, the bisect search, the messages, the load gate, install keys, PR numbers |
-| `bin/run.sh`, `bin/host-lib.sh` | the host side: lock, git mirror, image, prepare, gate, container, load sampler, posting; the host's checks of what a container wrote |
-| `docker/`, `systemd/` | the image and the timer |
-| `test/` | unit tests; `host.test.sh` for the host's checks; `test/testdata/` holds a real manifest and a real core result file of survey-library |
+- Jobs: `plan` decides the builds and the measuring jobs; `build-today` and `build-older` build the commits; `tool`
+  prepares the runner; `measure` runs one job per scenario, each on its own worker; `report` writes the one Discord
+  message; `post` sends it; `history` keeps the report files.
+- One worker per scenario: today and each older build are measured on that one worker, so every compared pair shares
+  one machine.
+- 5 interleaved repeats, in the order A B B A A B B A A B (A is today, B the older build).
+- The highlight rule: delta = today / build − 1 (plus: today is slower). A cell is highlighted when the delta over all
+  samples is over 25% and its absolute difference is over `minDelta` (2 ms for `core`, 8 ms for the browser suites),
+  and every repeat agrees: each one is over the same threshold in the same direction. A cell that is not confirmed by
+  every repeat is not highlighted. A scenario the runner marks `counterOnly` (too short or not repeatable to judge by
+  time) shows its time without a highlight; its work counters decide instead (slower when one grew over 2% and over 1,
+  faster when they only fell).
+
+The `post` job runs no library code, and the webhook secret is only in its send step.
+
+## Setup
+
+1. Settings → Secrets and variables → Actions → repository secret `PERF_DISCORD_WEBHOOK`: the webhook of the channel.
+2. Settings → Actions → General → Workflow permissions: "Read and write" (the `history` job pushes a branch).
+3. Repository variable `PERF_SCHEDULE` = `on` starts the schedule (01:00 UTC). A run by hand works regardless.
+
+## Running by hand
+
+Actions → night → Run workflow, or:
+
+```bash
+gh workflow run night.yml
+gh workflow run night.yml -f dry-post=true
+```
+
+A run by hand is a whole night, every suite and every scenario. Its only input, `dry-post`, builds the message and
+prints it instead of posting it.
+
+## What the report has
+
+One Discord message per run. Its first line is `📊 nightly`, `🔺 nightly` (something got slower against yesterday) or
+`⚠️ nightly` (a build or suite failed, a scenario failed on today, or something is incomplete or not run), then notes:
+`cancelled: N scenarios not measured`, `not run (worker failed): <suite> <id> <job url>, ...` and `run: <url>`, and a `deps vs yesterday: ...` line when the dependencies changed.
+Embeds: the builds (four commits with links and dates), the commits since yesterday (PR numbers and titles), and one
+embed per suite only when something is highlighted against yesterday or a column failed.
+
+Attachments, in this order:
+
+1. `overview.png`: a table `SUITE | 1D | 7D | 30D`, a row per suite. A cell shows `N slower`, `N faster`, `N n/a` (only
+   the non-zero ones), `—` when nothing changed, or for a build without a result `= today`, `build failed`,
+   `suite failed`, `incomplete N`, `not run`; then `· N ⚑` when present. The suite's name gets `· N failed` when
+   scenarios failed on today's build. Every cell stays on one line: a quiet night is 728 px wide, a busy one grows
+   wider instead of wrapping. If Chromium gives no PNG, the same summary goes into the message as text.
+2. `<suite>.md` for each suite: a table of scenarios (today's time in ms; for the other builds only the delta;
+   `🔴 **+31%**` for a highlighted slowdown, `🟢 **−55%**` for a speedup, `n/a¹` with a footnote, `ʳ` when every repeat
+   agrees), then the sections for scenarios that failed on today, `jsonErrors` that differ, the repeats of each
+   highlighted or unconfirmed cell, the differences of the work counters, the log tails of failed columns, and the last line
+   `Δ = today / build − 1.`
+3. `results.tar.gz`: all raw result files of the night.
+4. The logs of failed builds and suites, up to Discord's 10 files.
+
+Marks:
+
+- `n/a`: the runner skipped the scenario (`not in this build: <api>`), it failed or hung (`timeout 300 s`), or the build
+  has no UI package for that suite.
+- `ᶜ`: a counter-only scenario, judged by its work counters (`🔴 **work**`, `🟢 **work**`).
+- `ʳ`: every repeat agrees with the highlighted delta.
+- `⚑`: the build does not know part of the test's JSON (jsonErrors) and measured less work than today.
+
+## History and artifacts
+
+The `history` job commits each run's files to the orphan `history` branch:
+
+```
+<project>/<run id>/
+  overview.png  <suite>.md  payload.json  cells.json
+```
+
+The run's workflow artifacts (reports, `cells.json`, build records, measuring results, logs) are kept for 90 days.
+
+## When a post fails
+
+Open the failed `post` job and re-run that job. "Re-run failed jobs" re-runs every failed job and the jobs that depend
+on them, so when only `post` failed it re-runs only `post`, but when a measuring job failed too it re-runs that as well.
 
 ## Development
 
 ```bash
 npm install
-npm test                                   # unit tests
+npm test                       # unit tests (vitest)
 npm run lint && npm run typecheck
-SURVEY_LIBRARY_DIR=../survey-library npm test   # also checks that checkout's manifest
-bash test/host.test.sh                          # the host's checks (Linux)
 ```
 
-The code is TypeScript that Node 22.18+ runs directly (type stripping): no build, no runtime dependency.
-
-## Running locally
-
-Build survey-library first: in `packages/survey-core` `npm run build && npm run build:i18n && npm run build:icons &&
-npm run build:linter`, then `npm run build` in `packages/survey-react-ui` and `packages/survey-js-ui`.
-
-* `PERF_STATE_DIR=<tmp> node src/nightly.ts --runner <survey-library> --dry-post --suites core,react` runs a whole
-  night locally against `origin/master` of that checkout in `<tmp>/work/target`, and prints the Discord payloads
-  instead of posting them.
-* `npm run baseline -- <suite> <result.json>...` and `npm run compare -- <result.json>` build a local baseline from
-  result files of survey-library's `npm run perf` / `npm run perf:ci` and judge a run. `PERF_STATE_DIR` sets where
-  baselines live (default `results/state` in this checkout).
-
-## The server
-
-### Host prerequisites
-
-bash, util-linux `flock`, coreutils `timeout`, curl 7.76 or newer, git, Docker (the user that runs the tests is in the
-`docker` group) on cgroup v2. Check `docker info -f '{{.CgroupDriver}} {{.CgroupVersion}}'`: `systemd 2` or
-`cgroupfs 2`. Node is not needed on the host.
-
-### Bootstrap
-
-Three folders, kept apart (`run.sh` refuses one inside another):
-
-| folder | owner | what | in the containers |
-|---|---|---|---|
-| `/opt/surveyjs-performance-monitor` | root | this repository at a release tag; `run.sh` runs from here | read-only |
-| `/var/lib/surveyjs-performance-monitor-host` (`PERF_HOST_DIR`) | perf | the host's own files: a bare git mirror of survey-library, `run.lock`, `running.json`, `runs/<run>/` (`nightly.log`, `load.jsonl`, `gate.json`, `prepare.log`, `outbox/`, `posted-*`) | the mirror and the run's own folder, read-only |
-| `/srv/surveyjs-performance-monitor` (`PERF_STATE_DIR`) | perf | the containers' working folder: their clone of survey-library, `work/`, `baselines/`, `history/`, `known.json`, ... | read-write |
-
-```bash
-sudo git clone https://github.com/surveyjs/surveyjs-performance-monitor /opt/surveyjs-performance-monitor
-sudo git -C /opt/surveyjs-performance-monitor checkout <tag>
-H=/var/lib/surveyjs-performance-monitor-host
-S=/srv/surveyjs-performance-monitor
-sudo install -d -m 700 -o perf -g perf $H $S
-sudo -u perf git clone --quiet --bare https://github.com/surveyjs/survey-library $H/mirror.git
-sudo -u perf git --git-dir=$H/mirror.git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
-sudo -u perf git --git-dir=$H/mirror.git fetch --prune origin
-sudo install -D -m 600 -o perf -g perf /dev/null /etc/surveyjs-perf/perf.env   # then fill it, see below
-```
-
-The env file (`PERF_ENV_FILE`, default `/etc/surveyjs-perf/perf.env`) holds plain `KEY=value` lines, no quotes; `run.sh`
-parses it line by line:
-
-```
-PERF_DISCORD_WEBHOOK=https://discord.com/api/webhooks/<id>/<token>
-PERF_DISCORD_ROLE_ID=<role to mention on a new regression>
-PERF_CPUS=4-7,12-15
-PERF_MEMORY=12g
-PERF_MAX_BUSY_CORES=1.0
-PERF_MAX_OTHER_CORES=1.0
-PERF_GATE_MAX_MIN=60
-PERF_KEEP_DAYS=90
-```
-
-The env file stays **outside** the state directory, and `run.sh` refuses an env file inside it. The webhook is never
-passed to a container, and curl reads it from a process substitution, so it is not in `ps` either.
-
-### The host and the containers
-
-The containers run survey-library's code (`master`, or any branch given with `--ref`) and its npm dependencies with their
-install scripts, and they write the whole state directory. Whatever is there can be a link, a rewritten git config or a
-file that changes while the host reads it. So the host:
-
-* runs git only in its own mirror (`git --git-dir=$PERF_HOST_DIR/mirror.git`: fetch, rev-parse, `show <sha>:package.json`),
-  never in the state directory; the prepare container fetches the state directory's clone from the mirror, read-only;
-* runs no program from the state directory: `nightly.ts`, `gate.ts` and the Dockerfile come from this checkout;
-* writes nothing there: its lock, its logs, the load samples and the gate result go to its own run folder, which the
-  night container sees read-only;
-* reads from there only whether a few files exist, and a ready Discord message, which it first copies to
-  `runs/<run>/outbox/<n>` taking regular files with plain names only (`bin/host-lib.sh`; a link, a linked folder on the
-  way, or a `files.txt` naming anything else is refused and posted as such). curl reads only that copy.
-
-`test/host.test.sh` checks these rules against links and odd names (Linux: `bash test/host.test.sh`).
-
-### Keeping other work off `PERF_CPUS`
-
-The container runs in its own `perf.slice`. Move everything else off the perf cores:
-
-```bash
-systemctl set-property system.slice AllowedCPUs=0-3,8-11
-systemctl set-property user.slice AllowedCPUs=0-3,8-11
-systemctl set-property machine.slice AllowedCPUs=0-3,8-11   # only if VMs run on the box
-```
-
-Pin whole physical cores, both SMT siblings (`lscpu -e` shows them). Set the `performance` governor if the host
-allows it (`cpupower frequency-set -g performance`). A night still checks the load: before it starts, the gate waits
-until the host is below `PERF_MAX_BUSY_CORES` for 5 minutes (60 at most), and a suite with other work on the pinned
-cores (0.25 core in its busiest minute) or elsewhere (`PERF_MAX_OTHER_CORES`) is `noisy`: counters are judged, times
-are not.
-
-### The timer
-
-```bash
-sudo cp /opt/surveyjs-performance-monitor/systemd/perf-nightly.* /etc/systemd/system/
-sudoedit /etc/systemd/system/perf-nightly.service   # User=, Group=, PERF_STATE_DIR and PERF_HOST_DIR
-sudo systemctl daemon-reload && sudo systemctl enable --now perf-nightly.timer
-systemctl list-timers perf-nightly.timer            # the next run
-```
-
-`OnCalendar=*-*-* 03:00:00 Europe/Berlin`, `Persistent=false`: a missed night is skipped. A run stopped by a signal
-(`systemctl stop`, a clean reboot, `TimeoutStartSec`) posts "stopped by a signal"; one killed outright (power loss,
-SIGKILL) leaves `running.json`, and the next run posts "did not finish". A host that was off at 03:00 posts nothing, so
-a missing morning message means the host did not run. Without systemd, use cron: `CRON_TZ=Europe/Berlin` and
-`0 3 * * *` where cron supports it; otherwise `0 1,2 * * *` UTC with a wrapper that runs `run.sh --nightly` only when
-`TZ=Europe/Berlin date +%H` is `03`.
-
-### The first etalon
-
-Once the server is set up: `run.sh --record` (5 interleaved rounds of the three suites: about 1.5 hours at the
-steady-state suite times; the limit is 5 × the sum of the suites' `budgetMin` + 45 minutes, 175 at budgets of 10, 8
-and 8). Each suite's baseline is written as soon as its 5 rounds are in;
-scenarios with fewer than 4 clean runs are recorded again, at most twice, and only while the extra rounds fit in the
-limit. A noisy run is left out, and a record does not start when the gate gave up. Check the spread and the `unstable`
-list in its post. Until a baseline exists, a night posts its results without time verdicts.
-
-### Renewing the baseline
-
-`run.sh --record`, or `run.sh --record --only <ids>` for some scenarios. Say why in the channel. A new image (a new
-`@playwright/test` in survey-library, or a new Dockerfile here) is a new machine key: once a baseline exists, the next
-nightly records the suites by itself (at most twice; after that the post asks for a `--record` by hand) and runs the
-other suites as usual, in one post; it leaves the bisects for the night after. When the gate gave up, the record waits
-for a quiet night and the night runs every suite.
-
-### On demand
-
-Run them as the owner of the two folders, with the service's folders (the env file is readable only by that user, and
-`run.lock` belongs to it):
-
-```bash
-R="sudo -u perf PERF_STATE_DIR=/srv/surveyjs-performance-monitor PERF_HOST_DIR=/var/lib/surveyjs-performance-monitor-host /opt/surveyjs-performance-monitor/bin/run.sh"
-$R --ref feature/x --label "PR #12345"          # a branch against master's reference
-$R --ref feature/x --only records-10k/records/next@orders
-$R --bisect v3.2.2..master --only <id>          # search by hand; refs are origin/<ref> first, then tags and shas
-$R --dry-post --no-gate                          # build the messages, post nothing
-$R --reinstall                                   # reinstall every node_modules folder of the run
-```
-
-The options are checked before the gate: a wrong suite or id is posted at once as "not started".
-
-### Updating the server
-
-Read the diff, then `sudo git -C /opt/surveyjs-performance-monitor fetch && sudo git -C /opt/surveyjs-performance-monitor
-checkout <tag>`. The tests themselves come from survey-library's `master`, which the prepare step checks out into
-`work/tool` before every run.
-
-### What a night does
-
-1. `run.sh` (host): takes `run.lock`, posts a stuck or unfinished previous run, fetches the mirror, builds the image if
-   needed (Playwright's version from survey-library's `package.json` on `master`), then:
-   * the prepare container: the state directory's clone fetches from the mirror, `work/tool` moves to `master`, and
-     `nightly.ts` checks the options against the tool's manifest and prints the sum of its suites' budgets
-     (`budget: <B>`), from which `run.sh` sets the night container's time limit;
-   * the gate; the night container with the load sampler beside it;
-   * posts `history/<run>/discord/1-result` and `2-bisect` through its outbox. A crash, a timeout or an out-of-memory
-     kill is posted with the last 50 log lines attached.
-2. `src/nightly.ts` (container): reads the tool's manifest, installs only when a folder's dependency fields change
-   (`install-key.ts`), builds the target, runs the suites one after another, compares them with the reference, reruns
-   the suspects twice at the end, writes `known.json`, the ratchet and `last-nightly.json`, and bisects new
-   regressions (at most 2 and 40 minutes a night).
-
-The state directory: `repo/`, `work/{tool,target,bisect,builds}`, `baselines/`, `history/`, `known.json`,
-`last-nightly.json`, `record-pending.json`, `deps-last.json`, `npm-cache/`, `home/`. History older than
-`PERF_KEEP_DAYS` is pruned, in the state directory by the container and in `PERF_HOST_DIR/runs` by `run.sh`.
+The code is TypeScript that Node runs directly (type stripping): no build step, no runtime dependency. The night pins
+Node 24.15.0; local development needs Node 24 (`package.json` allows 22.18 and later). CI
+(`.github/workflows/ci.yml`) runs actionlint, lint, typecheck and the unit tests. `test/testdata/` holds a real manifest and result file of survey-library; `test/fixtures/` holds a fake runner and a
+fake project.

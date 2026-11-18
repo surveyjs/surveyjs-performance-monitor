@@ -2,9 +2,8 @@ import { describe, test, expect, beforeEach } from "vitest";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { buildAll, buildAt, coreSteps, installTool, nightDir, slotDir } from "../src/builds.ts";
+import { buildAt, coreSteps, installTool, slotDir } from "../src/builds.ts";
 import type { Npm, BuildOptions } from "../src/builds.ts";
-import { cloneRepo } from "../src/versions.ts";
 import type { BuildSpec, Role } from "../src/versions.ts";
 import { checkProject, loadProject } from "../src/project.ts";
 import { checkManifest } from "../src/contract.ts";
@@ -19,10 +18,9 @@ const library = loadProject(path.join(root, "projects"), "survey-library");
 const other = loadProject(path.join(root, "test/fixtures/projects"), "other");
 const manifest = checkManifest(JSON.parse(fs.readFileSync(path.join(root, "test/testdata/manifest.json"), "utf8")), "manifest.json") as Manifest;
 
-interface Call { dir: string, op: string, name: string, t0: number, t1: number, signal?: AbortSignal }
+interface Call { dir: string, op: string, name: string }
 interface Fake extends Npm {
   calls: Array<Call>;
-  delay: number;
   out: string;
   failInstall: Array<string>;
   failRun: Array<string>;
@@ -30,26 +28,15 @@ interface Fake extends Npm {
 
 function fakeNpm(): Fake {
   const f: Fake = {
-    calls: [], delay: 0, out: "build", failInstall: [], failRun: [],
-    async install(dir: string, name: string, _ignore: boolean, signal?: AbortSignal): Promise<void> {
-      const c: Call = { dir: dir, op: "install", name: name, t0: Date.now(), t1: 0, signal: signal };
-      f.calls.push(c);
-      c.t1 = Date.now();
+    calls: [], out: "build", failInstall: [], failRun: [],
+    async install(dir: string, name: string): Promise<void> {
+      f.calls.push({ dir: dir, op: "install", name: name });
       if (f.failInstall.some((s: string) => dir.endsWith(s))) throw new InfraError("npm install failed in build-root", path.join(dir, "install.log"));
     },
-    async run(dir: string, script: string, logFile: string, signal?: AbortSignal): Promise<boolean> {
-      const c: Call = { dir: dir, op: "run", name: script, t0: Date.now(), t1: 0, signal: signal };
-      f.calls.push(c);
-      if (f.delay) {
-        await new Promise<void>((resolve) => {
-          const t = setTimeout(resolve, f.delay);
-          if (signal) signal.addEventListener("abort", () => { clearTimeout(t); resolve(); });
-        });
-      }
-      c.t1 = Date.now();
+    async run(dir: string, script: string, logFile: string): Promise<boolean> {
+      f.calls.push({ dir: dir, op: "run", name: script });
       fs.mkdirSync(path.dirname(logFile), { recursive: true });
       fs.appendFileSync(logFile, "ran " + script + "\n");
-      if (signal && signal.aborted) return false;
       if (f.failRun.some((s: string) => dir.endsWith(s) && script === "build")) return false;
       if (script === "build" || script === "compile") {
         fs.mkdirSync(path.join(dir, f.out), { recursive: true });
@@ -71,7 +58,21 @@ beforeEach(() => {
   npm = fakeNpm();
 });
 
-function setup(o: { project?: typeof library, branch?: string, coreDir?: string, ui?: string | Array<string>, suites?: Array<string>, abort?: AbortSignal } = {}): { opts: BuildOptions, specs: Array<BuildSpec>, repo: string } {
+// The folder a build's outputs are copied to; one per role when a test builds several.
+function dest(role?: Role): string {
+  return path.join(work, "dest", role || "");
+}
+
+// A clone of the source repository that keeps its branches in refs/remotes/origin/*, as the night's checkout does.
+function cloneRepo(mirror: string, dir: string): void {
+  fs.mkdirSync(dir, { recursive: true });
+  git(dir, ["init", "--quiet"]);
+  git(dir, ["remote", "add", "origin", mirror]);
+  git(dir, ["config", "--replace-all", "remote.origin.fetch", "+refs/remotes/origin/*:refs/remotes/origin/*"]);
+  git(dir, ["fetch", "--quiet", "origin"]);
+}
+
+function setup(o: { project?: typeof library, branch?: string, coreDir?: string, ui?: string | Array<string>, suites?: Array<string> } = {}): { opts: BuildOptions, specs: Array<BuildSpec>, repo: string } {
   const project = o.project || library;
   const uiFiles: Record<string, string> = {};
   for (const u of o.ui === undefined ? [] : ([] as Array<string>).concat(o.ui)) uiFiles[u + "/package.json"] = "{\"scripts\":{\"build\":\"true\"}}";
@@ -81,7 +82,7 @@ function setup(o: { project?: typeof library, branch?: string, coreDir?: string,
   cloneRepo(src, repo);
   const shas = git(src, ["rev-list", "--reverse", "HEAD"]).split("\n");
   const specs: Array<BuildSpec> = roles.map((r: Role, i: number) => ({ role: r, sha: shas[i], date: dates[i] }));
-  return { opts: { work: work, repo: repo, logs: path.join(work, "logs"), npm: npm, m: manifest, suites: o.suites || ["core", "react"], project: project, signal: o.abort }, specs: specs, repo: repo };
+  return { opts: { work: work, dest: dest(), repo: repo, logs: path.join(work, "logs"), npm: npm, m: manifest, suites: o.suites || ["core", "react"], project: project }, specs: specs, repo: repo };
 }
 
 describe("coreSteps", () => {
@@ -95,85 +96,44 @@ describe("coreSteps", () => {
   });
 });
 
-describe("buildAll", () => {
+describe("buildAt, one role", () => {
   test("a second project builds without code changes", async () => {
     npm.out = "dist";
     const { opts, specs } = setup({ project: other, branch: "main", coreDir: "lib/core", ui: "lib/survey-react-ui" });
-    const res = await buildAll(specs, opts);
-    expect(Object.keys(res).sort()).toEqual(["month", "today", "week", "yesterday"]);
-    for (const r of roles) {
-      expect(npm.calls.some((c: Call) => c.dir === path.join(work, "build-" + r, "lib/core"))).toBe(true);
-      expect(res[r]?.core).toBe(path.join(work, "builds", r, "core"));
-      expect(fs.existsSync(path.join(work, "builds", r, "core", "package.json"))).toBe(true);
-    }
+    const res = await buildAt(opts, specs.find((x) => x.role === "today")!);
+    expect(npm.calls.some((c: Call) => c.dir === path.join(work, "build-today", "lib/core"))).toBe(true);
+    expect(res.core).toBe(path.join(dest(), "core"));
+    expect(fs.existsSync(path.join(dest(), "core", "package.json"))).toBe(true);
     expect(npm.calls.some((c: Call) => c.dir.includes("packages"))).toBe(false);
   });
 
   test("every role is built into its own slot and copied", async () => {
     const { opts, specs } = setup({ ui: "packages/survey-react-ui" });
-    const res = await buildAll(specs, opts);
     for (const s of specs) {
-      const b = res[s.role]!;
+      const b = await buildAt({ ...opts, dest: dest(s.role) }, s);
       expect(b.failed).toBeUndefined();
-      expect(b.core).toBe(path.join(work, "builds", s.role, "survey-core"));
-      expect(b.ui.react).toBe(path.join(work, "builds", s.role, "survey-react-ui"));
+      expect(b.sha).toBe(s.sha);
+      expect(b.core).toBe(path.join(dest(s.role), "survey-core"));
+      expect(b.ui.react).toBe(path.join(dest(s.role), "survey-react-ui"));
+      expect(fs.existsSync(path.join(dest(s.role), "survey-react-ui", "package.json"))).toBe(true);
+      expect(b.uiMissing).toEqual({});
+      expect(Array.isArray(b.deps)).toBe(true);
       expect(b.node).toBe(process.version);
       expect(npm.calls.some((c: Call) => c.op === "install" && c.dir === slotDir(work, s.role))).toBe(true);
       expect(npm.calls.some((c: Call) => c.dir === path.join(slotDir(work, s.role), "packages/survey-core"))).toBe(true);
-      const bj = JSON.parse(fs.readFileSync(path.join(nightDir(work, s.role), "build.json"), "utf8"));
-      expect(bj.sha).toBe(s.sha);
-      expect(bj.suites).toEqual(["core", "react"]);
-      expect(bj.uiMissing).toEqual({});
-      expect(Array.isArray(bj.deps)).toBe(true);
-      expect(bj.node).toBe(process.version);
     }
-  });
-
-  test("builds run in parallel", async () => {
-    npm.delay = 200;
-    const { opts, specs } = setup({ suites: ["core"] });
-    const t0 = Date.now();
-    await buildAll(specs, opts);
-    const total = Date.now() - t0;
-    const runs = npm.calls.filter((c: Call) => c.op === "run" && c.name === "build");
-    const overlap = runs.some((a: Call) => runs.some((b: Call) => a !== b && a.dir !== b.dir && a.t0 < b.t1 && b.t0 < a.t1));
-    expect(overlap).toBe(true);
-    expect(total).toBeLessThan(runs.length * 200);
-  });
-
-  test("equal commits are built once", async () => {
-    const { opts, specs } = setup({ suites: ["core"] });
-    const s = specs.map((x: BuildSpec) => Object.assign({}, x));
-    s.find((x) => x.role === "yesterday")!.sameAs = "today";
-    s.find((x) => x.role === "week")!.sameAs = "today";
-    const res = await buildAll(s, opts);
-    expect(Object.keys(res).sort()).toEqual(["month", "today"]);
-    const dirs = new Set(npm.calls.map((c: Call) => c.dir.substring(work.length + 1).split("/")[0]));
-    expect(Array.from(dirs).sort()).toEqual(["build-month", "build-today"]);
   });
 
   test("a failing install of an old build is a column", async () => {
     npm.failInstall = [path.join("build-month")];
     const { opts, specs } = setup({ suites: ["core"] });
-    const res = await buildAll(specs, opts);
-    expect(res.month?.failed).toBe("npm install failed in build-root");
-    expect(res.month?.core).toBeNull();
-    expect(res.month?.logs.length).toBe(1);
-    expect(res.today?.failed).toBeUndefined();
-    expect(res.today?.core).not.toBeNull();
-  });
-
-  test("abort stops every build", async () => {
-    npm.delay = 30000;
-    const ac = new AbortController();
-    const { opts, specs } = setup({ suites: ["core"], abort: ac.signal });
-    setTimeout(() => ac.abort(), 100);
-    const t0 = Date.now();
-    await buildAll(specs, opts);
-    expect(Date.now() - t0).toBeLessThan(5000);
-    const runs = npm.calls.filter((c: Call) => c.op === "run");
-    expect(runs.length).toBeGreaterThan(0);
-    expect(runs.every((c: Call) => c.signal === ac.signal)).toBe(true);
+    const month = await buildAt(opts, specs.find((x) => x.role === "month")!);
+    const today = await buildAt(opts, specs.find((x) => x.role === "today")!);
+    expect(month.failed).toBe("npm install failed in build-root");
+    expect(month.core).toBeNull();
+    expect(month.logs.length).toBe(1);
+    expect(today.failed).toBeUndefined();
+    expect(today.core).not.toBeNull();
   });
 });
 
@@ -213,10 +173,10 @@ describe("buildAt", () => {
     expect(b.uiMissing).toEqual({ react: "build failed" });
     expect(b.uiFailed.react).toEqual({ reason: "npm install failed in build-root", log: path.join(slotDir(work, "today"), "packages/survey-react-ui", "install.log") });
     expect(b.logs).toContain(b.uiFailed.react.log);
-    expect(b.core).toBe(path.join(nightDir(work, "today"), "survey-core"));
-    expect(b.ui).toEqual({ vue3: path.join(nightDir(work, "today"), "survey-vue3-ui") });
+    expect(b.core).toBe(path.join(dest(), "survey-core"));
+    expect(b.ui).toEqual({ vue3: path.join(dest(), "survey-vue3-ui") });
+    expect(fs.existsSync(path.join(dest(), "survey-react-ui"))).toBe(false);
     expect(npm.calls.some((c: Call) => c.op === "run" && c.dir.endsWith("survey-react-ui"))).toBe(false);
-    expect(JSON.parse(fs.readFileSync(path.join(nightDir(work, "today"), "build.json"), "utf8")).uiMissing).toEqual({ react: "build failed" });
   });
 
   test("a failing core build fails the build", async () => {
@@ -225,7 +185,7 @@ describe("buildAt", () => {
     const b = await buildAt(opts, specs[3]);
     expect(b.failed).toBe("survey-core does not build");
     expect(b.core).toBeNull();
-    expect(fs.existsSync(path.join(nightDir(work, "today"), "build.json"))).toBe(false);
+    expect(fs.existsSync(path.join(dest(), "survey-core"))).toBe(false);
   });
 });
 
@@ -241,21 +201,11 @@ describe("installTool", () => {
   const rel = (t: string): Array<string> => npm.calls.filter((c: Call) => c.op === "install").map((c: Call) => path.relative(t, c.dir) || ".");
 
   test("installTool installs what the project lists", async () => {
-    delete process.env.PW_VERSION;
     const t = tool();
     await installTool(npm, t, library);
     expect(rel(t)).toEqual([".", "packages/survey-core", "perf/react19", "perf/vue3"]);
     npm.calls.length = 0;
     await installTool(npm, t, checkProject({ ...other, tool: { dirs: ["."], optional: [] } } as unknown, "other.json"));
     expect(rel(t)).toEqual(["."]);
-  });
-
-  test("the installed Playwright must be the image's", async () => {
-    process.env.PW_VERSION = "9.9.9";
-    try {
-      await expect(installTool(npm, tool(), library)).rejects.toThrow(/@playwright\/test/);
-    } finally {
-      delete process.env.PW_VERSION;
-    }
   });
 });

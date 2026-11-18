@@ -1,6 +1,18 @@
 import fs from "node:fs";
 import { execFileSync } from "node:child_process";
-import { parseCpuList } from "../../src/gate.ts";
+
+// A cpu list like "0-2,5" as the cores it names.
+function parseCpuList(text: string | undefined): Array<number> {
+  const res: Array<number> = [];
+  (text || "").split(",").map((s: string) => s.trim()).filter((s: string) => !!s).forEach((part: string) => {
+    const m = /^(\d+)(?:-(\d+))?$/.exec(part);
+    if (!m) throw new Error("not a cpu list: " + text);
+    const from = Number(m[1]);
+    const to = m[2] === undefined ? from : Number(m[2]);
+    for (let i = from; i <= to; i++) res.push(i);
+  });
+  return res;
+}
 
 // Whether a test can pin a process to these cores: Linux, taskset installed, and every core in this process's own
 // affinity (a container or a CI runner may allow fewer cores than the machine has).

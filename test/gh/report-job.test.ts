@@ -3,7 +3,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { execFileSync, spawnSync } from "node:child_process";
-import { runReport, cpuNote, workerNote } from "../../src/gh/report-job.ts";
+import { runReport, workerNote } from "../../src/gh/report-job.ts";
 import type { ReportInput, CellsFile, JobResults } from "../../src/gh/report-job.ts";
 import { RECORD } from "../../src/gh/build.ts";
 import type { BuildRecord } from "../../src/gh/build.ts";
@@ -53,7 +53,7 @@ function measure(suite: string, id: string, medians: { today: number, yesterday?
     }
     pairs.push({ role: role, sha: "x", steps: steps });
   }
-  const pf: PairFile = { suite: suite, id: id, key: key, repeats: 5, machine: { model: "AMD EPYC 7763", cpu: "AMD EPYC 7763", cores: 4 },
+  const pf: PairFile = { suite: suite, id: id, key: key, repeats: 5, machine: { model: "AMD EPYC 7763", cores: 4 },
     start: "s", end: "e", pairs: pairs };
   writeJson(path.join(dir, "pair.json"), pf);
 }
@@ -117,7 +117,7 @@ describe("runReport", () => {
   test("the report: one message, the suites' md, cells.json, the tarball and history", async () => {
     allMeasured();
     expect(await runReport(base)).toBe("report");
-    expect(content().split("\n")).toEqual(["🔺 nightly", "CPU: AMD EPYC 7763 × 3", "run: <" + url + ">", expect.stringMatching(/^\*\*core\*\* /), "overview.png failed"]);
+    expect(content().split("\n")).toEqual(["🔺 nightly", "run: <" + url + ">", expect.stringMatching(/^\*\*core\*\* /), "overview.png failed"]);
     expect(read(out + "/core.md")).toContain("## Repeats");
     const cells = readJson(out + "/cells.json") as CellsFile;
     expect(cells.cells.find((c) => c.id === "a/one" && c.role === "yesterday")).toMatchObject({ verdict: "up", rerun: "confirmed",
@@ -172,9 +172,7 @@ describe("runReport", () => {
   });
 });
 
-test("cpuNote and workerNote", () => {
-  expect(cpuNote(["AMD EPYC 7763", "Intel Xeon 6975P-C", "AMD EPYC 7763"])).toBe("CPU: AMD EPYC 7763 × 2, Intel Xeon 6975P-C × 1");
-  expect(cpuNote([])).toBeUndefined();
+test("workerNote", () => {
   const items = ["a", "b", "c", "d", "e", "f", "g"].map((x) => ({ suite: "core", id: x }));
   expect(workerNote(items)).toBe("not run (worker failed): core a, core b, core c, core d, core e, +2 more");
 });

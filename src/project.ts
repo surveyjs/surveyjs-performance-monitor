@@ -2,8 +2,8 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { UsageError } from "./errors.ts";
 
-// A project the monitor measures: everything specific to it lives in projects/<name>.json (in the image,
-// /monitor/projects), nothing in src/.
+// A project the monitor measures: everything specific to it lives in projects/<name>.json (the projects/ folder of this
+// repository), nothing in src/.
 export interface Project {
   name: string;
   // https://github.com/<owner>/<repo>, the base of the commit links.
@@ -95,9 +95,9 @@ export function loadProject(dir: string, name: string): Project {
   return checkProject(json, file);
 }
 
-// The configs live in the image; a test or a local run points PERF_PROJECTS_DIR elsewhere.
+// The configs live in this repository; a test points PERF_PROJECTS_DIR elsewhere.
 export function projectsDir(env: NodeJS.ProcessEnv): string {
-  return env.PERF_PROJECTS_DIR || "/monitor/projects";
+  return env.PERF_PROJECTS_DIR || path.join(import.meta.dirname, "..", "projects");
 }
 
 // The folder of a UI package.

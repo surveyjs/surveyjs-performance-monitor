@@ -19,8 +19,7 @@ function pair(role: Role, today: number[], build: number[], extra?: { today?: Ex
   return {
     role: role,
     today: today.map((x: number) => result([["a", x, extra?.today]])),
-    build: build.map((x: number) => result([["a", x, extra?.build]])),
-    sec: { today: 5, build: 6 }
+    build: build.map((x: number) => result([["a", x, extra?.build]]))
   };
 }
 
@@ -36,7 +35,6 @@ describe("pairMatrix", () => {
     expect(cellOf(m, "yesterday").delta).toBeCloseTo(0.02);
     expect(cellOf(m, "today").median).toBe(102);
     expect(cellOf(m, "yesterday").repeats![3]).toEqual({ today: 101, build: 100, delta: expect.closeTo(0.01) });
-    expect(m.sec).toEqual({ yesterday: 6, today: 5 });
   });
 
   test("a highlight needs every repeat over the threshold in the same direction", () => {
@@ -60,6 +58,38 @@ describe("pairMatrix", () => {
     // pooled +36% of 7 ms = 2.5 ms > 2; the last repeat +27% of 7 ms = 1.9 ms < 2
     const m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [9.5, 9.5, 9.5, 9.5, 8.9], [7, 7, 7, 7, 7])] }], 5);
     expect(cellOf(m, "yesterday").rerun).toBe("unconfirmed");
+  });
+
+  test("a jsonErrors count that differs from today's flags the cell and is counted", () => {
+    const p = pair("yesterday", [100, 100], [100, 100], { today: { jsonErrors: 0 }, build: { jsonErrors: 2 } });
+    const m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [p] }], 2);
+    expect(cellOf(m, "yesterday").flags).toEqual(["jsonErrors"]);
+    expect(m.flagged.yesterday).toBe(1);
+    const same = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [100, 100], [100, 100])] }], 2);
+    expect(cellOf(same, "yesterday").flags).toEqual([]);
+    expect(same.flagged).toEqual({});
+  });
+
+  test("a row that is not counterOnly keeps its counter differences as information: no counter verdict", () => {
+    const counters = (n: number): Extra => ({ counters: { rows: { value: n, kind: "work" } } });
+    const m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [100, 100], [100, 100], { today: counters(120), build: counters(100) })] }], 2);
+    expect(cellOf(m, "yesterday").counterDiffs).toEqual(["rows 100 → 120"]);
+    expect(cellOf(m, "yesterday").counterVerdict).toBeUndefined();
+    expect(verdictOf(m.rows[0], "yesterday", "core")).toBeUndefined();
+    expect(m.up).toEqual({});
+  });
+
+  test("every repeat faster: confirmed down, counted in m.down", () => {
+    let m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [70, 69, 71, 68, 72], [100, 100, 100, 100, 100])] }], 5);
+    expect(cellOf(m, "yesterday").rerun).toBe("confirmed");
+    expect(verdictOf(m.rows[0], "yesterday", "core")).toBe("down");
+    expect(m.down.yesterday).toBe(1);
+    expect(m.up).toEqual({});
+    // One repeat under the threshold: unconfirmed, no highlight.
+    m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [70, 69, 71, 90, 72], [100, 100, 100, 100, 100])] }], 5);
+    expect(cellOf(m, "yesterday").rerun).toBe("unconfirmed");
+    expect(verdictOf(m.rows[0], "yesterday", "core")).toBeUndefined();
+    expect(m.down).toEqual({});
   });
 
   test("counterOnly rows are judged by the first repeat's work counters", () => {
@@ -155,7 +185,7 @@ describe("loadScenario", () => {
       }
       pairs.push({ role: role, sha: "x", steps: steps });
     }
-    const pf: PairFile = { suite: "core", id: "a", key: "a", repeats: 5, machine: { model: "m", cpu: "c", cores: 4 }, start: "s", pairs: pairs };
+    const pf: PairFile = { suite: "core", id: "a", key: "a", repeats: 5, machine: { model: "m", cores: 4 }, start: "s", pairs: pairs };
     if (withEnd) pf.end = "e";
     fs.writeFileSync(path.join(dir, "pair.json"), JSON.stringify(pf));
     return dir;

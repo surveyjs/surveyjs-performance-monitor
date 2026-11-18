@@ -1,6 +1,6 @@
 import { defineConfig } from "vitest/config";
 
-// The unit tests of the server. Nothing here measures: the suites run in survey-library.
+// The unit tests of the monitor. Nothing here measures: the suites run in survey-library.
 export default defineConfig({
   test: {
     include: ["test/**/*.test.ts"],

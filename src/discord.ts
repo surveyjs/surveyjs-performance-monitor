@@ -9,7 +9,7 @@ import { overviewText } from "./overview.ts";
 import { pct, fixedMs, stripAnsi, dateUtc } from "./util/format.ts";
 import { writeJsonAtomic } from "./util/json.ts";
 
-// The Discord messages: a payload and its files, no network. run.sh posts them from the host.
+// The Discord messages: a payload and its files, no network. The report job writes them to its outbox and the post job sends them.
 // Limits (docs.discord.com/developers, checked 2026-10-29): content 2,000 characters, 10 embeds, an embed title 256,
 // description 4,096, footer 2,048, and 6,000 characters over all embeds of a message; 20 MiB per file. The number of
 // files per message is not stated there: we attach at most 10.
@@ -85,11 +85,12 @@ function withAttachments(payload: Payload, files: Array<string>): Message {
 }
 
 const WARN = "⚠️";
-const ABBR: Partial<Record<Role, string>> = { yesterday: "y", week: "w", month: "m", base: "base" };
-const compareRole = (kind: "nightly" | "on-demand"): Role => (kind === "nightly" ? "yesterday" : "base");
+const ABBR: Partial<Record<Role, string>> = { yesterday: "y", week: "w", month: "m" };
+// The build today is compared with in the post.
+const COMPARE: Role = "yesterday";
 
-function icon(kind: "nightly" | "on-demand", matrices: SuiteMatrix[]): string {
-  const cmp = compareRole(kind);
+function icon(matrices: SuiteMatrix[]): string {
+  const cmp = COMPARE;
   const failed = matrices.some((m: SuiteMatrix) => m.failed.length > 0 || m.failedToday.length > 0 || Object.keys(m.incomplete).length > 0 || m.notRun.length > 0);
   if (failed) return WARN;
   return matrices.some((m: SuiteMatrix) => (m.up[cmp] || 0) > 0) ? "🔺" : "📊";
@@ -146,10 +147,6 @@ const size = (e: Embed): number => (e.title || "").length + (e.description || ""
 
 export interface ReportInput {
   project: Project;
-  kind: "nightly" | "on-demand";
-  label?: string;
-  date: Date;
-  durationMin: number;
   specs: BuildSpec[];
   matrices: SuiteMatrix[];
   commits: CommitPr[];
@@ -160,11 +157,11 @@ export interface ReportInput {
 }
 
 export function reportMessage(i: ReportInput): Message {
-  const head = icon(i.kind, i.matrices) + " " + (i.kind === "nightly" ? "nightly" : "on-demand" + (i.label ? " · " + escapeText(i.label) : ""));
+  const head = icon(i.matrices) + " nightly";
   const lines = [head, ...(i.notes || []).map(escapeText)];
   // Spec, sections 2 and 5: the dependencies that changed since the compared build are a line of content (the embeds may
   // be hidden).
-  if (i.depsNote) lines.push(escapeText("deps vs " + compareRole(i.kind) + ": " + i.depsNote));
+  if (i.depsNote) lines.push(escapeText("deps vs " + COMPARE + ": " + i.depsNote));
   if (!i.overview) lines.push(...overviewText(i.matrices), "overview.png failed");
   const content = cut(lines.join("\n"), limits.content);
 
@@ -173,11 +170,11 @@ export function reportMessage(i: ReportInput): Message {
     (s.sameAs ? " · = " + s.sameAs : ""));
   embeds.push({ title: "Builds", description: fitLines(buildLines, 1500) });
   if (i.commits.length > 0) {
-    embeds.push({ title: i.kind === "nightly" ? "Commits since yesterday (" + i.commits.length + ")" : "Commits base..branch (" + i.commits.length + ")",
+    embeds.push({ title: "Commits since yesterday (" + i.commits.length + ")",
       description: rangeText(i.commits, 2400) });
   }
   const used = embeds.reduce((s: number, e: Embed) => s + size(e), 0);
-  const cmp = compareRole(i.kind);
+  const cmp = COMPARE;
   const room = Math.max(200, Math.floor((limits.total - used - 100) / Math.max(1, i.matrices.length)));
   const suites: Embed[] = [];
   for (const m of i.matrices) {
@@ -190,12 +187,12 @@ export function reportMessage(i: ReportInput): Message {
   return withAttachments({ content: content, embeds: embeds.concat(suites), allowed_mentions: { parse: [] } }, i.files);
 }
 
-// run.sh's own posts and the infrastructure failures use fixed templates with no untrusted text.
+// The infrastructure failures use fixed templates with no untrusted text.
 export function plainMessage(text: string, files: Array<string> = []): Message {
   return withAttachments({ content: cut(text, limits.content), embeds: [], allowed_mentions: { parse: [] } }, files);
 }
 
-// A message directory: the files, files.txt (their order), payload.json, then "ready" for run.sh.
+// A message directory: the files, files.txt (their order) and payload.json, which the post job sends.
 export function writeMessage(dir: string, m: Message, sources: Record<string, string>): void {
   fs.mkdirSync(dir, { recursive: true });
   const names: Array<string> = [];
@@ -209,20 +206,4 @@ export function writeMessage(dir: string, m: Message, sources: Record<string, st
   m.payload.attachments = names.map((n: string, i: number) => ({ id: i, filename: n }));
   writeJsonAtomic(path.join(dir, "payload.json"), m.payload);
   fs.writeFileSync(path.join(dir, "files.txt"), names.join("\n") + (names.length ? "\n" : ""));
-  fs.writeFileSync(path.join(dir, "ready"), new Date().toISOString() + "\n");
-}
-
-// The exact curl argv run.sh uses, with the webhook replaced by <webhook> (--dry-post).
-export function curlArgv(dir: string): Array<string> {
-  const names = fs.readFileSync(path.join(dir, "files.txt"), "utf8").split(/\r?\n/).filter((s: string) => !!s);
-  const argv = ["curl", "--fail-with-body", "-sS", "-D", "<hdr>", "-K", "<(printf 'url = \"%s\"\\n' '<webhook>?wait=true')",
-    "-F", "payload_json=<payload.json;type=application/json"];
-  names.forEach((n: string, i: number) => argv.push("-F", "files[" + i + "]=@" + n));
-  return argv;
-}
-
-export function printDry(dir: string): void {
-  console.log("\n--- dry post " + path.basename(dir) + " (cd " + dir + ") ---");
-  console.log(curlArgv(dir).join(" "));
-  console.log(fs.readFileSync(path.join(dir, "payload.json"), "utf8"));
 }

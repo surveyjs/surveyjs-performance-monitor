@@ -28,7 +28,7 @@ export interface PairFile {
   id: string;
   key: string;
   repeats: number;
-  machine: { model: string, cpu: string, cores: number };
+  machine: { model: string, cores: number };
   start: string;
   end?: string;
   pairs: PairOf[];
@@ -45,18 +45,6 @@ export function pairOrder(repeats: number): Array<{ repeat: number, side: Side }
     for (const side of sides) order.push({ repeat: n, side: side });
   }
   return order;
-}
-
-// A short CPU name for the report: the model without trademarks, core count, "Processor", "CPU" and the clock.
-export function cpuLabel(model: string): string {
-  return model
-    .replace(/\((R|TM)\)/gi, "")
-    .replace(/\b\d+-Core Processor\b/gi, "")
-    .replace(/\bProcessor\b/g, "")
-    .replace(/\bCPU\b/g, "")
-    .replace(/@\s*[\d.]+\s*GHz/gi, "")
-    .replace(/\s+/g, " ")
-    .trim();
 }
 
 // What a run says about one scenario: its median, or why the pair stops.
@@ -94,7 +82,7 @@ function firstLine(e: unknown): string {
 
 function defaultMachine(): PairFile["machine"] {
   const model = os.cpus()[0]?.model || "unknown";
-  return { model: model, cpu: cpuLabel(model), cores: os.availableParallelism() };
+  return { model: model, cores: os.availableParallelism() };
 }
 
 // Measures the job's scenario: today against each older build, `plan.repeats` times each, and writes pair.json after
@@ -135,10 +123,10 @@ export async function measureScenario(o: MeasureOptions): Promise<PairFile> {
     const start = new Date(t0).toISOString();
     let outcome: Outcome;
     try {
-      outcome = await runSuite({ runner: o.runner, m: plan.manifest, suite: job.suite, build: b, file: file, logFile: logFile, hostRun: o.out, local: true,
-        slot: o.slot, cpus: o.slot || undefined, signal: o.signal,
+      outcome = await runSuite({ runner: o.runner, m: plan.manifest, suite: job.suite, build: b, file: file, logFile: logFile,
+        slot: o.slot, signal: o.signal,
         env: { resultFile: file, core: b.core as string, ui: b.ui[job.suite], kind: isToday ? plan.kind : "bisect",
-          label: isToday ? plan.label || reference.role : spec.role, ref: spec.role === "branch" && plan.ref ? plan.ref : "origin/" + project.branch,
+          label: isToday ? reference.role : spec.role, ref: "origin/" + project.branch,
           targetCommit: b.sha, only: [job.id] } });
     } catch(e) {
       outcome = { kind: "suite failed", reason: firstLine(e), log: logFile };

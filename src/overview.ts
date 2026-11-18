@@ -1,4 +1,5 @@
 import * as fs from "node:fs";
+import * as os from "node:os";
 import * as path from "node:path";
 import { spawn } from "node:child_process";
 import type { SuiteMatrix } from "./report.ts";
@@ -12,7 +13,7 @@ export interface CellPart { text: string, cls: "bad" | "good" | "na" | "none" }
 
 const none: CellPart = { text: "—", cls: "none" };
 
-// The reference (today; the branch on demand) has no result to compare with: it failed, or it is incomplete without a
+// The reference (today) has no result to compare with: it failed, or it is incomplete without a
 // single measured row. Its cells would otherwise read "—", which means "nothing changed".
 function referenceMissing(m: SuiteMatrix): boolean {
   const ref = m.roles[0];
@@ -50,36 +51,32 @@ export function cellParts(m: SuiteMatrix, role: Role): CellPart[] {
   if (down > 0) parts.push({ text: down + " faster", cls: "good" });
   if (na > 0) parts.push({ text: na + " n/a", cls: "na" });
   if (parts.length === 0) parts.push(none);
-  if (m.noisy.indexOf(role) > -1) parts.push({ text: "noisy", cls: "na" });
   const flagged = m.flagged[role] || 0;
   if (flagged > 0) parts.push({ text: flagged + " ⚑", cls: "na" });
   return parts;
 }
 
 const NIGHTLY_COLUMNS: Array<[Role, string]> = [["yesterday", "1d"], ["week", "7d"], ["month", "30d"]];
-const ON_DEMAND_COLUMNS: Array<[Role, string]> = [["base", "base"]];
 
 function html(text: string): string {
   return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
-export function overviewHtml(i: { project: string, kind: "nightly" | "on-demand", sha: string, date: Date, durationMin: number, matrices: SuiteMatrix[] }): string {
-  const columns = i.kind === "nightly" ? NIGHTLY_COLUMNS : ON_DEMAND_COLUMNS;
-  const widths = i.kind === "nightly" ? ["28%", "23%", "23%", "26%"] : ["28%", "72%"];
+export function overviewHtml(i: { project: string, sha: string, date: Date, durationMin: number, matrices: SuiteMatrix[] }): string {
+  const columns = NIGHTLY_COLUMNS;
   const dim = '<span class="dim">·</span>';
   const rows = i.matrices.map((m: SuiteMatrix) => {
     const notes = suiteNotes(m).map((n: string) => ' <span class="fail">· ' + html(n) + "</span>").join("");
-    // A part never breaks inside, and a line breaks after a "·", never before it.
+    // A cell stays on one line: a busy night makes the picture wider instead of wrapping.
     const cells = columns.map(([role]) => "<td>" + cellParts(m, role).map((p: CellPart) => '<span class="' + p.cls + '">' + html(p.text) + "</span>").join('&nbsp;<span class="na">·</span> ') + "</td>");
     return '<tr><td class="s">' + html(m.suite) + notes + "</td>" + cells.join("") + "</tr>";
   });
   return '<!doctype html><html><head><meta charset="utf-8"><style>\n' +
     "html,body{margin:0;background:#2b2d31;}\n" +
-    'body{font-family:"Liberation Sans",sans-serif;color:#b5bac1;padding:10px 12px;width:728px;box-sizing:border-box}\n' +
-    "table{border-collapse:collapse;width:100%;table-layout:fixed;font-size:15px}\n" +
+    'body{font-family:"Liberation Sans",sans-serif;color:#b5bac1;padding:10px 12px;width:max-content;min-width:728px;box-sizing:border-box}\n' +
+    "table{border-collapse:collapse;width:100%;table-layout:auto;font-size:15px}\n" +
     "th{font-weight:600;color:#80848e;text-align:left;padding:7px 10px;border-bottom:1px solid #3f4147;font-size:13px;text-transform:uppercase;letter-spacing:.03em}\n" +
-    "td{padding:8px 10px;border-bottom:1px solid #35373c;white-space:normal}\n" +
-    "td span{white-space:nowrap}\n" +
+    "td{padding:8px 10px;border-bottom:1px solid #35373c;white-space:nowrap}\n" +
     "tr:last-child td{border-bottom:none}\n" +
     "td.s{font-weight:600;color:#c4c9ce}\n" +
     ".bad{color:#c9686a;font-weight:500}.good{color:#5f9e74;font-weight:500}.na{color:#6d7178}.none{color:#5c5f66}\n" +
@@ -87,7 +84,7 @@ export function overviewHtml(i: { project: string, kind: "nightly" | "on-demand"
     ".leg{font-size:12px;color:#6d7178;margin:8px 10px 0}.fail{color:#c9686a;font-weight:500;font-size:13px}\n" +
     "</style></head><body>\n" +
     '<div class="head"><b>' + html(i.project) + " · " + html(i.sha.slice(0, 9)) + "</b> " + dim + " " + dateUtc(i.date) + " " + i.date.toISOString().slice(11, 16) + " UTC " + dim + " " + durationText(i.durationMin) + "</div>\n" +
-    "<table>\n<colgroup>" + widths.map((w: string) => '<col style="width:' + w + '">').join("") + "</colgroup>\n" +
+    "<table>\n" +
     "<tr><th>suite</th>" + columns.map(([, label]) => "<th>" + label + "</th>").join("") + "</tr>\n" +
     rows.join("\n") + "\n</table>\n" +
     '<div class="leg">slower / faster: over 25% · n/a: see &lt;suite&gt;.md</div>\n</body></html>\n';
@@ -96,23 +93,24 @@ export function overviewHtml(i: { project: string, kind: "nightly" | "on-demand"
 // The picture's replacement: a line per suite.
 export function overviewText(matrices: SuiteMatrix[]): string[] {
   return matrices.map((m: SuiteMatrix) => {
-    const columns = m.roles.indexOf("base") > -1 ? ON_DEMAND_COLUMNS : NIGHTLY_COLUMNS;
     const notes = suiteNotes(m);
     const head = notes.length > 0 ? " · " + notes.join(" · ") + " ·" : "";
-    return "**" + m.suite + "**" + head + " " + columns.map(([role, label]) => label + " " + cellParts(m, role).map((p: CellPart) => p.text).join(" · ")).join(" · ");
+    return "**" + m.suite + "**" + head + " " + NIGHTLY_COLUMNS.map(([role, label]) => label + " " + cellParts(m, role).map((p: CellPart) => p.text).join(" · ")).join(" · ");
   });
 }
 
-// The page's height in the image's Chromium (measured 13.11): 94 px of head, header row, legend and padding, and 34 px a
+// The page's height in Chromium on the runner (measured 13.11): 94 px of head, header row, legend and padding, and 34 px a
 // row, 35 when a cell has the ⚑ glyph (a fallback font); a row without it leaves 1 px of empty band at the bottom. Only
-// the fallback when the measuring pass gives nothing: a cell that wraps makes its row taller.
+// the fallback when the measuring pass gives nothing.
 export function overviewHeight(rows: number): number {
   return 94 + 35 * rows;
 }
 
 // The measuring pass: the same page with this script at the end of <body>; Chromium's --dump-dom prints the DOM with the
-// page's height on <html>. The height of <html> is the content's (its scrollHeight is never less than the window).
-const MEASURE = '<script>document.documentElement.setAttribute("data-height",String(Math.ceil(document.documentElement.getBoundingClientRect().height)))</script>';
+// page's height on <html> and its width (the body's: wider than 728 px on a busy night). The height of <html> is the
+// content's (its scrollHeight is never less than the window).
+const MEASURE = '<script>document.documentElement.setAttribute("data-height",String(Math.ceil(document.documentElement.getBoundingClientRect().height)));' +
+  'document.documentElement.setAttribute("data-width",String(Math.ceil(document.body.getBoundingClientRect().width)))</script>';
 
 // The height the measuring script wrote, or null for anything else (a crash, a page without it, a silly number).
 export function heightOf(dom: string): number | null {
@@ -120,6 +118,14 @@ export function heightOf(dom: string): number | null {
   if (!m) return null;
   const h = Number(m[1]);
   return h >= 50 && h <= 20000 ? h : null;
+}
+
+// The width the measuring script wrote, or null for anything else (missing, not a whole number, outside 728..4000).
+export function widthOf(dom: string): number | null {
+  const m = /<html\b[^>]*\sdata-width="(\d+)"/.exec(dom);
+  if (!m) return null;
+  const w = Number(m[1]);
+  return w >= 728 && w <= 4000 ? w : null;
 }
 
 // Chromium's stdout (the DOM), its stderr to the log; null when it fails or is stopped. Never throws.
@@ -139,7 +145,9 @@ function dumpDom(chrome: string, args: Array<string>, o: { cwd: string, logFile:
   });
 }
 
-export function chromePath(root: string = "/ms-playwright"): string | null {
+// The Chromium of a Playwright install under `root` (by default Playwright's own folder, ~/.cache/ms-playwright, which
+// the report job restores from the cache); null when there is none.
+export function chromePath(root: string = path.join(os.homedir(), ".cache", "ms-playwright")): string | null {
   let names: string[] = [];
   try {
     names = fs.readdirSync(root).sort();
@@ -164,8 +172,8 @@ export function chromePath(root: string = "/ms-playwright"): string | null {
 const PNG = [137, 80, 78, 71, 13, 10, 26, 10];
 
 // True when out is a PNG; never throws (no Chromium, a failed run, something else in the file all mean false). First a
-// measuring pass (--dump-dom) gives the page's height, so cells that wrap are not cut; when it fails or takes longer
-// than measureMs (20 s by default) the window gets overviewHeight(rows). Both passes stop with `signal`.
+// measuring pass (--dump-dom) gives the page's height and width, so a wide or tall page is not cut; when it fails or takes
+// longer than measureMs (20 s by default) the window is 728 px wide and overviewHeight(rows) high. Both passes stop with `signal`.
 export async function renderPng(htmlText: string, out: string, o: { chrome: string | null, rows: number, logFile: string, signal?: AbortSignal, measureMs?: number }): Promise<boolean> {
   if (!o.chrome) return false;
   try {
@@ -184,7 +192,8 @@ export async function renderPng(htmlText: string, out: string, o: { chrome: stri
       { cwd: dir, logFile: o.logFile, signal: o.signal ? AbortSignal.any([o.signal, limit]) : limit });
     fs.rmSync(probe, { force: true });
     const height = (dom !== null && heightOf(dom)) || overviewHeight(o.rows);
-    const r = await runLogged(o.chrome, flags.concat(["--window-size=728," + height, "--screenshot=" + out, "file://" + path.resolve(page)]),
+    const width = (dom !== null && widthOf(dom)) || 728;
+    const r = await runLogged(o.chrome, flags.concat(["--window-size=" + width + "," + height, "--screenshot=" + out, "file://" + path.resolve(page)]),
       { cwd: dir, logFile: o.logFile, signal: o.signal });
     if (r.code !== 0 || !fs.existsSync(out)) return false;
     const head = fs.readFileSync(out).subarray(0, 8);
@@ -192,17 +201,4 @@ export async function renderPng(htmlText: string, out: string, o: { chrome: stri
   } catch(e) {
     return false;
   }
-}
-
-// The picture within the night's time: up to `budget` (60 s), cut short at once by a SIGTERM (`night`, the container's
-// signal), after which it gets one more try of `afterStop` (10 s): docker stop gives the container 30 s. Stopped before
-// it starts, it gets only that one short try.
-export async function renderWithin(htmlText: string, out: string, o: { chrome: string | null, rows: number, logFile: string }, night?: AbortSignal,
-  ms: { budget: number, afterStop: number } = { budget: 60000, afterStop: 10000 }): Promise<boolean> {
-  const late = (): Promise<boolean> => renderPng(htmlText, out, Object.assign({}, o, { signal: AbortSignal.timeout(ms.afterStop), measureMs: Math.round(ms.afterStop / 3) }));
-  if (night && night.aborted) return late();
-  const limit = AbortSignal.timeout(ms.budget);
-  const first = await renderPng(htmlText, out, Object.assign({}, o, { signal: night ? AbortSignal.any([night, limit]) : limit }));
-  if (first || !night || !night.aborted) return first;
-  return late();
 }

@@ -26,6 +26,6 @@ export function fakePlan(over: Partial<RunPlan> = {}): RunPlan {
     specs: specs,
     manifest: manifest,
     suites: suites,
-    jobs: jobsOf(manifest, suites.map((s: string) => ({ suite: s, only: null }))),
+    jobs: jobsOf(manifest, suites),
   } as RunPlan, over);
 }

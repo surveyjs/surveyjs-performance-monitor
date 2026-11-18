@@ -2,7 +2,7 @@
 // job use it without the build folders' original paths.
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { buildAt, nightDir, npmFor } from "../builds.ts";
+import { buildAt, npmFor } from "../builds.ts";
 import type { Build, Npm } from "../builds.ts";
 import type { Project } from "../project.ts";
 import type { Outcome } from "../report.ts";
@@ -66,7 +66,7 @@ export function buildFromRecord(rec: BuildRecord, dir: string): Build {
   return b;
 }
 
-// What a role shows for a suite when it gets no measuring job, or nothing. Same rules as the server's night: a role
+// What a role shows for a suite when it gets no measuring job, or nothing. The rules: a role
 // that is the same as another, a role without a record or a failed build, a UI package that is missing (n/a) or
 // failed; and when the reference (the first spec) has no result for the suite, the other roles are not run.
 export function suiteOutcomes(specs: BuildSpec[], records: Partial<Record<Role, BuildRecord>>, suite: string,
@@ -101,14 +101,12 @@ export async function buildRole(o: { plan: RunPlan, project: Project, role: Role
   if (!spec) throw new UsageError("the plan has no build " + o.role);
   const logs = path.join(o.out, "logs");
   fs.mkdirSync(logs, { recursive: true });
-  const npm = o.npm || npmFor({ work: o.work, logs: logs, local: false });
-  const t0 = Date.now();
-  const b = await buildAt({ work: o.work, repo: o.repo, logs: logs, npm: npm, m: o.plan.manifest, suites: o.plan.suites, project: o.project }, spec);
-  const rec = recordOf(b, Math.round((Date.now() - t0) / 100) / 10);
+  const npm = o.npm || npmFor({ logs: logs });
   const dest = path.join(o.out, "build");
-  const night = nightDir(o.work, o.role);
   fs.mkdirSync(dest, { recursive: true });
-  if (fs.existsSync(night)) fs.cpSync(night, dest, { recursive: true });
+  const t0 = Date.now();
+  const b = await buildAt({ work: o.work, dest: dest, repo: o.repo, logs: logs, npm: npm, m: o.plan.manifest, suites: o.plan.suites, project: o.project }, spec);
+  const rec = recordOf(b, Math.round((Date.now() - t0) / 100) / 10);
   writeJsonAtomic(path.join(dest, RECORD), rec);
   writeJsonAtomic(path.join(o.out, RECORD), rec);
   return rec;

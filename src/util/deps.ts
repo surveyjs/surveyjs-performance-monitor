@@ -3,7 +3,7 @@ import * as path from "node:path";
 
 // name@version of the external packages installed in a package folder (a copy of listInstalled in survey-library's
 // perf/harness/node/deps.ts). Linked packages (survey-core in a UI package is a junction to its build) are left out.
-// The result file's deps fingerprint is the runner's; this list only feeds the install notes and the bisect ends' diff.
+// The result file's deps fingerprint is the runner's; this list feeds the report's deps line (depsDiff).
 export function listInstalled(packageDir: string): Array<string> {
   const res: Array<string> = [];
   const nm = path.join(packageDir, "node_modules");

@@ -2,7 +2,6 @@ import { describe, test, expect, afterEach } from "vitest";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { execFileSync } from "node:child_process";
 import { parseInputs, jobKey, jobsOf, checkLimit, makePlan, cachePaths, planOutputs } from "../../src/gh/plan.ts";
 import { cloneBlobless, fetchCommit, checkoutAt } from "../../src/gh/lib.ts";
 import { loadManifest } from "../../src/contract.ts";
@@ -56,28 +55,21 @@ function opts(repo: string): { project: typeof surveyLibrary, repo: string, runn
 }
 
 describe("plan", () => {
-  test("parseInputs: defaults and lists", () => {
-    expect(parseInputs({})).toEqual({ kind: "nightly", suites: null, only: null, repeats: 5 });
-    expect(parseInputs({ INPUT_SUITES: "core, react", INPUT_ONLY: " a/one  b/three " }))
-      .toMatchObject({ suites: ["core", "react"], only: ["a/one", "b/three"] });
-    expect(parseInputs({ INPUT_SUITES: "  ", INPUT_LABEL: "" })).toMatchObject({ suites: null, label: undefined });
-  });
-
-  test("parseInputs: today's rules for kind and ref", () => {
-    expect(() => parseInputs({ INPUT_KIND: "on-demand" })).toThrow("an on-demand run needs a ref");
-    expect(() => parseInputs({ INPUT_REF: "x" })).toThrow("a nightly takes no ref");
-    expect(() => parseInputs({ INPUT_KIND: "weekly" })).toThrow("kind must be nightly or on-demand");
+  test("parseInputs: PERF_REPEATS, 5 when blank", () => {
+    expect(parseInputs({})).toEqual({ repeats: 5 });
+    expect(parseInputs({ PERF_REPEATS: "" })).toEqual({ repeats: 5 });
+    expect(parseInputs({ PERF_REPEATS: "3" })).toEqual({ repeats: 3 });
     for (const r of ["0", "10", "x"]) expect(() => parseInputs({ PERF_REPEATS: r })).toThrow("PERF_REPEATS must be a whole number from 1 to 9");
   });
 
   test("jobKey and jobsOf", () => {
     expect(jobKey("survey-js-ui", "records-plain/records/sort-header@ordersPaged")).toBe("survey-js-ui-records-plain_records_sort-header_ordersPaged");
     const m = loadManifest(fakeRunner);
-    expect(jobsOf(m, [{ suite: "core", only: null }, { suite: "react", only: ["b/paint"] }]).map((j) => j.key + (j.browser ? "*" : "")))
-      .toEqual(["core-a_one", "core-a_two", "core-b_three", "react-b_paint*"]);
-    expect(Object.keys(jobsOf(m, [{ suite: "core", only: null }])[0])).toEqual(["suite", "id", "key", "browser"]);
+    expect(jobsOf(m, ["core", "react"]).map((j) => j.key + (j.browser ? "*" : "")))
+      .toEqual(["core-a_one", "core-a_two", "core-b_three", "react-a_paint*", "react-b_paint*"]);
+    expect(Object.keys(jobsOf(m, ["core"])[0])).toEqual(["suite", "id", "key", "browser"]);
     const clash = { ...m, suites: { core: { ...m.suites.core, ids: ["a/b", "a_b"] } } };
-    expect(() => jobsOf(clash, [{ suite: "core", only: null }])).toThrow("two scenarios share the job key core-a_b: a/b and a_b");
+    expect(() => jobsOf(clash, ["core"])).toThrow("two scenarios share the job key core-a_b: a/b and a_b");
   });
 
   test("checkLimit: 256 jobs per run", () => {
@@ -91,11 +83,13 @@ describe("plan", () => {
     expect(p.specs.map((s) => s.role)).toEqual(["today", "yesterday", "week", "month"]);
     expect(p.runnerSha).toBe(git(repo, ["rev-parse", "origin/master"]));
     expect(p.jobs.length).toBe(5);
+    expect(p.suites).toEqual(["core", "react"]);
+    expect(p.kind).toBe("nightly");
     expect(p.runId).toMatch(/^\d{8}T\d{6}-[0-9a-f]{7}-nightly$/);
     expect(p.repeats).toBe(5);
     expect(p.manifest.contract).toBe(2);
     const out = planOutputs(p, { project: surveyLibrary, runnerDir: "/r", home: "/h", node: "24.15.0" });
-    expect(Object.keys(out)).toEqual(["jobs", "reference", "older", "kind", "runner_sha", "cache_key", "cache_paths"]);
+    expect(Object.keys(out)).toEqual(["jobs", "reference", "older", "runner_sha", "cache_key", "cache_paths"]);
     expect(out.cache_key).toBe("tool-linux-node24.15.0-" + p.runnerSha);
     expect(JSON.parse(out.jobs)[0]).toEqual({ suite: "core", id: "a/one", key: "core-a_one", browser: false });
     expect(out.jobs.indexOf('{"suite":"core","id":"a/one","key":"core-a_one","browser":false}')).toBe(1);
@@ -116,29 +110,6 @@ describe("plan", () => {
     expect(p.specs.map((s) => s.sameAs)).toEqual([undefined, "today", "today", "today"]);
     const out = planOutputs(p, { project: surveyLibrary, runnerDir: "/r", home: "/h", node: "24.15.0" });
     expect(JSON.parse(out.older)).toEqual([]);
-  });
-
-  test("makePlan: on-demand measures the branch against its merge-base with the branch's own runner", () => {
-    const repo = library([-40 * DAY, -10 * DAY, -DAY - 2 * HOUR]);
-    const tip = git(repo, ["rev-parse", "HEAD"]);
-    const env = Object.assign({}, process.env, { GIT_AUTHOR_DATE: new Date().toISOString(), GIT_COMMITTER_DATE: new Date().toISOString() });
-    const feature = execFileSync("git", ["commit-tree", tip + "^{tree}", "-p", tip, "-m", "feature work"], { cwd: repo, env: env, encoding: "utf8" }).trim();
-    git(repo, ["update-ref", "refs/remotes/origin/feature", feature]);
-    const p = makePlan(parseInputs({ INPUT_KIND: "on-demand", INPUT_REF: "feature" }), opts(repo));
-    expect(p.specs.map((s) => s.role)).toEqual(["branch", "base"]);
-    expect(p.specs[1].sha).toBe(tip);
-    expect(p.runnerSha).toBe(p.specs[0].sha);
-    expect(p.label).toBe("feature");
-    expect(p.runId).toMatch(/-on-demand$/);
-  });
-
-  test("makePlan: unknown suite, id or ref", () => {
-    const repo = library([-40 * DAY, -2 * HOUR]);
-    const o = (): ReturnType<typeof opts> => opts(repo);
-    expect(() => makePlan(parseInputs({ INPUT_SUITES: "x" }), o())).toThrow("unknown suite x");
-    expect(() => makePlan(parseInputs({ INPUT_ONLY: "z/z" }), o())).toThrow("ids that are in no suite: z/z");
-    expect(() => makePlan(parseInputs({ INPUT_KIND: "on-demand", INPUT_REF: "nope" }), o())).toThrow("unknown ref nope");
-    expect(() => makePlan(parseInputs({ INPUT_KIND: "on-demand", INPUT_REF: "-x" }), o())).toThrow("bad ref -x");
   });
 
   test("cachePaths and the cache key", () => {

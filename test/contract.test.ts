@@ -2,11 +2,11 @@ import { describe, test, expect } from "vitest";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { checkManifest, readResult, suitesOf, isBrowser, planSuites } from "../src/contract.ts";
+import { checkManifest, readResult, suitesOf, isBrowser } from "../src/contract.ts";
 import type { ResultEntry } from "../src/contract.ts";
 
-// survey-library's runner contract 2 (perf/CONTRACT.md there) as this server reads it: a real manifest and a real core
-// result file (the machine block is the container's), and the version checks.
+// survey-library's runner contract 2 (perf/CONTRACT.md there) as this monitor reads it: a real manifest and a real core
+// result file, and the version checks.
 const testdata = (name: string): string => path.join(import.meta.dirname, "testdata", name);
 const manifestJson = (): any => JSON.parse(fs.readFileSync(testdata("manifest.json"), "utf8"));
 
@@ -51,15 +51,5 @@ describe("the runner contract 2", () => {
     fs.writeFileSync(file, "null");
     expect(() => readResult(file)).toThrow(/not an object/);
     fs.rmSync(dir, { recursive: true, force: true });
-  });
-  test("planSuites", () => {
-    const m = checkManifest(manifestJson(), "x");
-    const all = planSuites(m, null, null);
-    expect(all.length).toBe(suitesOf(m).length);
-    all.forEach((p) => expect(p.only).toBeNull());
-    expect(planSuites(m, ["large/load/model"], null)).toEqual([{ suite: "core", only: ["large/load/model"] }]);
-    expect(() => planSuites(m, ["nope/x/y"], null)).toThrow(/in no suite: nope\/x\/y/);
-    expect(() => planSuites(m, null, ["vue"])).toThrow(/unknown suite vue/);
-    expect(() => planSuites(m, ["large/load/paint"], ["core"])).toThrow(/none of the requested ids/);
   });
 });

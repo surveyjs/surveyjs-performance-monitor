@@ -7,14 +7,12 @@ import * as path from "node:path";
 import { execFileSync } from "node:child_process";
 import { readRecord, suiteOutcomes } from "./build.ts";
 import type { BuildRecord } from "./build.ts";
-import { PAIR } from "./measure.ts";
-import type { PairFile } from "./measure.ts";
 import { loadScenario, pairMatrix } from "./pairs.ts";
 import type { ScenarioInput } from "./pairs.ts";
 import type { RunPlan } from "./plan.ts";
 import { suiteMarkdown, verdictOf } from "../report.ts";
 import type { Cell, Row, SuiteMatrix, Verdict } from "../report.ts";
-import { overviewHtml, renderWithin } from "../overview.ts";
+import { overviewHtml, renderPng } from "../overview.ts";
 import { reportMessage, plainMessage, writeMessage, limits } from "../discord.ts";
 import type { Message } from "../discord.ts";
 import { commitRange } from "../pr.ts";
@@ -35,7 +33,7 @@ export interface ReportInput {
   measuresDir: string;
   out: string;
   results: JobResults;
-  kind: "nightly" | "on-demand";
+  kind: "nightly";
   runUrl: string;
   projectsDir: string;
   now: Date;
@@ -49,7 +47,7 @@ export type ReportKind = "report" | "not started" | "build failed" | "cancelled"
 export interface CellsFile {
   project: string;
   runId: string;
-  kind: string;
+  kind: "nightly";
   start: string;
   repeats: number;
   specs: BuildSpec[];
@@ -59,16 +57,6 @@ export interface CellsFile {
 export const OUTBOX = "discord/1-result";
 
 const STRIP = /[`<>@*_~|\\]/g;
-
-// "CPU: <model> × <n>, ..." for the machines of the finished pairs, the most common first; undefined with none.
-export function cpuNote(cpus: string[]): string | undefined {
-  if (cpus.length === 0) return undefined;
-  const count = new Map<string, number>();
-  for (const c of cpus) count.set(c, (count.get(c) || 0) + 1);
-  const order = Array.from(count.keys());
-  order.sort((a: string, b: string) => (count.get(b) as number) - (count.get(a) as number));
-  return "CPU: " + order.map((c: string) => c + " × " + count.get(c)).join(", ");
-}
 
 // "not run (worker failed): <suite> <id> [<job url>], ..." for the first `max` scenarios, then "+N more".
 export function workerNote(items: Array<{ suite: string, id: string, url?: string }>, max: number = 5): string {
@@ -132,16 +120,6 @@ function tarMeasures(dir: string, out: string): string | undefined {
   }
 }
 
-function machineOf(dir: string): string | undefined {
-  try {
-    const pf = JSON.parse(fs.readFileSync(path.join(dir, PAIR), "utf8")) as PairFile | null;
-    if (pf && pf.end && pf.machine && typeof pf.machine.cpu === "string") return pf.machine.cpu;
-  } catch(e) {
-    // unreadable: no machine
-  }
-  return undefined;
-}
-
 function post(i: ReportInput, m: Message, sources: Record<string, string> = {}): void {
   writeMessage(path.join(i.out, OUTBOX), m, sources);
 }
@@ -189,7 +167,6 @@ export async function runReport(i: ReportInput): Promise<ReportKind> {
   const scenarios: Record<string, ScenarioInput[]> = {};
   const cancelled: Array<{ suite: string, id: string }> = [];
   const workerFailed: Array<{ suite: string, id: string, url?: string }> = [];
-  const cpus: string[] = [];
   for (const job of plan.jobs) {
     const dir = path.join(i.measuresDir, "measure-" + job.key);
     const info = (i.jobs || []).find((j: JobInfo) => j.name === "measure " + job.key);
@@ -200,10 +177,6 @@ export async function runReport(i: ReportInput): Promise<ReportKind> {
     (scenarios[job.suite] = scenarios[job.suite] || []).push(sc);
     if (sc.missing === "cancelled") cancelled.push({ suite: job.suite, id: job.id });
     else if (sc.missing) workerFailed.push({ suite: job.suite, id: job.id, url: info ? info.html_url : undefined });
-    else {
-      const cpu = machineOf(dir);
-      if (cpu) cpus.push(cpu);
-    }
   }
 
   const matrices: SuiteMatrix[] = plan.suites.map((suite: string) => {
@@ -216,20 +189,17 @@ export async function runReport(i: ReportInput): Promise<ReportKind> {
   const notes: string[] = [];
   if (cancelled.length > 0) notes.push("cancelled: " + cancelled.length + " scenario" + (cancelled.length === 1 ? "" : "s") + " not measured");
   if (workerFailed.length > 0) notes.push(workerNote(workerFailed));
-  const cpu = cpuNote(cpus);
-  if (cpu) notes.push(cpu);
   notes.push("run: " + i.runUrl);
 
   const start = new Date(plan.start);
-  const withNode = plan.specs.map((s: BuildSpec) => Object.assign({}, s, { node: records[s.role] ? (records[s.role] as BuildRecord).node : undefined }));
   const md = (suite: string): string => path.join(i.out, suite + ".md");
-  for (const m of matrices) fs.writeFileSync(md(m.suite), suiteMarkdown(project, withNode, m, start, notes.join(" · ")));
+  for (const m of matrices) fs.writeFileSync(md(m.suite), suiteMarkdown(project, m, start, notes.join(" · ")));
 
   const durationMin = (i.now.getTime() - start.getTime()) / 60000;
   const png = path.join(i.out, "overview.png");
-  const html = overviewHtml({ project: project.name, kind: i.kind, sha: reference.sha, date: start, durationMin: durationMin, matrices: matrices });
+  const html = overviewHtml({ project: project.name, sha: reference.sha, date: start, durationMin: durationMin, matrices: matrices });
   fs.writeFileSync(path.join(i.out, "overview.html"), html);
-  const pngOk = await renderWithin(html, png, { chrome: i.chrome, rows: matrices.length, logFile: path.join(i.out, "overview.log") });
+  const pngOk = await renderPng(html, png, { chrome: i.chrome, rows: matrices.length, logFile: path.join(i.out, "overview.log"), signal: AbortSignal.timeout(60000) });
   if (!pngOk) fs.rmSync(png, { force: true });
 
   const tar = tarMeasures(i.measuresDir, i.out);
@@ -241,11 +211,11 @@ export async function runReport(i: ReportInput): Promise<ReportKind> {
   for (const m of matrices) for (const f of m.failed) if (f.log && fs.existsSync(f.log) && logs.indexOf(f.log) < 0) logs.push(f.log);
   files.push(...logs.slice(0, Math.max(0, limits.files - files.length)));
 
-  const cmp = plan.specs.find((s: BuildSpec) => s.role === (i.kind === "nightly" ? "yesterday" : "base"));
+  const cmp = plan.specs.find((s: BuildSpec) => s.role === "yesterday");
   const commits = cmp && i.lib ? commitRange(i.lib, cmp.sha, reference.sha, project.repo) : [];
   const cmpRecord = cmp ? records[cmp.sameAs || cmp.role] : undefined;
   const depsNote = cmp && !cmp.sameAs && cmpRecord && !cmpRecord.failed ? depsDiff(cmpRecord.deps, refRecord.deps) : "";
-  const message = reportMessage({ project: project, kind: i.kind, label: plan.label || plan.ref, date: start, durationMin: durationMin, specs: plan.specs,
+  const message = reportMessage({ project: project, specs: plan.specs,
     matrices: matrices, commits: commits, depsNote: depsNote || undefined, notes: notes, overview: pngOk, files: files });
   post(i, message);
 

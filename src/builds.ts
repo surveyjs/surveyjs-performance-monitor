@@ -1,10 +1,9 @@
-// The builds of a night: each role without sameAs gets its own slot (a git worktree in <work>/build-<role>), is
-// installed and built there, and the result is copied to <work>/builds/<role>/, which is what gets measured.
+// The build of one role: a slot (a git worktree in <work>/build-<role>) is installed and built, and the outputs are
+// copied to the folder `dest`, which is what gets measured.
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { git } from "./util/git.ts";
 import { runLogged } from "./util/proc.ts";
-import { writeJsonAtomic } from "./util/json.ts";
 import { installedList } from "./util/deps.ts";
 import { InfraError } from "./errors.ts";
 import { isBrowser } from "./contract.ts";
@@ -14,15 +13,15 @@ import type { Project } from "./project.ts";
 import type { Role, BuildSpec } from "./versions.ts";
 
 export interface Npm {
-  // Always installs (a fresh /work has nothing); a failure is an InfraError.
-  install(dir: string, name: string, ignoreScripts: boolean, signal?: AbortSignal): Promise<void>;
-  run(dir: string, script: string, logFile: string, signal?: AbortSignal): Promise<boolean>;
+  // Always installs (a fresh worker has nothing); a failure is an InfraError.
+  install(dir: string, name: string, ignoreScripts: boolean): Promise<void>;
+  run(dir: string, script: string, logFile: string): Promise<boolean>;
 }
 
 export interface Build {
   role: Role;
   sha: string;
-  // Paths of the copies in nightDir(), not of the slot.
+  // Paths of the copies in `dest`, not of the slot.
   core: string | null;
   ui: Record<string, string>;
   // Per suite without a UI package to measure: "no <package> at <sha7>" (n/a), or "build failed" when the package is
@@ -37,41 +36,34 @@ export interface Build {
 
 export interface BuildOptions {
   work: string;
+  // The folder the build's outputs are copied to.
+  dest: string;
   repo: string;
   logs: string;
   npm: Npm;
   m: Manifest;
   suites: Array<string>;
   project: Project;
-  signal?: AbortSignal;
-  // Called at the start and end of each build's phases, `checkout-<role>` and `build-<role>` (the night's phases.json).
-  phase?: (name: string, edge: "start" | "end") => void;
 }
 
 export function slotDir(work: string, role: Role): string {
   return path.join(work, "build-" + role);
 }
 
-export function nightDir(work: string, role: Role): string {
-  return path.join(work, "builds", role);
-}
-
-// `local`: the user's own npm cache stays (a run outside the container).
-export function npmFor(o: { work: string, logs: string, local: boolean }): Npm {
+export function npmFor(o: { logs: string }): Npm {
   const env = (ignoreScripts: boolean): NodeJS.ProcessEnv => {
     const e: NodeJS.ProcessEnv = Object.assign({}, process.env, { PUPPETEER_SKIP_DOWNLOAD: "true", HUSKY: "0" });
-    if (!o.local) e.npm_config_cache = path.join(o.work, "npm-cache");
     if (ignoreScripts) e.npm_config_ignore_scripts = "true";
     return e;
   };
   return {
-    async install(dir: string, name: string, ignoreScripts: boolean, signal?: AbortSignal): Promise<void> {
+    async install(dir: string, name: string, ignoreScripts: boolean): Promise<void> {
       const logFile = path.join(o.logs, "install-" + name + ".log");
-      const r = await runLogged("npm", ["install", "--no-audit", "--no-fund", "--no-package-lock"], { cwd: dir, env: env(ignoreScripts), logFile: logFile, signal: signal });
+      const r = await runLogged("npm", ["install", "--no-audit", "--no-fund", "--no-package-lock"], { cwd: dir, env: env(ignoreScripts), logFile: logFile });
       if (r.code !== 0) throw new InfraError("npm install failed in " + name, logFile);
     },
-    async run(dir: string, script: string, logFile: string, signal?: AbortSignal): Promise<boolean> {
-      const r = await runLogged("npm", ["run", script], { cwd: dir, env: env(false), logFile: logFile, signal: signal });
+    async run(dir: string, script: string, logFile: string): Promise<boolean> {
+      const r = await runLogged("npm", ["run", script], { cwd: dir, env: env(false), logFile: logFile });
       return r.code === 0;
     },
   };
@@ -102,19 +94,8 @@ function copyOut(from: string, to: string): boolean {
 }
 
 export async function buildAt(o: BuildOptions, spec: BuildSpec): Promise<Build> {
-  const phase = (name: string, edge: "start" | "end"): void => { if (o.phase) o.phase(name + "-" + spec.role, edge); };
-  phase("build", "start");
-  try {
-    return await buildIn(o, spec, phase);
-  } finally {
-    phase("build", "end");
-  }
-}
-
-async function buildIn(o: BuildOptions, spec: BuildSpec, phase: (name: string, edge: "start" | "end") => void): Promise<Build> {
   const { role, sha } = spec;
   const slot = slotDir(o.work, role);
-  const night = nightDir(o.work, role);
   const b = o.project.build;
   const res: Build = { role: role, sha: sha, core: null, ui: {}, uiMissing: {}, uiFailed: {}, logs: [], deps: [], node: process.version };
   const logOf = (pkg: string): string => {
@@ -123,29 +104,24 @@ async function buildIn(o: BuildOptions, spec: BuildSpec, phase: (name: string, e
     return f;
   };
   try {
-    phase("checkout", "start");
-    try {
-      addSlot(o.repo, slot, sha);
-    } finally {
-      phase("checkout", "end");
-    }
-    await o.npm.install(slot, "build-" + role + "-root", true, o.signal);
+    addSlot(o.repo, slot, sha);
+    await o.npm.install(slot, "build-" + role + "-root", true);
     const coreDir = path.join(slot, b.core.dir);
     const coreName = path.basename(b.core.dir);
-    await o.npm.install(coreDir, "build-" + role + "-" + coreName, false, o.signal);
+    await o.npm.install(coreDir, "build-" + role + "-" + coreName, false);
     const browser = o.suites.filter((s: string) => isBrowser(o.m.suites[s]));
     const scripts = JSON.parse(fs.readFileSync(path.join(coreDir, "package.json"), "utf8")).scripts || {};
     for (const step of coreSteps(scripts, b.core, browser.length > 0)) {
-      if (!await o.npm.run(coreDir, step, logOf(coreName), o.signal)) {
+      if (!await o.npm.run(coreDir, step, logOf(coreName))) {
         res.failed = coreName + " does not build";
         return res;
       }
     }
-    if (!copyOut(path.join(coreDir, b.core.out), path.join(night, coreName))) {
+    if (!copyOut(path.join(coreDir, b.core.out), path.join(o.dest, coreName))) {
       res.failed = coreName + " does not build";
       return res;
     }
-    res.core = path.join(night, coreName);
+    res.core = path.join(o.dest, coreName);
     const dirs = [slot, coreDir];
     for (const s of browser) {
       const pkg = o.m.suites[s].package as string;
@@ -157,7 +133,7 @@ async function buildIn(o: BuildOptions, spec: BuildSpec, phase: (name: string, e
       // A UI package that does not install fails its suite only, as one that does not build (R11): survey-core and
       // the other packages stay.
       try {
-        await o.npm.install(dir, "build-" + role + "-" + pkg, false, o.signal);
+        await o.npm.install(dir, "build-" + role + "-" + pkg, false);
       } catch(e: unknown) {
         if (!(e instanceof InfraError)) throw e;
         if (e.log && res.logs.indexOf(e.log) < 0) res.logs.push(e.log);
@@ -166,15 +142,14 @@ async function buildIn(o: BuildOptions, spec: BuildSpec, phase: (name: string, e
         continue;
       }
       dirs.push(dir);
-      if (!await o.npm.run(dir, b.ui.script, logOf(pkg), o.signal) || !copyOut(path.join(dir, b.ui.out), path.join(night, pkg))) {
+      if (!await o.npm.run(dir, b.ui.script, logOf(pkg)) || !copyOut(path.join(dir, b.ui.out), path.join(o.dest, pkg))) {
         res.uiMissing[s] = "build failed";
         res.uiFailed[s] = { reason: pkg + " does not build", log: logOf(pkg) };
         continue;
       }
-      res.ui[s] = path.join(night, pkg);
+      res.ui[s] = path.join(o.dest, pkg);
     }
     res.deps = installedList(dirs);
-    writeJsonAtomic(path.join(night, "build.json"), { sha: sha, suites: o.suites, uiMissing: res.uiMissing, deps: res.deps, node: res.node });
     return res;
   } catch(e: unknown) {
     if (!(e instanceof InfraError)) throw e;
@@ -182,31 +157,11 @@ async function buildIn(o: BuildOptions, spec: BuildSpec, phase: (name: string, e
   }
 }
 
-// All roles without sameAs at once; the checkouts are synchronous git calls and so follow each other, the installs and
-// builds overlap. The sameAs roles are the night's to fill in.
-export async function buildAll(specs: Array<BuildSpec>, o: BuildOptions): Promise<Partial<Record<Role, Build>>> {
-  const own = specs.filter((s: BuildSpec) => !s.sameAs);
-  const builds = await Promise.all(own.map((s: BuildSpec) => buildAt(o, s)));
-  const res: Partial<Record<Role, Build>> = {};
-  own.forEach((s: BuildSpec, i: number) => { res[s.role] = builds[i]; });
-  return res;
-}
-
-function checkPlaywright(tool: string): void {
-  const want = process.env.PW_VERSION;
-  if (!want) return;
-  const file = path.join(tool, "node_modules", "@playwright", "test", "package.json");
-  const have = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")).version : null;
-  if (have !== want) throw new InfraError("@playwright/test " + have + " in the tool, the image has " + want + ": rebuild the image");
-}
-
 // The runner's install: the project's folders, then the optional ones the checkout has, one after another.
-// The frameworks' pins are installed here, before the runner is copied to the slots, so the suites install nothing.
-// `signal` (the night's SIGTERM) stops the running install.
-export async function installTool(npm: Npm, tool: string, p: Project, signal?: AbortSignal): Promise<void> {
+// The frameworks' pins are installed here, so the suites install nothing.
+export async function installTool(npm: Npm, tool: string, p: Project): Promise<void> {
   const dirs = p.tool.dirs.concat(p.tool.optional.filter((d: string) => fs.existsSync(path.join(tool, d))));
   for (const d of dirs) {
-    await npm.install(path.join(tool, d), "tool-" + (d === "." ? "root" : d.replace(/[\\/]/g, "-")), false, signal);
+    await npm.install(path.join(tool, d), "tool-" + (d === "." ? "root" : d.replace(/[\\/]/g, "-")), false);
   }
-  checkPlaywright(tool);
 }

@@ -3,8 +3,8 @@ import type { Role } from "../../src/versions.ts";
 
 export function matrix(suite: string, over: Partial<SuiteMatrix> = {}): SuiteMatrix {
   return {
-    suite: suite, roles: ["today", "yesterday", "week", "month"], rows: [], up: {}, down: {}, noisy: [], failed: [], failedToday: [],
-    incomplete: {}, incompleteReason: {}, notRun: [], notRunReason: {}, na: {}, flagged: {}, sec: {}, ...over
+    suite: suite, roles: ["today", "yesterday", "week", "month"], rows: [], up: {}, down: {}, failed: [], failedToday: [],
+    incomplete: {}, incompleteReason: {}, notRun: [], notRunReason: {}, na: {}, flagged: {}, ...over
   };
 }
 

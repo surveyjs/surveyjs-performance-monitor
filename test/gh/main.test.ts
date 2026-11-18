@@ -47,7 +47,7 @@ beforeEach(() => {
     ({ date: new Date(d0 + t).toISOString(), subject: "change " + i + " (#" + (100 + i) + ")", files: runnerFiles() }));
   mirror = repoWith(commits);
   env = { PERF_PROJECTS_DIR: path.join(root, "projects"), PERF_LIB_URL: mirror, GITHUB_OUTPUT: path.join(tmp, "github-output"),
-    PERF_DISCORD_WEBHOOK: "https://discord.com/api/webhooks/1/secret-token" };
+    PERF_DISCORD_WEBHOOK: "https://discord.com/api/webhooks/1/secret-token", PERF_CHROME_ROOT: path.join(tmp, "no-chrome") };
 });
 
 afterEach(() => {
@@ -68,8 +68,8 @@ describe("gh main", () => {
   });
 
   test("plan: an input error writes failure.json and exits 2", async () => {
-    expect(await main(["plan", "--work", w, "--runner-dir", r, "--out", out], { ...env, INPUT_KIND: "on-demand" })).toBe(2);
-    expect(readJson(out + "/failure.json", null)).toEqual({ reason: "an on-demand run needs a ref" });
+    expect(await main(["plan", "--work", w, "--runner-dir", r, "--out", out], { ...env, PERF_REPEATS: "0" })).toBe(2);
+    expect(readJson(out + "/failure.json", null)).toEqual({ reason: "PERF_REPEATS must be a whole number from 1 to 9" });
   });
 
   test("plan: outputs for the workflow", async () => {

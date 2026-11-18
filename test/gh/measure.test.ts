@@ -2,7 +2,7 @@ import { describe, test, expect, afterEach } from "vitest";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { measureScenario, pairOrder, cpuLabel, checkRun } from "../../src/gh/measure.ts";
+import { measureScenario, pairOrder, checkRun } from "../../src/gh/measure.ts";
 import type { PairFile, MeasureOptions } from "../../src/gh/measure.ts";
 import { RECORD } from "../../src/gh/build.ts";
 import type { BuildRecord } from "../../src/gh/build.ts";
@@ -59,7 +59,7 @@ function setup(o: { plan?: RunPlan, fake?: unknown, env?: Record<string, string>
   return {
     out: out, builds: builds,
     trace: () => fs.existsSync(traceFile) ? fs.readFileSync(traceFile, "utf8").split("\n").filter((l: string) => !!l).map((l: string) => JSON.parse(l)) : [],
-    opts: { plan: plan, project: project, job: job, runner: fakeRunner, builds: builds, out: out, slot: null, machine: { model: "m", cpu: "m", cores: 4 } },
+    opts: { plan: plan, project: project, job: job, runner: fakeRunner, builds: builds, out: out, slot: null, machine: { model: "m", cores: 4 } },
   };
 }
 
@@ -67,13 +67,6 @@ test("pairOrder(5) is A B B A A B B A A B", () => {
   const o = pairOrder(5);
   expect(o.map((s) => (s.side === "today" ? "A" : "B")).join("")).toBe("ABBAABBAAB");
   expect(o.map((s) => s.repeat)).toEqual([1, 1, 2, 2, 3, 3, 4, 4, 5, 5]);
-});
-
-test("cpuLabel", () => {
-  expect(cpuLabel("AMD EPYC 7763 64-Core Processor")).toBe("AMD EPYC 7763");
-  expect(cpuLabel("Intel(R) Xeon(R) 6975P-C")).toBe("Intel Xeon 6975P-C");
-  expect(cpuLabel("Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz")).toBe("Intel Xeon Platinum 8370C");
-  expect(cpuLabel("INTEL(R) XEON(R) PLATINUM 8573C")).toBe("INTEL XEON PLATINUM 8573C");
 });
 
 test("checkRun", () => {

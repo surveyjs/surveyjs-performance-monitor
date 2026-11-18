@@ -33,9 +33,3 @@ jobs:
 
     - name: Unit tests
       run: npm test
-
-    - name: Shell syntax
-      run: for f in bin/*.sh bin/perf-hold; do bash -n "$f" || exit 1; done
-
-    - name: Host checks
-      run: bash test/host.test.sh

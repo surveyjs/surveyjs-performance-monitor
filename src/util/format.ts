@@ -22,7 +22,7 @@ export function tail(file: string, n: number): Array<string> {
   return fs.readFileSync(file, "utf8").replace(stripAnsi, "").split(/\r?\n/).filter((l: string) => !!l.trim()).slice(-n);
 }
 
-// A UTC date as YYYYMMDDTHHMMSS: run ids (run.sh's RUN_ID has the same form).
+// A UTC date as YYYYMMDDTHHMMSS: run ids.
 export function utcStamp(date: Date): string {
   return date.toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "");
 }
