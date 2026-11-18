@@ -2,7 +2,7 @@ import { describe, test, expect } from "vitest";
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { checkManifest, readResult, suitesOf, isBrowser } from "../src/contract.ts";
+import { checkManifest, readResult, suitesOf, isBrowser, parseCommand } from "../src/contract.ts";
 import type { ResultEntry } from "../src/contract.ts";
 
 // survey-library's runner contract 2 (perf/CONTRACT.md there) as this monitor reads it: a real manifest and a real core
@@ -51,5 +51,47 @@ describe("the runner contract 2", () => {
     fs.writeFileSync(file, "null");
     expect(() => readResult(file)).toThrow(/not an object/);
     fs.rmSync(dir, { recursive: true, force: true });
+  });
+});
+
+describe("the creator contract 1", () => {
+  const creatorJson = (): any => JSON.parse(fs.readFileSync(testdata("creator-manifest.json"), "utf8"));
+  test("a real creator manifest is accepted", () => {
+    const m = checkManifest(creatorJson(), "x", "creator");
+    expect(suitesOf(m)).toEqual(["core", "react"]);
+    expect(isBrowser(m.suites.core)).toBe(false);
+    expect(isBrowser(m.suites.react)).toBe(true);
+    expect(m.library!.builds.map((b) => b.package)).toEqual(["survey-core", "survey-react-ui"]);
+    expect(m.builds!.map((b) => b.env)).toEqual(["PERF_CREATOR_CORE_DIR", "PERF_UI_DIR"]);
+  });
+  test("product and contract must match the project", () => {
+    expect(() => checkManifest(creatorJson(), "x")).toThrow("x: product creator, the project expects survey-library");
+    expect(() => checkManifest(manifestJson(), "x", "creator")).toThrow("x: product survey-library, the project expects creator");
+    expect(() => checkManifest({ ...creatorJson(), contract: 2 }, "x", "creator")).toThrow("x: runner contract 2, monitor knows 1");
+  });
+  test("a malformed creator manifest is refused", () => {
+    const bad = (mutate: (j: any) => void, msg: string | RegExp): void => { const j = creatorJson(); mutate(j); expect(() => checkManifest(j, "x", "creator")).toThrow(msg); };
+    bad((j) => { j.builds[0].commands = ["npm ci"]; }, "x: unsupported command: npm ci");
+    bad((j) => { j.install = ["npm run -x"]; }, "x: unsupported command: npm run -x");
+    bad((j) => { j.builds[0].env = "PERF_X"; }, "x: builds[0] is malformed");
+    bad((j) => { j.builds[1].cwd = "../x"; }, "x: builds[1] is malformed");
+    bad((j) => { j.builds[1].suites = ["vue3"]; }, "x: builds[1] is malformed");
+    bad((j) => { j.library.layout = "nested"; }, "x: library is malformed");
+    bad((j) => { j.library.repo = "../lib"; }, "x: library is malformed");
+    bad((j) => { j.library.repo = ".."; }, "x: library is malformed");
+    bad((j) => { j.library.builds[0].dir = "/abs"; }, "x: library.builds[0] is malformed");
+    bad((j) => { delete j.install; }, "x: install is malformed");
+    bad((j) => { j.library.builds[0].package = "@scope/x"; }, "x: library.builds[0] is malformed");
+    bad((j) => { j.library.builds[0].package = "../x"; }, "x: library.builds[0] is malformed");
+    bad((j) => { j.builds[0].cwd = "."; }, "x: builds[0] is malformed");
+    bad((j) => { j.builds[1].cwd = "packages/survey-core"; }, "x: builds are malformed");
+    bad((j) => { j.builds[1].env = "PERF_CREATOR_CORE_DIR"; }, "x: builds are malformed");
+    bad((j) => { j.library.builds[1].env = "PERF_UI_DIR"; }, "x: builds are malformed");
+    bad((j) => { j.library.builds[0].env = "PERF_LIB_UI_DIR"; }, "x: builds are malformed");
+  });
+  test("parseCommand", () => {
+    expect(parseCommand("npm install")).toEqual({ op: "install" });
+    expect(parseCommand("npm run build:main")).toEqual({ op: "run", script: "build:main" });
+    for (const c of ["npm ci", "npm run", "npm run a b", "npm run -x", "yarn build", " npm install"]) expect(() => parseCommand(c)).toThrow("unsupported command: " + c);
   });
 });

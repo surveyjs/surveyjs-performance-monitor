@@ -1,9 +1,12 @@
-# The night: the nightly performance report of survey-library, run on GitHub Actions. One plan job reads the
-# repository and decides the builds and the measuring jobs; build jobs build today and the older commits; one measuring
-# job per scenario runs the pairs on its own worker; the report job writes the one Discord message; the history job
-# keeps the report files on the `history` branch.
+# The night: the nightly performance report of survey-library (scheduled 01:00 UTC) or of survey-creator (scheduled
+# 03:00 UTC; a Creator build pairs each creator commit with the survey-library commit of the same cut-off), run on
+# GitHub Actions. The project comes from the `project` input of a manual dispatch, else from the schedule that fired.
+# One plan job reads the repository and decides the builds and the measuring jobs; build jobs build today and the
+# older commits; one measuring job per scenario runs the pairs on its own worker; the report job writes the one Discord
+# message; the history job keeps the report files on the `history` branch.
 #
-# The schedule acts only while the repository variable PERF_SCHEDULE is `on`. A manual dispatch works regardless.
+# The schedules act only while the repository variable PERF_SCHEDULE is `on` (one switch for both). A manual dispatch
+# works regardless.
 #
 # The webhook (the secret PERF_DISCORD_WEBHOOK) lives only in the send step of the post job, a job that runs no library
 # code. "Re-run failed jobs" re-runs the failed jobs and the jobs that depend on them; when only post failed, only post
@@ -11,12 +14,22 @@
 #
 # The runner context is not available in `env`, so each job that needs it sets RUNNER_DIR in its first step through GITHUB_ENV.
 name: night
+run-name: night ${{ inputs.project || (github.event.schedule == '0 3 * * *' && 'survey-creator') || 'survey-library' }}
 
 on:
   schedule:
+    # The project expressions in run-name, env.PERF_PROJECT and concurrency.group compare against this exact string.
     - cron: "0 1 * * *"
+    - cron: "0 3 * * *"
   workflow_dispatch:
     inputs:
+      project:
+        description: "Project to run"
+        type: choice
+        options:
+          - survey-library
+          - survey-creator
+        default: survey-library
       dry-post:
         description: "Do not post to Discord"
         type: boolean
@@ -25,12 +38,12 @@ on:
 permissions: {}
 
 env:
-  PERF_PROJECT: survey-library
+  PERF_PROJECT: ${{ inputs.project || (github.event.schedule == '0 3 * * *' && 'survey-creator') || 'survey-library' }}
   PERF_REPEATS: "5"
   NODE_VERSION: 24.15.0
 
 concurrency:
-  group: night-survey-library
+  group: night-${{ inputs.project || (github.event.schedule == '0 3 * * *' && 'survey-creator') || 'survey-library' }}
   cancel-in-progress: false
 
 jobs:
@@ -294,7 +307,7 @@ jobs:
           RESULT_BUILD_TODAY: ${{ needs.build-today.result }}
           RESULT_BUILD_OLDER: ${{ needs.build-older.result }}
           RESULT_MEASURE: ${{ needs.measure.result }}
-        run: node src/gh/main.ts report --plan-dir r/plan --builds r/builds --measures r/measures --out r-out --jobs r/jobs.jsonl --lib "$RUNNER_TEMP/lib"
+        run: node src/gh/main.ts report --plan-dir r/plan --builds r/builds --measures r/measures --out r-out --jobs r/jobs.jsonl --lib "$RUNNER_TEMP/lib" --sibling "$RUNNER_TEMP/sibling"
       - uses: actions/upload-artifact@v7
         if: always()
         with:

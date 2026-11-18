@@ -7,7 +7,8 @@ import { suites } from "./suites.ts";
 // { "exit": N } writes nothing and exits with N; "sleepMs" and "median" are read, not written; a key named after a
 // suite holds overrides for that suite only; the commit "*" applies to every commit; "onlyMedian" is the median when
 // PERF_ONLY is set, as in a second run of a few scenarios), with kind = PERF_KIND,
-// build.core.dir = PERF_CORE_DIR and a `fake` block: the cpus it may run on and the runner root it was started from.
+// build.core.dir = PERF_CORE_DIR and a `fake` block: the cpus it may run on, the runner root it was started from, and
+// `env`: the values of PERF_CREATOR_CORE_DIR, PERF_LIB_UI_DIR, PERF_UI_DIR and PERF_LIB_COMMIT that are set.
 // FAKE_SLEEP_MS (or the entry's sleepMs): it waits first; SIGTERM then writes `incomplete` and exits with 143, as the
 // real runner does. A browser suite writes PERF_TARGET_COMMIT to <runner>/perf/results/.cache/bundle at its start and
 // reads it back at its end: another value there means another job swapped the bundle under it ("bundle swapped").
@@ -66,7 +67,9 @@ const result: { [key: string]: any } = Object.assign({
   results: ids.map((id: string) => ({ id: id, rev: 1, unit: "ms", samples: [median], median: median, min: median, max: median, mad: 0, counters: {}, info: {},
     jsonErrors: 0, tolerance: null, local: false })),
 }, entry);
-result.fake = { cpus: cpus(), runner: runner };
+const fakeEnv: { [key: string]: string } = {};
+for (const k of ["PERF_CREATOR_CORE_DIR", "PERF_LIB_UI_DIR", "PERF_UI_DIR", "PERF_LIB_COMMIT"]) if (env[k]) fakeEnv[k] = env[k] as string;
+result.fake = { cpus: cpus(), runner: runner, env: fakeEnv };
 
 function write(r: unknown): void {
   fs.writeFileSync(env.PERF_RESULT_FILE as string, JSON.stringify(r, null, 2) + "\n");

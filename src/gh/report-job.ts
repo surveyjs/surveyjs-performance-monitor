@@ -34,11 +34,15 @@ export interface ReportInput {
   out: string;
   results: JobResults;
   kind: "nightly";
+  // The project name used while plan.json is missing.
+  project: string;
   runUrl: string;
   projectsDir: string;
   now: Date;
   jobs?: JobInfo[];
   lib?: string;
+  // A clone of the library repository of a two-repo project.
+  sibling?: string;
   chrome: string | null;
 }
 
@@ -131,12 +135,12 @@ export async function runReport(i: ReportInput): Promise<ReportKind> {
   const plan = readJson<RunPlan | null>(path.join(i.planDir, "plan.json"), null);
   if (!plan) {
     if (i.results.plan === "cancelled") {
-      post(i, plainMessage("⛔ perf " + i.kind + " cancelled before measuring\n" + url));
+      post(i, plainMessage("⛔ perf " + i.project + " " + i.kind + " cancelled before measuring\n" + url));
       return "cancelled";
     }
     const failure = readJson<{ reason?: string } | null>(path.join(i.planDir, "failure.json"), null);
     const reason = failure && typeof failure.reason === "string" ? failure.reason.replace(STRIP, "") : "the plan job failed";
-    post(i, plainMessage("❌ perf " + i.kind + " not started: " + reason + "\n" + url));
+    post(i, plainMessage("❌ perf " + i.project + " " + i.kind + " not started: " + reason + "\n" + url));
     return "not started";
   }
 
@@ -151,12 +155,12 @@ export async function runReport(i: ReportInput): Promise<ReportKind> {
   const refRecord = records[reference.role];
   const sha9 = reference.sha.substring(0, 9);
   if (!refRecord && i.results.buildToday === "cancelled") {
-    post(i, plainMessage("⛔ perf " + i.kind + " " + plan.runId + ": cancelled before measuring\n" + url));
+    post(i, plainMessage("⛔ perf " + plan.project + " " + i.kind + " " + plan.runId + ": cancelled before measuring\n" + url));
     return "cancelled";
   }
   if (!refRecord || refRecord.failed) {
     const reason = refRecord ? (refRecord.failed as string).replace(STRIP, "") : "the build job failed";
-    const text = "❌ " + i.kind + " · `" + sha9 + "` · " + reference.role + " build failed: " + reason + "\n" + url;
+    const text = "❌ " + plan.project + " " + i.kind + " · `" + sha9 + "` · " + reference.role + " build failed: " + reason + "\n" + url;
     const log = refRecord && refRecord.log ? logOf(reference.role, refRecord.log) : undefined;
     if (log && fs.existsSync(log)) post(i, plainMessage(text, [path.basename(log)]), { [path.basename(log)]: log });
     else post(i, plainMessage(text));
@@ -213,10 +217,12 @@ export async function runReport(i: ReportInput): Promise<ReportKind> {
 
   const cmp = plan.specs.find((s: BuildSpec) => s.role === "yesterday");
   const commits = cmp && i.lib ? commitRange(i.lib, cmp.sha, reference.sha, project.repo) : [];
+  const refLib = reference.lib;
+  const libCommits = cmp && cmp.lib && refLib && i.sibling && project.library ? commitRange(i.sibling, cmp.lib.sha, refLib.sha, project.library.repo) : [];
   const cmpRecord = cmp ? records[cmp.sameAs || cmp.role] : undefined;
   const depsNote = cmp && !cmp.sameAs && cmpRecord && !cmpRecord.failed ? depsDiff(cmpRecord.deps, refRecord.deps) : "";
   const message = reportMessage({ project: project, specs: plan.specs,
-    matrices: matrices, commits: commits, depsNote: depsNote || undefined, notes: notes, overview: pngOk, files: files });
+    matrices: matrices, commits: commits, libCommits: libCommits, depsNote: depsNote || undefined, notes: notes, overview: pngOk, files: files });
   post(i, message);
 
   const cells = cellsFile(plan, matrices);

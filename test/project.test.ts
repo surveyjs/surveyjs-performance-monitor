@@ -17,11 +17,11 @@ describe("the project config", () => {
   test("the real project config is accepted", () => {
     const p = loadProject(real, "survey-library");
     expect(p.branch).toBe("master");
-    expect(p.build.core.dir).toBe("packages/survey-core");
+    expect(p.build!.core.dir).toBe("packages/survey-core");
     expect(uiDir(p, "survey-react-ui")).toBe("packages/survey-react-ui");
     const o = loadProject(path.join(import.meta.dirname, "fixtures", "projects"), "other");
     expect(o.branch).toBe("main");
-    expect(o.build.core.dir).toBe("lib/core");
+    expect(o.build!.core.dir).toBe("lib/core");
     expect(o.discordEnv).toBe("PERF_DISCORD_WEBHOOK_OTHER");
   });
   test("a bad project config is refused", () => {
@@ -49,6 +49,26 @@ describe("the project config", () => {
     bad((j) => { j.build.core.extra = 1; });
     expect(() => checkProject(null, "survey-library.json")).toThrow(UsageError);
     expect(() => loadProject(real, "nope")).toThrow(/unknown project nope/);
+  });
+  test("the creator config is accepted", () => {
+    const c = loadProject(real, "survey-creator");
+    expect(c.build).toBeNull();
+    expect(c.library).toEqual({ repo: "https://github.com/surveyjs/survey-library", branch: "master" });
+    expect(c.tool).toEqual({ dirs: [".", "packages/survey-creator-core"], optional: ["perf/react19"] });
+    expect(c.discordEnv).toBe("PERF_DISCORD_WEBHOOK");
+    expect(loadProject(real, "survey-library").library).toBeNull();
+    expect(() => uiDir(c, "x")).toThrow("survey-creator has no build recipe");
+  });
+  test("a bad two-repo config is refused", () => {
+    const creatorJson = (): any => JSON.parse(fs.readFileSync(path.join(real, "survey-creator.json"), "utf8"));
+    const badC = (mutate: (j: any) => void): void => { const j = creatorJson(); mutate(j); expect(() => checkProject(j, "survey-creator.json")).toThrow(/bad project config/); };
+    badC((j) => { j.build = realJson().build; });
+    badC((j) => { delete j.library; });
+    badC((j) => { j.library.repo += ".git"; });
+    badC((j) => { j.library.branch = "-x"; });
+    badC((j) => { j.library.extra = 1; });
+    const both = creatorJson(); both.build = realJson().build;
+    expect(() => checkProject(both, "survey-creator.json")).toThrow(/: build$/);
   });
   test("the projects folder", () => {
     expect(projectsDir({})).toBe(path.join(import.meta.dirname, "..", "projects"));

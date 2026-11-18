@@ -127,7 +127,8 @@ export async function measureScenario(o: MeasureOptions): Promise<PairFile> {
         slot: o.slot, signal: o.signal,
         env: { resultFile: file, core: b.core as string, ui: b.ui[job.suite], kind: isToday ? plan.kind : "bisect",
           label: isToday ? reference.role : spec.role, ref: "origin/" + project.branch,
-          targetCommit: b.sha, only: [job.id] } });
+          targetCommit: b.sha, only: [job.id],
+          extra: { ...b.targets?.[job.suite], ...(b.lib ? { PERF_LIB_COMMIT: b.lib } : {}) } } });
     } catch(e) {
       outcome = { kind: "suite failed", reason: firstLine(e), log: logFile };
     }

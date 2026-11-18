@@ -1,0 +1,158 @@
+{
+  "product": "creator",
+  "contract": 1,
+  "resultSchema": 2,
+  "library": {
+    "repo": "survey-library",
+    "layout": "sibling",
+    "builds": [
+      {
+        "env": "PERF_CORE_DIR",
+        "package": "survey-core",
+        "cwd": "packages/survey-core",
+        "commands": [
+          "npm run build",
+          "npm run build:icons",
+          "npm run build:linter",
+          "npm run build:themes"
+        ],
+        "dir": "packages/survey-core/build"
+      },
+      {
+        "env": "PERF_LIB_UI_DIR",
+        "package": "survey-react-ui",
+        "cwd": "packages/survey-react-ui",
+        "commands": [
+          "npm run build"
+        ],
+        "dir": "packages/survey-react-ui/build",
+        "suites": [
+          "react"
+        ]
+      }
+    ]
+  },
+  "install": [
+    "npm install"
+  ],
+  "builds": [
+    {
+      "env": "PERF_CREATOR_CORE_DIR",
+      "cwd": "packages/survey-creator-core",
+      "install": [
+        "npm install"
+      ],
+      "commands": [
+        "npm run build:main",
+        "npm run build:collaboration"
+      ],
+      "dir": "packages/survey-creator-core/build",
+      "src": [
+        "packages/survey-creator-core/src"
+      ],
+      "bundles": [
+        "survey-core/linter",
+        "survey-core/themes"
+      ]
+    },
+    {
+      "env": "PERF_UI_DIR",
+      "cwd": "packages/survey-creator-react",
+      "install": [
+        "npm install"
+      ],
+      "commands": [
+        "npm run build"
+      ],
+      "dir": "packages/survey-creator-react/build",
+      "src": [
+        "packages/survey-creator-react/src"
+      ],
+      "suites": [
+        "react"
+      ]
+    }
+  ],
+  "suites": {
+    "core": {
+      "ids": [
+        "huge/edit/add-question",
+        "huge/edit/property",
+        "huge/load/json",
+        "huge/output/dispose",
+        "huge/output/text",
+        "huge/select/element@q3978",
+        "huge/tabs/designer",
+        "huge/tabs/json",
+        "huge/tabs/logic",
+        "huge/tabs/preview",
+        "huge/tabs/roundtrip",
+        "huge/tabs/translation",
+        "locales/load/json",
+        "locales/tabs/translation",
+        "typical/edit/add-question",
+        "typical/edit/convert@dropdown1",
+        "typical/edit/delete",
+        "typical/edit/property",
+        "typical/edit/undo-redo",
+        "typical/load/json",
+        "typical/select/element@checkbox1",
+        "typical/select/element@dropdown1",
+        "typical/select/element@matrixdynamic1",
+        "typical/select/element@page1",
+        "typical/select/element@panel1",
+        "typical/select/element@paneldynamic1",
+        "typical/select/element@survey",
+        "typical/select/element@text1",
+        "typical/tabs/theme"
+      ],
+      "cwd": "packages/survey-creator-core",
+      "script": "perf/core/run.ts",
+      "args": []
+    },
+    "react": {
+      "ids": [
+        "huge/designer/collapse-all",
+        "huge/designer/expand-all",
+        "huge/designer/object-selector",
+        "huge/edit/add-question",
+        "huge/edit/property",
+        "huge/load/paint",
+        "huge/select/element@q3978",
+        "huge/tabs/designer",
+        "huge/tabs/json",
+        "huge/tabs/logic",
+        "huge/tabs/preview",
+        "huge/tabs/roundtrip",
+        "huge/tabs/translation",
+        "locales/tabs/translation",
+        "typical/edit/add-question",
+        "typical/edit/delete",
+        "typical/edit/property",
+        "typical/edit/title-type",
+        "typical/load/paint",
+        "typical/select/element@matrixdynamic1",
+        "typical/select/element@survey",
+        "typical/select/element@text1",
+        "typical/tabs/theme"
+      ],
+      "cwd": "packages/survey-creator-react",
+      "script": "node_modules/@playwright/test/cli.js",
+      "args": [
+        "test",
+        "-c",
+        "playwright.perf.config.ts"
+      ]
+    }
+  },
+  "machine": {
+    "key": "linux-6-amd-epyc-rome-processor-16c-node24-chromiumnone",
+    "os": "linux-6",
+    "cpu": "AMD EPYC-Rome Processor",
+    "cores": 16,
+    "availableParallelism": 16,
+    "node": "24.15.0",
+    "chromium": null,
+    "extra": ""
+  }
+}

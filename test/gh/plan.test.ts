@@ -12,7 +12,9 @@ import type { FakeCommit } from "../helpers/repo.ts";
 
 const root = path.resolve(import.meta.dirname, "../..");
 const fakeRunner = path.join(root, "test/fixtures/fake-runner");
+const fakeCreator = path.join(root, "test/fixtures/fake-creator");
 const surveyLibrary = loadProject(path.join(root, "projects"), "survey-library");
+const surveyCreator = loadProject(path.join(root, "projects"), "survey-creator");
 const DAY = 86400000;
 const HOUR = 3600000;
 
@@ -45,6 +47,20 @@ function runnerFiles(): Record<string, string> {
 
 function library(offsets: Array<number>): string {
   const commits: Array<FakeCommit> = offsets.map((t: number, i: number) => ({ date: new Date(d0() + t).toISOString(), subject: "change " + i + " (#" + (100 + i) + ")", files: runnerFiles() }));
+  const repo = repoWith(commits);
+  cleanup.push({ dir: repo });
+  return repo;
+}
+
+// The fake Creator runner as files of every commit.
+function creatorFiles(): Record<string, string> {
+  return { "package.json": JSON.stringify({ name: "fake-creator", private: true, type: "module" }),
+    "perf/manifest.ts": fs.readFileSync(path.join(fakeCreator, "perf/manifest.ts"), "utf8") };
+}
+
+function creatorRepo(files: Record<string, string>): string {
+  const commits: Array<FakeCommit> = [-40 * DAY, -10 * DAY, -DAY - 2 * HOUR, -2 * HOUR].map((t: number, i: number) =>
+    ({ date: new Date(d0() + t).toISOString(), subject: "change " + i + " (#" + (100 + i) + ")", files: files }));
   const repo = repoWith(commits);
   cleanup.push({ dir: repo });
   return repo;
@@ -90,9 +106,32 @@ describe("plan", () => {
     expect(p.manifest.contract).toBe(2);
     const out = planOutputs(p, { project: surveyLibrary, runnerDir: "/r", home: "/h", node: "24.15.0" });
     expect(Object.keys(out)).toEqual(["jobs", "reference", "older", "runner_sha", "cache_key", "cache_paths"]);
-    expect(out.cache_key).toBe("tool-linux-node24.15.0-" + p.runnerSha);
+    expect(out.cache_key).toBe("tool-survey-library-linux-node24.15.0-" + p.runnerSha);
     expect(JSON.parse(out.jobs)[0]).toEqual({ suite: "core", id: "a/one", key: "core-a_one", browser: false });
     expect(out.jobs.indexOf('{"suite":"core","id":"a/one","key":"core-a_one","browser":false}')).toBe(1);
+  });
+
+  test("makePlan: a Creator night pairs every build with the library", () => {
+    const repo = creatorRepo(creatorFiles());
+    const lib = library([-40 * DAY, -10 * DAY, -DAY - 2 * HOUR, -2 * HOUR]);
+    const p = makePlan(parseInputs({}), { project: surveyCreator, repo: repo, sibling: lib, runnerDir: tmpDir(repo), start: new Date() });
+    expect(p.specs.map((s) => s.role)).toEqual(["today", "yesterday", "week", "month"]);
+    expect(p.specs[0].lib!.sha).toBe(git(lib, ["rev-parse", "origin/master"]));
+    expect(p.manifest.product).toBe("creator");
+    expect(p.jobs.length).toBe(5);
+  });
+
+  test("makePlan: a library manifest in a Creator project stops the plan", () => {
+    const repo = creatorRepo(runnerFiles());
+    const lib = library([-40 * DAY, -2 * HOUR]);
+    expect(() => makePlan(parseInputs({}), { project: surveyCreator, repo: repo, sibling: lib, runnerDir: tmpDir(repo), start: new Date() }))
+      .toThrow(/product survey-library, the project expects creator/);
+  });
+
+  test("makePlan: a Creator project without the library clone stops", () => {
+    const repo = creatorRepo(creatorFiles());
+    expect(() => makePlan(parseInputs({}), { project: surveyCreator, repo: repo, runnerDir: tmpDir(repo), start: new Date() }))
+      .toThrow("a two-repo project needs the library clone");
   });
 
   test("makePlan: a young repo has no month, and older lists only what is built", () => {

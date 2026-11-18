@@ -80,6 +80,28 @@ describe("gh main", () => {
     expect(fs.existsSync(out + "/plan.json")).toBe(true);
   });
 
+  test("plan: a Creator night clones the library too", async () => {
+    const commits: Array<FakeCommit> = [-40 * DAY, -10 * DAY, -DAY - 2 * HOUR, -2 * HOUR].map((t: number, i: number) =>
+      ({ date: new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), new Date().getUTCDate()) + t).toISOString(), subject: "change " + i + " (#" + (100 + i) + ")",
+        files: { "package.json": JSON.stringify({ name: "fake-creator", private: true, type: "module" }), "perf/manifest.ts": read(path.join(root, "test/fixtures/fake-creator/perf/manifest.ts")) } }));
+    const creator = repoWith(commits);
+    try {
+      const e = { ...env, PERF_PROJECT: "survey-creator", PERF_LIB_URL: creator, PERF_SIBLING_URL: mirror };
+      expect(await main(["plan", "--work", w, "--runner-dir", r, "--out", out], e)).toBe(0);
+      const plan = readJson<{ project: string, specs: Array<{ lib?: unknown }> }>(out + "/plan.json", null as never);
+      expect(plan.project).toBe("survey-creator");
+      expect(plan.specs.every((s) => !!s.lib)).toBe(true);
+      expect(fs.existsSync(path.join(w, "sibling"))).toBe(true);
+    } finally {
+      try {
+        git(creator, ["worktree", "prune"]);
+      } catch(e) {
+        // nothing to prune
+      }
+      fs.rmSync(creator, { recursive: true, force: true });
+    }
+  });
+
   test("plan: a failure after the plan leaves only failure.json", async () => {
     const bad = { ...env, GITHUB_OUTPUT: path.join(tmp, "no-such-folder", "o") };
     expect(await main(["plan", "--work", w, "--runner-dir", r, "--out", out], bad)).toBe(0 + 2);
@@ -102,8 +124,8 @@ describe("gh main", () => {
   });
 
   test("report: no plan at all is the plan job's failure, posted as not started", async () => {
-    expect(await main(["report", "--plan-dir", empty, "--builds", empty, "--measures", empty, "--out", out], { ...env, RESULT_PLAN: "failure" })).toBe(0);
-    expect(readJson(out + "/discord/1-result/payload.json", null)).toMatchObject({ content: expect.stringMatching(/^❌ perf nightly not started: the plan job failed/) });
+    expect(await main(["report", "--plan-dir", empty, "--builds", empty, "--measures", empty, "--out", out], { ...env, RESULT_PLAN: "failure", PERF_PROJECT: "survey-creator" })).toBe(0);
+    expect(readJson(out + "/discord/1-result/payload.json", null)).toMatchObject({ content: expect.stringMatching(/^❌ perf survey-creator nightly not started: the plan job failed/) });
   });
 
   test("report: an unreadable jobs file is a warning, not a failure", async () => {

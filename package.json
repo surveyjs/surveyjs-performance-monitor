@@ -2,7 +2,7 @@
   "name": "surveyjs-performance-monitor",
   "private": true,
   "type": "module",
-  "description": "The nightly performance report of survey-library on GitHub Actions",
+  "description": "The nightly performance reports of survey-library and survey-creator on GitHub Actions",
   "engines": {
     "node": ">=22.18"
   },

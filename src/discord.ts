@@ -150,6 +150,8 @@ export interface ReportInput {
   specs: BuildSpec[];
   matrices: SuiteMatrix[];
   commits: CommitPr[];
+  // The commits of the library repository of a two-repo project.
+  libCommits?: CommitPr[];
   depsNote?: string;
   notes?: string[];
   overview: boolean;
@@ -157,7 +159,7 @@ export interface ReportInput {
 }
 
 export function reportMessage(i: ReportInput): Message {
-  const head = icon(i.matrices) + " nightly";
+  const head = icon(i.matrices) + " " + i.project.name + " nightly";
   const lines = [head, ...(i.notes || []).map(escapeText)];
   // Spec, sections 2 and 5: the dependencies that changed since the compared build are a line of content (the embeds may
   // be hidden).
@@ -167,11 +169,18 @@ export function reportMessage(i: ReportInput): Message {
 
   const embeds: Embed[] = [];
   const buildLines = i.specs.map((s: BuildSpec) => "**" + s.role + "** [" + s.sha.slice(0, 9) + "](" + i.project.repo + "/commit/" + s.sha + ") · " + dateUtc(s.date) +
-    (s.sameAs ? " · = " + s.sameAs : ""));
+    (s.sameAs ? " · = " + s.sameAs : "") +
+    (s.lib && i.project.library ? " · library [" + s.lib.sha.slice(0, 9) + "](" + i.project.library.repo + "/commit/" + s.lib.sha + ")" : ""));
   embeds.push({ title: "Builds", description: fitLines(buildLines, 1500) });
+  const libCommits = i.libCommits || [];
+  // One list gets 2,400 characters, two lists 1,200 each: the suite embeds keep their room.
+  const listMax = i.commits.length > 0 && libCommits.length > 0 ? 1200 : 2400;
   if (i.commits.length > 0) {
-    embeds.push({ title: "Commits since yesterday (" + i.commits.length + ")",
-      description: rangeText(i.commits, 2400) });
+    embeds.push({ title: "Commits since yesterday (" + i.commits.length + ")", description: rangeText(i.commits, listMax) });
+  }
+  if (libCommits.length > 0 && i.project.library) {
+    const name = i.project.library.repo.replace(/\/+$/, "").split("/").pop() as string;
+    embeds.push({ title: cut(name + " commits since yesterday (" + libCommits.length + ")", limits.title), description: rangeText(libCommits, listMax) });
   }
   const used = embeds.reduce((s: number, e: Embed) => s + size(e), 0);
   const cmp = COMPARE;

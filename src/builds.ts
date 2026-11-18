@@ -5,8 +5,8 @@ import * as path from "node:path";
 import { git } from "./util/git.ts";
 import { runLogged } from "./util/proc.ts";
 import { installedList } from "./util/deps.ts";
-import { InfraError } from "./errors.ts";
-import { isBrowser } from "./contract.ts";
+import { InfraError, UsageError } from "./errors.ts";
+import { parseCommand } from "./contract.ts";
 import type { Manifest } from "./contract.ts";
 import { uiDir } from "./project.ts";
 import type { Project } from "./project.ts";
@@ -32,6 +32,9 @@ export interface Build {
   logs: Array<string>;
   deps: Array<string>;
   node: string;
+  // A two-repo build: the library commit, and per suite the built targets (target variable -> path in `dest`).
+  lib?: string;
+  targets?: Record<string, Record<string, string>>;
 }
 
 export interface BuildOptions {
@@ -94,6 +97,7 @@ function copyOut(from: string, to: string): boolean {
 }
 
 export async function buildAt(o: BuildOptions, spec: BuildSpec): Promise<Build> {
+  if (!o.project.build) throw new UsageError(o.project.name + " has no build recipe");
   const { role, sha } = spec;
   const slot = slotDir(o.work, role);
   const b = o.project.build;
@@ -109,7 +113,7 @@ export async function buildAt(o: BuildOptions, spec: BuildSpec): Promise<Build> 
     const coreDir = path.join(slot, b.core.dir);
     const coreName = path.basename(b.core.dir);
     await o.npm.install(coreDir, "build-" + role + "-" + coreName, false);
-    const browser = o.suites.filter((s: string) => isBrowser(o.m.suites[s]));
+    const browser = o.suites.filter((s: string) => !!o.m.suites[s].package);
     const scripts = JSON.parse(fs.readFileSync(path.join(coreDir, "package.json"), "utf8")).scripts || {};
     for (const step of coreSteps(scripts, b.core, browser.length > 0)) {
       if (!await o.npm.run(coreDir, step, logOf(coreName))) {
@@ -157,6 +161,115 @@ export async function buildAt(o: BuildOptions, spec: BuildSpec): Promise<Build> 
   }
 }
 
+// The build of one role of a two-repo project: the library at `spec.lib.sha` and the project at `spec.sha`, side by side
+// in the slot, built in the order of the manifest. A build with `suites` that fails fails only those suites.
+export async function buildPairAt(o: BuildOptions & { libRepo: string }, spec: BuildSpec): Promise<Build> {
+  if (!spec.lib) throw new UsageError("no library commit for " + spec.role);
+  const lib = o.m.library;
+  const creatorBuilds = o.m.builds;
+  if (!lib || !creatorBuilds || !o.m.install) throw new UsageError(o.project.name + " has no two-repo manifest");
+  const { role, sha } = spec;
+  const slot = slotDir(o.work, role);
+  const libSlot = path.join(slot, lib.repo);
+  const creatorSlot = path.join(slot, "survey-creator");
+  const res: Build = { role: role, sha: sha, core: null, ui: {}, uiMissing: {}, uiFailed: {}, logs: [], deps: [], node: process.version, lib: spec.lib.sha, targets: {} };
+  const logOf = (name: string): string => {
+    const f = path.join(o.logs, "build-" + role + "-" + name + ".log");
+    if (res.logs.indexOf(f) < 0) res.logs.push(f);
+    return f;
+  };
+  // Suites that failed or whose package is missing; a build that has only such suites is skipped.
+  const lost = new Set<string>();
+  const live = (suites: Array<string>): Array<string> => suites.filter((s: string) => o.suites.indexOf(s) >= 0 && !lost.has(s));
+  const built: Array<{ env: string, path: string, suites?: Array<string> }> = [];
+  const dirs: Array<string> = [];
+  // Runs manifest commands in `cwd`: an install with the given ignoreScripts, a script with its log. Returns false
+  // when a script fails.
+  const exec = async (cwd: string, name: string, commands: Array<string>, installName: string, ignoreScripts: boolean): Promise<boolean> => {
+    for (const c of commands) {
+      const cmd = parseCommand(c);
+      if (cmd.op === "install") await o.npm.install(cwd, installName, ignoreScripts);
+      else if (!await o.npm.run(cwd, cmd.script, logOf(name))) return false;
+    }
+    return true;
+  };
+  // One build: `pre` (its installs, scripts on), its commands, the copy. False when the whole build must stop.
+  const one = async (b: { env: string, cwd: string, commands: Array<string>, dir: string, suites?: Array<string> }, name: string,
+    repoSlot: string, pre: Array<string>, repoSha: string): Promise<boolean> => {
+    const active = b.suites ? live(b.suites) : [];
+    if (b.suites && active.length === 0) return true;
+    const cwd = path.join(repoSlot, b.cwd);
+    // A failure of a build with suites loses those suites; of a build without, the whole role.
+    const fail = (reason: string, log?: string): boolean => {
+      if (!b.suites) {
+        res.failed = reason;
+        return false;
+      }
+      for (const s of active) {
+        lost.add(s);
+        res.uiMissing[s] = "build failed";
+        res.uiFailed[s] = { reason: reason, log: log };
+      }
+      return true;
+    };
+    if (b.suites && !fs.existsSync(path.join(cwd, "package.json"))) {
+      for (const s of active) {
+        lost.add(s);
+        res.uiMissing[s] = "no " + name + " at " + repoSha.substring(0, 7);
+      }
+      return true;
+    }
+    try {
+      if (!await exec(cwd, name, pre.concat(b.commands), "build-" + role + "-" + name, false)) return fail(name + " does not build", logOf(name));
+    } catch(e: unknown) {
+      if (!(e instanceof InfraError)) throw e;
+      if (e.log && res.logs.indexOf(e.log) < 0) res.logs.push(e.log);
+      return fail(e.message, e.log);
+    }
+    dirs.push(cwd);
+    if (!copyOut(path.join(repoSlot, b.dir), path.join(o.dest, name))) return fail(name + " does not build", logOf(name));
+    built.push({ env: b.env, path: path.join(o.dest, name), suites: b.suites });
+    return true;
+  };
+  const failedBuild = (): Build => ({ role: role, sha: sha, core: null, ui: {}, uiMissing: {}, uiFailed: {}, failed: res.failed, logs: res.logs, deps: [], node: process.version, lib: spec.lib?.sha });
+  try {
+    addSlot(o.libRepo, libSlot, spec.lib.sha);
+    addSlot(o.repo, creatorSlot, sha);
+    await o.npm.install(libSlot, "build-" + role + "-library-root", true);
+    dirs.push(libSlot);
+    for (const b of lib.builds) {
+      if (!await one(b, b.package, libSlot, ["npm install"], spec.lib.sha)) return failedBuild();
+    }
+    if (!await exec(creatorSlot, "survey-creator", o.m.install, "build-" + role + "-root", true)) {
+      res.failed = "survey-creator does not build";
+      return failedBuild();
+    }
+    dirs.push(creatorSlot);
+    for (const b of creatorBuilds) {
+      if (!await one(b, path.basename(b.cwd), creatorSlot, b.install, sha)) return failedBuild();
+    }
+    for (const t of built) {
+      if (t.env === "PERF_CORE_DIR") res.core = t.path;
+      if (t.env === "PERF_UI_DIR") for (const s of live(t.suites || [])) res.ui[s] = t.path;
+    }
+    for (const s of o.suites) {
+      if (lost.has(s)) continue;
+      const tg: Record<string, string> = {};
+      for (const t of built) {
+        if (!t.suites || t.suites.indexOf(s) >= 0) tg[t.env] = t.path;
+      }
+      (res.targets as Record<string, Record<string, string>>)[s] = tg;
+    }
+    res.deps = installedList(dirs);
+    return res;
+  } catch(e: unknown) {
+    if (!(e instanceof InfraError)) throw e;
+    res.failed = e.message;
+    if (e.log && res.logs.indexOf(e.log) < 0) res.logs.push(e.log);
+    return failedBuild();
+  }
+}
+
 // The runner's install: the project's folders, then the optional ones the checkout has, one after another.
 // The frameworks' pins are installed here, so the suites install nothing.
 export async function installTool(npm: Npm, tool: string, p: Project): Promise<void> {
@@ -164,4 +277,21 @@ export async function installTool(npm: Npm, tool: string, p: Project): Promise<v
   for (const d of dirs) {
     await npm.install(path.join(tool, d), "tool-" + (d === "." ? "root" : d.replace(/[\\/]/g, "-")), false);
   }
+}
+
+// The runner's own `npm install` follows links such as `../../../survey-library/packages/survey-core/build` (the
+// Creator packages point at the sibling library checkout); the suites get the real builds through the target
+// variables. So every library build folder is created next to the runner checkout with a stub package.json.
+// No-op and [] for a project without a library. Returns the files written.
+export function siblingStubs(runner: string, m: Manifest): Array<string> {
+  if (!m.library) return [];
+  const files: Array<string> = [];
+  for (const b of m.library.builds) {
+    const dir = path.join(path.dirname(runner), m.library.repo, b.dir);
+    fs.mkdirSync(dir, { recursive: true });
+    const file = path.join(dir, "package.json");
+    fs.writeFileSync(file, JSON.stringify({ name: b.package, version: "0.0.0", private: true }, null, 2) + "\n");
+    files.push(file);
+  }
+  return files;
 }

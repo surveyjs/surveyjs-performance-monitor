@@ -1,0 +1,8 @@
+{
+  "name": "survey-creator",
+  "repo": "https://github.com/surveyjs/survey-creator",
+  "branch": "master",
+  "library": { "repo": "https://github.com/surveyjs/survey-library", "branch": "master" },
+  "tool": { "dirs": [".", "packages/survey-creator-core"], "optional": ["perf/react19"] },
+  "discordEnv": "PERF_DISCORD_WEBHOOK"
+}

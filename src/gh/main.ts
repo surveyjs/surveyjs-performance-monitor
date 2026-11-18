@@ -4,7 +4,7 @@
 //   node src/gh/main.ts runner --plan <file> --dir <dir>
 //   node src/gh/main.ts tool --plan <file> --runner <dir> --logs <dir>
 //   node src/gh/main.ts measure --plan <file> --key <key> --runner <dir> --builds <dir> --out <dir> [--cores <list>]
-//   node src/gh/main.ts report --plan-dir <dir> --builds <dir> --measures <dir> --out <dir> [--jobs <file>] [--lib <dir>]
+//   node src/gh/main.ts report --plan-dir <dir> --builds <dir> --measures <dir> --out <dir> [--jobs <file>] [--lib <dir>] [--sibling <dir>]
 //   node src/gh/main.ts send --dir <dir> [--dry]
 //   node src/gh/main.ts history --from <dir> [--repo <dir>]
 // Exit codes: 0 done, 2 a usage error (or a plan that did not start), 1 a failure or a crash. No subcommand prints the
@@ -23,7 +23,7 @@ import { runReport } from "./report-job.ts";
 import type { JobInfo } from "./report-job.ts";
 import { sendOutbox } from "./send.ts";
 import { commitHistory } from "./history.ts";
-import { installTool, npmFor } from "../builds.ts";
+import { installTool, npmFor, siblingStubs } from "../builds.ts";
 import { chromePath } from "../overview.ts";
 import { loadProject, projectsDir } from "../project.ts";
 import type { Project } from "../project.ts";
@@ -38,7 +38,7 @@ const VALUED: Record<string, string[]> = {
   runner: ["--plan", "--dir"],
   tool: ["--plan", "--runner", "--logs"],
   measure: ["--plan", "--key", "--runner", "--builds", "--out", "--cores"],
-  report: ["--plan-dir", "--builds", "--measures", "--out", "--jobs", "--lib"],
+  report: ["--plan-dir", "--builds", "--measures", "--out", "--jobs", "--lib", "--sibling"],
   send: ["--dir"],
   history: ["--from", "--repo"],
 };
@@ -101,6 +101,12 @@ function libUrl(env: NodeJS.ProcessEnv, p: Project): string {
   return env.PERF_LIB_URL || p.repo;
 }
 
+// The clone URL of the library repository of a two-repo project; PERF_SIBLING_URL overrides it (tests).
+export function siblingUrl(env: NodeJS.ProcessEnv, p: Project): string {
+  if (!p.library) throw new UsageError("a one-repo project has no library repository");
+  return env.PERF_SIBLING_URL || p.library.repo;
+}
+
 function messageOf(e: unknown): string {
   return (e as Error) && (e as Error).message ? (e as Error).message : String(e);
 }
@@ -135,7 +141,12 @@ function cmdPlan(a: Args, env: NodeJS.ProcessEnv): number {
     const lib = path.join(a.values["--work"], "lib");
     fs.mkdirSync(a.values["--work"], { recursive: true });
     cloneBlobless(libUrl(env, project), lib);
-    const plan = makePlan(inputs, { project: project, repo: lib, runnerDir: a.values["--runner-dir"], start: new Date() });
+    let sibling: string | undefined;
+    if (project.library) {
+      sibling = path.join(a.values["--work"], "sibling");
+      cloneBlobless(siblingUrl(env, project), sibling);
+    }
+    const plan = makePlan(inputs, { project: project, repo: lib, sibling: sibling, runnerDir: a.values["--runner-dir"], start: new Date() });
     fs.mkdirSync(out, { recursive: true });
     const outputs = planOutputs(plan, { project: project, runnerDir: a.values["--runner-dir"], home: env.HOME || os.homedir(), node: process.versions.node });
     writeJsonAtomic(path.join(out, "plan.json"), plan);
@@ -159,7 +170,13 @@ async function cmdBuild(a: Args, env: NodeJS.ProcessEnv): Promise<number> {
   const project = projectOf(env, plan.project);
   const repo = path.join(a.values["--work"], "repo");
   fetchCommit(libUrl(env, project), spec.sha, repo);
-  const rec = await buildRole({ plan: plan, project: project, role: role, repo: repo, work: a.values["--work"], out: a.values["--out"] });
+  let libRepo: string | undefined;
+  if (project.library) {
+    if (!spec.lib) throw new UsageError("the plan has no library commit for " + role);
+    libRepo = path.join(a.values["--work"], "sibling-repo");
+    fetchCommit(siblingUrl(env, project), spec.lib.sha, libRepo);
+  }
+  const rec = await buildRole({ plan: plan, project: project, role: role, repo: repo, libRepo: libRepo, work: a.values["--work"], out: a.values["--out"] });
   if (rec.failed) console.error(role + " build failed: " + rec.failed);
   return rec.failed && role === plan.specs[0].role ? 1 : 0;
 }
@@ -167,6 +184,7 @@ async function cmdBuild(a: Args, env: NodeJS.ProcessEnv): Promise<number> {
 function cmdRunner(a: Args, env: NodeJS.ProcessEnv): number {
   const plan = readPlan(a.values["--plan"]);
   checkoutAt(libUrl(env, projectOf(env, plan.project)), plan.runnerSha, a.values["--dir"]);
+  siblingStubs(a.values["--dir"], plan.manifest);
   return 0;
 }
 
@@ -270,11 +288,24 @@ async function cmdReport(a: Args, env: NodeJS.ProcessEnv): Promise<number> {
       console.error("warning: no commit list: " + messageOf(e));
     }
   }
+  let sibling: string | undefined;
+  if (plan && a.values["--sibling"]) {
+    const project = projectOf(env, plan.project);
+    if (project.library) {
+      try {
+        cloneBlobless(siblingUrl(env, project), a.values["--sibling"]);
+        sibling = a.values["--sibling"];
+      } catch(e) {
+        console.error("warning: no library commit list: " + messageOf(e));
+      }
+    }
+  }
   const runUrl = (env.GITHUB_SERVER_URL || "https://github.com") + "/" + (env.GITHUB_REPOSITORY || "") + "/actions/runs/" + (env.GITHUB_RUN_ID || "");
   const k = await runReport({
     planDir: a.values["--plan-dir"], buildsDir: a.values["--builds"], measuresDir: a.values["--measures"], out: a.values["--out"],
     results: { plan: env.RESULT_PLAN || "", buildToday: env.RESULT_BUILD_TODAY || "", buildOlder: env.RESULT_BUILD_OLDER || "", measure: env.RESULT_MEASURE || "" },
-    kind: "nightly", runUrl: runUrl, projectsDir: projectsDir(env), now: new Date(), jobs: readJobs(a.values["--jobs"]), lib: lib,
+    kind: "nightly", project: (plan && plan.project) || env.PERF_PROJECT || "survey-library", runUrl: runUrl, projectsDir: projectsDir(env), now: new Date(),
+    jobs: readJobs(a.values["--jobs"]), lib: lib, sibling: sibling,
     // Chromium under Playwright's own folder; a test points PERF_CHROME_ROOT elsewhere.
     chrome: chromePath(env.PERF_CHROME_ROOT),
   });

@@ -13,6 +13,7 @@ import type { RunPlan } from "../../src/gh/plan.ts";
 import type { Role } from "../../src/versions.ts";
 import { writeJsonAtomic } from "../../src/util/json.ts";
 import { fakePlan } from "../helpers/plan.ts";
+import { repoWith } from "../helpers/repo.ts";
 import { result } from "../helpers/result.ts";
 
 const root = path.resolve(import.meta.dirname, "../..");
@@ -69,7 +70,7 @@ beforeEach(() => {
   plan = fakePlan({ suites: ["core"], jobs: full.jobs.filter((j) => j.suite === "core") });
   writeJson(planDir + "/plan.json", plan);
   for (const s of plan.specs) record(s.role, { sha: s.sha });
-  base = { planDir: planDir, buildsDir: buildsDir, measuresDir: measuresDir, out: out, results: ok4, kind: "nightly", runUrl: url,
+  base = { planDir: planDir, buildsDir: buildsDir, measuresDir: measuresDir, out: out, results: ok4, kind: "nightly", project: "survey-library", runUrl: url,
     projectsDir: path.join(root, "projects"), now: new Date("2026-11-17T01:30:00Z"), chrome: null };
 });
 
@@ -90,13 +91,13 @@ describe("runReport", () => {
   test("no plan: cancelled, not started with the reason, or the plan job failed", async () => {
     fs.rmSync(planDir + "/plan.json");
     expect(await runReport({ ...base, results: { ...ok4, plan: "cancelled" } })).toBe("cancelled");
-    expect(content()).toBe("⛔ perf nightly cancelled before measuring\n<" + url + ">");
+    expect(content()).toBe("⛔ perf survey-library nightly cancelled before measuring\n<" + url + ">");
     writeJson(planDir + "/failure.json", { reason: "unknown suite `x`" });
     expect(await runReport(base)).toBe("not started");
-    expect(content()).toBe("❌ perf nightly not started: unknown suite x\n<" + url + ">");
+    expect(content()).toBe("❌ perf survey-library nightly not started: unknown suite x\n<" + url + ">");
     fs.rmSync(planDir + "/failure.json");
-    await runReport(base);
-    expect(content()).toBe("❌ perf nightly not started: the plan job failed\n<" + url + ">");
+    await runReport({ ...base, project: "survey-creator" });
+    expect(content()).toBe("❌ perf survey-creator nightly not started: the plan job failed\n<" + url + ">");
   });
 
   test("today's build failed: today's infra message with the log attached", async () => {
@@ -104,20 +105,20 @@ describe("runReport", () => {
     fs.mkdirSync(buildsDir + "/buildlog-today/logs", { recursive: true });
     fs.writeFileSync(buildsDir + "/buildlog-today/logs/build-today-survey-core.log", "boom\n");
     expect(await runReport(base)).toBe("build failed");
-    expect(content()).toBe("❌ nightly · `111111111` · today build failed: survey-core does not build\n<" + url + ">");
+    expect(content()).toBe("❌ survey-library nightly · `111111111` · today build failed: survey-core does not build\n<" + url + ">");
     expect(read(out + "/discord/1-result/files.txt")).toBe("build-today-survey-core.log\n");
   });
 
   test("cancelled before today's build was ready", async () => {
     fs.rmSync(buildsDir + "/buildlog-today", { recursive: true });
     await runReport({ ...base, results: { ...ok4, buildToday: "cancelled" } });
-    expect(content()).toBe("⛔ perf nightly " + plan.runId + ": cancelled before measuring\n<" + url + ">");
+    expect(content()).toBe("⛔ perf survey-library nightly " + plan.runId + ": cancelled before measuring\n<" + url + ">");
   });
 
   test("the report: one message, the suites' md, cells.json, the tarball and history", async () => {
     allMeasured();
     expect(await runReport(base)).toBe("report");
-    expect(content().split("\n")).toEqual(["🔺 nightly", "run: <" + url + ">", expect.stringMatching(/^\*\*core\*\* /), "overview.png failed"]);
+    expect(content().split("\n")).toEqual(["🔺 survey-library nightly", "run: <" + url + ">", expect.stringMatching(/^\*\*core\*\* /), "overview.png failed"]);
     expect(read(out + "/core.md")).toContain("## Repeats");
     const cells = readJson(out + "/cells.json") as CellsFile;
     expect(cells.cells.find((c) => c.id === "a/one" && c.role === "yesterday")).toMatchObject({ verdict: "up", rerun: "confirmed",
@@ -127,11 +128,25 @@ describe("runReport", () => {
     expect(execFileSync("tar", ["-tzf", out + "/results.tar.gz"], { encoding: "utf8" })).toContain("measure-core-a_one/yesterday/today-1.json");
   });
 
+  test("a Creator night lists the library commits between yesterday's and today's library shas", async () => {
+    const sibling = repoWith([1, 2, 3].map((n: number) => ({ date: "2026-11-1" + n + "T12:00:00Z", subject: "lib change " + n })));
+    const shas = execFileSync("git", ["log", "--reverse", "--format=%H"], { cwd: sibling, encoding: "utf8" }).trim().split("\n");
+    const creatorPlan: RunPlan = { ...plan, project: "survey-creator", specs: plan.specs.map((s) => ({ ...s, lib: { sha: s.role === "today" ? shas[2] : shas[0], date: s.date } })) };
+    writeJson(planDir + "/plan.json", creatorPlan);
+    allMeasured();
+    await runReport({ ...base, project: "survey-creator", sibling: sibling });
+    const titles = (): string[] => ((readJson(out + "/discord/1-result/payload.json") as { embeds: Array<{ title: string }> }).embeds || []).map((e) => e.title);
+    expect(titles()).toContain("survey-library commits since yesterday (2)");
+    fs.rmSync(out, { recursive: true, force: true });
+    await runReport({ ...base, project: "survey-creator" });
+    expect(titles().some((t: string) => /survey-library commits/.test(t))).toBe(false);
+  });
+
   test("a worker that left nothing: warning, not run (worker failed), a note with the job's link", async () => {
     measure("core", "a/one", { today: 131, yesterday: 100 });
     measure("core", "b/three", { today: 100 });
     await runReport({ ...base, jobs: [{ name: "measure core-a_two", html_url: url + "/job/7", conclusion: "failure" }] });
-    expect(content()).toMatch(/^⚠️ nightly\n/);
+    expect(content()).toMatch(/^⚠️ survey-library nightly\n/);
     expect(content()).toContain("not run (worker failed): core a/two <" + url + "/job/7>");
     expect(read(out + "/core.md")).toContain("not run (worker failed)");
   });

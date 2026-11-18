@@ -23,15 +23,15 @@ const embedText = (m: ReturnType<typeof make>) => m.payload.embeds.map((e) => (e
 
 describe("reportMessage", () => {
   test("content is the icon and the kind", () => {
-    expect(make().payload.content).toBe("📊 nightly");
-    expect(make({ notes: ["a", "b"] }).payload.content).toBe("📊 nightly\na\nb");
+    expect(make().payload.content).toBe("📊 survey-library nightly");
+    expect(make({ notes: ["a", "b"] }).payload.content).toBe("📊 survey-library nightly\na\nb");
   });
   test("icons: 🔺 slower than yesterday, ⚠️ for failures and it wins", () => {
-    expect(make({ matrices: [matrix("core", { up: { yesterday: 1 } })] }).payload.content).toBe("🔺 nightly");
-    expect(make({ matrices: [matrix("core", { up: { week: 1 } })] }).payload.content).toBe("📊 nightly");
-    expect(make({ matrices: [matrix("core", { na: { week: { x: 1 } } })] }).payload.content).toBe("📊 nightly");
+    expect(make({ matrices: [matrix("core", { up: { yesterday: 1 } })] }).payload.content).toBe("🔺 survey-library nightly");
+    expect(make({ matrices: [matrix("core", { up: { week: 1 } })] }).payload.content).toBe("📊 survey-library nightly");
+    expect(make({ matrices: [matrix("core", { na: { week: { x: 1 } } })] }).payload.content).toBe("📊 survey-library nightly");
     const bad: Array<Partial<SuiteMatrix>> = [{ failed: [{ role: "week" as const, kind: "build failed" as const, reason: "r" }] }, { failedToday: [{ id: "a", error: "e" }] }, { incomplete: { week: 1 } }, { notRun: ["month" as const] }];
-    for (const b of bad) expect(make({ matrices: [matrix("core", { up: { yesterday: 1 }, ...b })] }).payload.content).toBe("⚠️ nightly");
+    for (const b of bad) expect(make({ matrices: [matrix("core", { up: { yesterday: 1 }, ...b })] }).payload.content).toBe("⚠️ survey-library nightly");
   });
   test("overview.png is the first attachment, then a file per suite", () => {
     const files = ["overview.png", "core.md", "react.md", "survey-js-ui.md", "results.tar.gz"];
@@ -52,7 +52,7 @@ describe("reportMessage", () => {
     for (const s of specs) expect(e.description).toContain(other.repo + "/commit/" + s.sha);
     expect(e.description).toContain("12.11.2026");
     expect(e.description).toContain("13.10.2026");
-    expect(m.payload.content).toBe("📊 nightly");
+    expect(m.payload.content).toBe("📊 other nightly");
   });
   test("commits embed", () => {
     const commits = Array.from({ length: 20 }, (_, i) => ({ sha: "e".repeat(40), pr: 100 + i, title: "t" + i, url: "https://x/" + i }));
@@ -94,7 +94,7 @@ describe("reportMessage", () => {
       "`manyPages/pages/validate` 240 ms · y 🔴 +27%",
       "`records-10k/output/dispose` 240 ms · y 🔴 work: expressionRuns 0 → 12 · w −4%"
     ]);
-    expect(r.payload.content).toBe("🔺 nightly");
+    expect(r.payload.content).toBe("🔺 survey-library nightly");
   });
   test("limits hold for a huge report", () => {
     const mats = ["core", "react", "survey-js-ui", "vue3", "angular"].map((s) => matrix(s, {
@@ -119,7 +119,7 @@ describe("reportMessage", () => {
     expect(e.description).toContain("**week: build failed**");
     expect(e.description).toContain("ERR! y");
     expect(r.payload.attachments![3].filename).toBe("build-week-survey-core.log");
-    expect(r.payload.content).toBe("⚠️ nightly");
+    expect(r.payload.content).toBe("⚠️ survey-library nightly");
   });
   test("a failed suite is headed suite failed", () => {
     const m = matrix("core", { failed: [{ role: "month", kind: "suite failed", reason: "exit 1", log: "/x/suite-core-month.log" }] });
@@ -128,9 +128,9 @@ describe("reportMessage", () => {
   });
   test("the dependency changes of today against yesterday are a line of content, not of the builds embed", () => {
     const m = make({ notes: ["stopped by a signal: 5 of 12 runs not run"], depsNote: "rollup 4.34.8 -> 4.35.0, +left_pad@1.3.0" });
-    expect(m.payload.content).toBe("📊 nightly\nstopped by a signal: 5 of 12 runs not run\ndeps vs yesterday: rollup 4.34.8 -\\> 4.35.0, +left\\_pad@1.3.0");
+    expect(m.payload.content).toBe("📊 survey-library nightly\nstopped by a signal: 5 of 12 runs not run\ndeps vs yesterday: rollup 4.34.8 -\\> 4.35.0, +left\\_pad@1.3.0");
     expect(embedText(m)).not.toContain("rollup");
-    expect(make().payload.content).toBe("📊 nightly");
+    expect(make().payload.content).toBe("📊 survey-library nightly");
   });
   test("notes are shown", () => {
     expect(make({ notes: ["cancelled: 2 scenarios not measured"] }).payload.content.split("\n")[1]).toBe("cancelled: 2 scenarios not measured");
@@ -148,5 +148,28 @@ describe("messages on disk", () => {
     expect(fs.readFileSync(path.join(out, "files.txt"), "utf8")).toBe("a.txt\n");
     expect(JSON.parse(fs.readFileSync(path.join(out, "payload.json"), "utf8")).attachments).toEqual([{ id: 0, filename: "a.txt" }]);
     expect(fs.readFileSync(path.join(out, "a.txt"), "utf8")).toBe("a");
+  });
+  test("a Creator night names both commits and lists both ranges", () => {
+    const creator = loadProject(path.join(import.meta.dirname, "..", "projects"), "survey-creator");
+    const lib = "f".repeat(40);
+    const withLib = specs.map((s) => ({ ...s, lib: { sha: lib, date: s.date } }));
+    const list = (tag: string) => Array.from({ length: 3 }, (_, i) => ({ sha: "e".repeat(40), pr: 100 + i, title: tag + i, url: "https://x/" + tag + i }));
+    const m = make({ project: creator, specs: withLib, commits: list("c"), libCommits: list("l") });
+    expect(m.payload.content).toBe("📊 survey-creator nightly");
+    const builds = m.payload.embeds[0].description as string;
+    expect(builds).toContain("library [" + lib.slice(0, 9) + "](https://github.com/surveyjs/survey-library/commit/" + lib + ")");
+    const titles = m.payload.embeds.map((e) => e.title);
+    expect(titles).toContain("Commits since yesterday (3)");
+    expect(titles).toContain("survey-library commits since yesterday (3)");
+  });
+  test("two commit lists leave room for the suites", () => {
+    const list = (tag: string) => Array.from({ length: 200 }, (_, i) => ({ sha: "e".repeat(40), pr: 1000 + i, title: tag + " a rather long commit subject number " + i, url: "https://github.com/surveyjs/survey-library/pull/" + i }));
+    const creator = loadProject(path.join(import.meta.dirname, "..", "projects"), "survey-creator");
+    const ms = ["a", "b", "c", "d", "e"].map((n) => matrix(n, { up: { yesterday: 20 }, rows: Array.from({ length: 20 }, (_, i) => hotRow("row " + n + i)) }));
+    const m = make({ project: creator, matrices: ms, commits: list("c"), libCommits: list("l") });
+    const total = m.payload.embeds.reduce((s, e) => s + (e.title || "").length + (e.description || "").length + (e.footer ? e.footer.text.length : 0), 0);
+    expect(total).toBeLessThanOrEqual(limits.total);
+    expect(m.payload.embeds.length).toBeLessThanOrEqual(limits.embeds);
+    for (const n of ["a", "b", "c", "d", "e"]) expect(m.payload.embeds.some((e) => (e.title || "").startsWith(n + " "))).toBe(true);
   });
 });

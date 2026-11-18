@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
 import { execFileSync } from "node:child_process";
-import { nightlyBuilds } from "../src/versions.ts";
+import { nightlyBuilds, pairedBuilds } from "../src/versions.ts";
 import { prOf, commitRange } from "../src/pr.ts";
 import { InfraError } from "../src/errors.ts";
 import { git } from "../src/util/git.ts";
@@ -101,5 +101,43 @@ describe("pr", () => {
     const url = "https://github.com/acme/widgets";
     expect(prOf("abc", "fix: x (#12)", undefined, url).url).toBe(url + "/pull/12");
     expect(prOf("abc", "plain", undefined, url).url).toBe(url + "/commit/abc");
+  });
+});
+
+describe("pairedBuilds", () => {
+  const d0 = Date.UTC(2026, 10, 11);
+  const at = (hours: number): string => new Date(d0 - hours * 3600000).toISOString().replace(/\.\d+Z$/, "Z");
+  const repoAt = (hs: Array<number>): string => repoWith(hs.map((h: number, i: number) => ({ date: at(h), subject: "c" + i })));
+  const shas = (repo: string): Array<string> => git(repo, ["log", "--reverse", "--format=%H"]).split("\n");
+
+  test("paired: each role takes the library commit of its own cut-off", () => {
+    const creator = repoAt([40 * 24, 10 * 24, 26, 2]);
+    const lib = repoAt([35 * 24, 8 * 24, 25, 1]);
+    const libSha = shas(lib);
+    const p = pairedBuilds(creator, lib, start, "master", "master");
+    expect(p.map((s) => s.role)).toEqual(["today", "yesterday", "week", "month"]);
+    expect(p.map((s) => s.lib!.sha)).toEqual([libSha[3], libSha[2], libSha[1], libSha[0]]);
+    expect(p[0].lib!.date).toBe(git(lib, ["log", "-1", "--format=%cI", libSha[3]]));
+  });
+
+  test("paired: sameAs needs both repos unchanged", () => {
+    const creator = repoAt([40 * 24, 10 * 24]);
+    const libMoved = pairedBuilds(creator, repoAt([40 * 24, 10 * 24, 1]), start, "master", "master");
+    expect(libMoved.find((s) => s.role === "today")!.sameAs).toBeUndefined();
+    expect(libMoved.find((s) => s.role === "yesterday")!.sameAs).toBeUndefined();
+
+    const creatorMoved = pairedBuilds(repoAt([40 * 24, 10 * 24, 1]), repoAt([40 * 24, 10 * 24]), start, "master", "master");
+    expect(creatorMoved.find((s) => s.role === "yesterday")!.sameAs).toBeUndefined();
+
+    const same = pairedBuilds(creator, repoAt([40 * 24, 10 * 24]), start, "master", "master");
+    expect(same.find((s) => s.role === "today")!.sameAs).toBeUndefined();
+    expect(same.find((s) => s.role === "yesterday")!.sameAs).toBe("today");
+    expect(same.find((s) => s.role === "week")!.sameAs).toBe("today");
+  });
+
+  test("paired: a role whose cut-off has no library commit is left out", () => {
+    const creator = repoAt([40 * 24, 10 * 24, 26, 2]);
+    const youngLib = repoAt([5 * 24, 1]);
+    expect(pairedBuilds(creator, youngLib, start, "master", "master").map((s) => s.role)).toEqual(["today", "yesterday"]);
   });
 });

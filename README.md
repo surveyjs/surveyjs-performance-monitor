@@ -1,14 +1,20 @@
 # surveyjs-performance-monitor
 
-The nightly performance report of survey-library, run on GitHub Actions (`.github/workflows/night.yml`, code in
-`src/gh/`).
+The nightly performance reports of survey-library and survey-creator, run on GitHub Actions
+(`.github/workflows/night.yml`, code in `src/gh/`).
 
 ## What the night does
 
-Every night it builds four versions of the project: today (midnight UTC of the run's day), yesterday, a week ago and a
-month ago. It measures them with the performance suites of the project's current `master` (the runner contract,
-`perf/CONTRACT.md` there; only `contract === 2` and `resultSchema === 2` are accepted) and posts one report to Discord:
-for each scenario, how much today's build changed against the three older ones.
+One workflow, two nights: survey-library at 01:00 UTC and survey-creator at 03:00 UTC (the project of a run is in its
+name and in `PERF_PROJECT`). A Creator build pairs each survey-creator commit with the survey-library commit of the same
+midnight-UTC cut-off, so the Creator is always measured against the library of its own day.
+
+Every night it builds four versions of the project: today (midnight UTC of the run's day), yesterday, a week ago and
+a month ago (for survey-creator, each version is a pair of commits). It measures them with the performance suites of
+the project's current `master` (the runner contract, `perf/CONTRACT.md` there) and posts one report to Discord: for
+each scenario, how much today's build changed against the three older ones. The accepted contracts: survey-library's
+runner contract 2, and survey-creator's own contract 1 (`product: "creator"`, its `perf/CONTRACT.md`); result schema 2
+for both.
 
 - Jobs: `plan` decides the builds and the measuring jobs; `build-today` and `build-older` build the commits; `tool`
   prepares the runner; `measure` runs one job per scenario, each on its own worker; `report` writes the one Discord
@@ -29,7 +35,8 @@ The `post` job runs no library code, and the webhook secret is only in its send 
 
 1. Settings → Secrets and variables → Actions → repository secret `PERF_DISCORD_WEBHOOK`: the webhook of the channel.
 2. Settings → Actions → General → Workflow permissions: "Read and write" (the `history` job pushes a branch).
-3. Repository variable `PERF_SCHEDULE` = `on` starts the schedule (01:00 UTC). A run by hand works regardless.
+3. Repository variable `PERF_SCHEDULE` = `on` starts both schedules (01:00 UTC survey-library, 03:00 UTC
+   survey-creator). A run by hand works regardless.
 
 ## Running by hand
 
@@ -37,18 +44,22 @@ Actions → night → Run workflow, or:
 
 ```bash
 gh workflow run night.yml
+gh workflow run night.yml -f project=survey-creator
 gh workflow run night.yml -f dry-post=true
 ```
 
-A run by hand is a whole night, every suite and every scenario. Its only input, `dry-post`, builds the message and
-prints it instead of posting it.
+A run by hand is a whole night, every suite and every scenario. Its inputs: `project` (`survey-library`, the default, or
+`survey-creator`) and `dry-post`, which builds the message and prints it instead of posting it.
 
 ## What the report has
 
-One Discord message per run. Its first line is `📊 nightly`, `🔺 nightly` (something got slower against yesterday) or
-`⚠️ nightly` (a build or suite failed, a scenario failed on today, or something is incomplete or not run), then notes:
+One Discord message per run. Its first line is `📊 <project> nightly`, `🔺 <project> nightly` (something got slower
+against yesterday) or `⚠️ <project> nightly` (a build or suite failed, a scenario failed on today, or something is
+incomplete or not run), then notes:
 `cancelled: N scenarios not measured`, `not run (worker failed): <suite> <id> <job url>, ...` and `run: <url>`, and a `deps vs yesterday: ...` line when the dependencies changed.
-Embeds: the builds (four commits with links and dates), the commits since yesterday (PR numbers and titles), and one
+Embeds: the builds (four commits with links and dates; for survey-creator each build names both commits, the creator
+commit and the survey-library commit it was paired with), the commits since yesterday (PR numbers and titles; for
+survey-creator a second list, "survey-library commits since yesterday (N)"), and one
 embed per suite only when something is highlighted against yesterday or a column failed.
 
 Attachments, in this order:
@@ -101,5 +112,5 @@ npm run lint && npm run typecheck
 
 The code is TypeScript that Node runs directly (type stripping): no build step, no runtime dependency. The night pins
 Node 24.15.0; local development needs Node 24 (`package.json` allows 22.18 and later). CI
-(`.github/workflows/ci.yml`) runs actionlint, lint, typecheck and the unit tests. `test/testdata/` holds a real manifest and result file of survey-library; `test/fixtures/` holds a fake runner and a
+(`.github/workflows/ci.yml`) runs actionlint, lint, typecheck and the unit tests. `test/testdata/` holds a real manifest and result file of survey-library and the real manifest of survey-creator (`test/testdata/creator-manifest.json`); `test/fixtures/` holds a fake runner, a fake creator runner (`test/fixtures/fake-creator`) and a
 fake project.

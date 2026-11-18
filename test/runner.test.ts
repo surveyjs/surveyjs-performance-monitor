@@ -51,6 +51,13 @@ async function waitFor(check: () => boolean, ms: number = 10000): Promise<void> 
 }
 
 describe("suiteEnv", () => {
+  test("suiteEnv sets the extra variables", () => {
+    const env = suiteEnv({ PERF_LIB_UI_DIR: "old" }, params("/f", { extra: { PERF_CREATOR_CORE_DIR: "/b/cc", PERF_LIB_COMMIT: "c" } }));
+    expect(env.PERF_CREATOR_CORE_DIR).toBe("/b/cc");
+    expect(env.PERF_LIB_COMMIT).toBe("c");
+    expect(env.PERF_LIB_UI_DIR).toBeUndefined();
+  });
+
   test("suiteEnv sets the contract variables and drops inherited ones", () => {
     const env = suiteEnv({ PERF_ONLY: "x", PERF_UI_DIR: "y", PERF_UNKNOWN: "z", PATH: "p" }, params("/o/core-today.json"));
     expect(env.PERF_ONLY).toBeUndefined();

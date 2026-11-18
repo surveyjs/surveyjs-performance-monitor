@@ -5,6 +5,9 @@ import path from "node:path";
 import { recordOf, readRecord, buildFromRecord, suiteOutcomes, buildRole, RECORD } from "../../src/gh/build.ts";
 import type { BuildRecord } from "../../src/gh/build.ts";
 import { loadProject } from "../../src/project.ts";
+import { checkManifest } from "../../src/contract.ts";
+import type { Manifest } from "../../src/contract.ts";
+import { jobsOf } from "../../src/gh/plan.ts";
 import type { BuildSpec, Role } from "../../src/versions.ts";
 import { git } from "../../src/util/git.ts";
 import { repoWith } from "../helpers/repo.ts";
@@ -47,6 +50,16 @@ describe("build records", () => {
   test("buildFromRecord resolves under the download folder", () => {
     expect(buildFromRecord(rec, "/d/build-today").core).toBe("/d/build-today/survey-core");
     expect(buildFromRecord(rec, "/d/build-today").ui.react).toBe("/d/build-today/survey-react-ui");
+  });
+
+  test("recordOf and buildFromRecord keep the targets and the library commit", () => {
+    const r = recordOf({ role: "today", sha: "1".repeat(40), core: "/w/b/survey-core", ui: {}, uiMissing: {}, uiFailed: {}, logs: [], deps: [], node: "v24.15.0",
+      lib: "9".repeat(40), targets: { core: { PERF_CORE_DIR: "/w/b/survey-core", PERF_CREATOR_CORE_DIR: "/w/b/survey-creator-core" } } }, 1);
+    expect(r.lib).toBe("9".repeat(40));
+    expect(r.targets).toEqual({ core: { PERF_CORE_DIR: "survey-core", PERF_CREATOR_CORE_DIR: "survey-creator-core" } });
+    const b = buildFromRecord(r, "/d/build-today");
+    expect(b.lib).toBe("9".repeat(40));
+    expect(b.targets).toEqual({ core: { PERF_CORE_DIR: "/d/build-today/survey-core", PERF_CREATOR_CORE_DIR: "/d/build-today/survey-creator-core" } });
   });
 
   test("readRecord: undefined when the file is absent or unreadable", () => {
@@ -99,5 +112,25 @@ describe("buildRole", () => {
     expect(rec.log).toBe("build-today-survey-core.log");
     expect(fs.existsSync(path.join(out, "logs", rec.log as string))).toBe(true);
     expect(readRecord(out)?.failed).toBe("survey-core does not build");
+  });
+});
+
+describe("buildRole, a Creator role", () => {
+  test("builds a Creator role", async () => {
+    const date = "2026-11-16T12:00:00Z";
+    const pkg = (name: string): string => JSON.stringify({ name: name, scripts: { build: "true" } });
+    const creatorRepo = repoWith([{ date: date, subject: "c", files: { "packages/survey-creator-react/package.json": pkg("survey-creator-react") } }], { coreDir: "packages/survey-creator-core" });
+    const libRepo = repoWith([{ date: date, subject: "l", files: libraryFiles }]);
+    cleanup.push(creatorRepo, libRepo);
+    const manifest = checkManifest(JSON.parse(fs.readFileSync(path.join(root, "test/testdata/creator-manifest.json"), "utf8")), "creator-manifest.json", "creator") as Manifest;
+    const suites = ["core"];
+    const plan = fakePlan({ project: "survey-creator", manifest: manifest, suites: suites, jobs: jobsOf(manifest, suites),
+      specs: [{ role: "today", sha: git(creatorRepo, ["rev-parse", "HEAD"]), date: date, lib: { sha: git(libRepo, ["rev-parse", "HEAD"]), date: date } }] });
+    const out = path.join(tmp(), "out");
+    const rec = await buildRole({ plan: plan, project: loadProject(path.join(root, "projects"), "survey-creator"), role: "today", repo: creatorRepo, libRepo: libRepo, work: tmp(), out: out, npm: fakeNpm() });
+    expect(rec.failed).toBeUndefined();
+    expect(rec.lib).toBe(plan.specs[0].lib!.sha);
+    expect(rec.targets!.core).toEqual({ PERF_CORE_DIR: "survey-core", PERF_CREATOR_CORE_DIR: "survey-creator-core" });
+    expect(fs.existsSync(path.join(out, "build", "survey-creator-core", "package.json"))).toBe(true);
   });
 });

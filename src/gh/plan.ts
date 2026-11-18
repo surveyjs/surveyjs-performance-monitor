@@ -1,9 +1,9 @@
 // The plan job of the GitHub workflow: which builds the run measures, which scenario jobs it fans out to, and the
 // outputs the other jobs read.
 import * as path from "node:path";
-import { nightlyBuilds } from "../versions.ts";
+import { nightlyBuilds, pairedBuilds } from "../versions.ts";
 import type { BuildSpec } from "../versions.ts";
-import { loadManifest, suitesOf, isBrowser } from "../contract.ts";
+import { loadManifest, suitesOf, isBrowser, expectedProduct } from "../contract.ts";
 import type { Manifest } from "../contract.ts";
 import type { Project } from "../project.ts";
 import { git } from "../util/git.ts";
@@ -71,14 +71,20 @@ export function runIdOf(start: Date, sha: string, kind: string): string {
 }
 
 // Decides the night: the builds, the runner (checked out as a worktree of `repo` in runnerDir, whose manifest lists
-// the scenarios) and one job per scenario of every suite.
-export function makePlan(i: Inputs, o: { project: Project, repo: string, runnerDir: string, start: Date }): RunPlan {
+// the scenarios) and one job per scenario of every suite. A two-repo project also needs `sibling`, the library clone.
+export function makePlan(i: Inputs, o: { project: Project, repo: string, sibling?: string, runnerDir: string, start: Date }): RunPlan {
   const branch = o.project.branch;
-  const specs = nightlyBuilds(o.repo, o.start, branch);
+  let specs: BuildSpec[];
+  if (o.project.library) {
+    if (!o.sibling) throw new UsageError("a two-repo project needs the library clone");
+    specs = pairedBuilds(o.repo, o.sibling, o.start, branch, o.project.library.branch);
+  } else {
+    specs = nightlyBuilds(o.repo, o.start, branch);
+  }
   if (specs.length === 0 || specs[0].role !== "today") throw new InfraError("no commit of origin/" + branch + " before midnight UTC");
   const runnerSha = git(o.repo, ["rev-parse", "--verify", "origin/" + branch + "^{commit}"]);
   git(o.repo, ["worktree", "add", "--detach", "--", o.runnerDir, runnerSha]);
-  const manifest = loadManifest(o.runnerDir);
+  const manifest = loadManifest(o.runnerDir, expectedProduct(o.project));
   const suites = suitesOf(manifest);
   const jobs = jobsOf(manifest, suites);
   checkLimit(jobs.length, specs.filter((s: BuildSpec) => !s.sameAs).length);
@@ -113,7 +119,7 @@ export function planOutputs(p: RunPlan, o: { project: Project, runnerDir: string
     reference: JSON.stringify({ role: first.role, sha: first.sha }),
     older: JSON.stringify(older),
     runner_sha: p.runnerSha,
-    cache_key: "tool-linux-node" + o.node + "-" + p.runnerSha,
+    cache_key: "tool-" + o.project.name + "-linux-node" + o.node + "-" + p.runnerSha,
     cache_paths: cachePaths(o.runnerDir, o.project, o.home).join("\n"),
   };
 }

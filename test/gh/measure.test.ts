@@ -93,6 +93,21 @@ describe("measureScenario", () => {
     expect(readJson(path.join(s.out, "pair.json"), null)).toEqual(pf);
   });
 
+  test("a Creator build passes its targets and the library commit", async () => {
+    const lib = "9".repeat(40);
+    const s = setup({ record: (r: BuildRecord) => ({ ...r, lib: lib, targets: { core: { PERF_CORE_DIR: "survey-core", PERF_CREATOR_CORE_DIR: "survey-creator-core" } } }) });
+    await measureScenario(s.opts);
+    const first = readJson(path.join(s.out, "yesterday", "today-1.json"), null) as { fake: { env: Record<string, string> } };
+    expect(first.fake.env).toEqual({ PERF_CREATOR_CORE_DIR: path.join(s.builds, "build-today", "survey-creator-core"), PERF_LIB_COMMIT: lib });
+  });
+
+  test("a library build record (no targets, no lib) passes no variables", async () => {
+    const s = setup();
+    await measureScenario(s.opts);
+    const first = readJson(path.join(s.out, "yesterday", "today-1.json"), null) as { fake: { env: Record<string, string> } };
+    expect(first.fake.env).toEqual({});
+  });
+
   test("a failed run of the older build stops its pair, and the next pair runs", async () => {
     const s = setup({ fake: { ["3".repeat(40)]: { results: [], failed: [{ id: "a/one", error: "killed after 300 s" }] } } });
     const pf = await measureScenario(s.opts);

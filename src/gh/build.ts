@@ -2,7 +2,7 @@
 // job use it without the build folders' original paths.
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { buildAt, npmFor } from "../builds.ts";
+import { buildAt, buildPairAt, npmFor } from "../builds.ts";
 import type { Build, Npm } from "../builds.ts";
 import type { Project } from "../project.ts";
 import type { Outcome } from "../report.ts";
@@ -25,6 +25,9 @@ export interface BuildRecord {
   deps: string[];
   node: string;
   sec: number;
+  // A two-repo build: the library commit, and per suite target variable -> folder name.
+  lib?: string;
+  targets?: Record<string, Record<string, string>>;
 }
 
 export const RECORD = "build-record.json";
@@ -40,6 +43,15 @@ export function recordOf(b: Build, sec: number): BuildRecord {
   }
   const rec: BuildRecord = { role: b.role, sha: b.sha, core: b.core === null ? null : path.basename(b.core), ui: ui,
     uiMissing: b.uiMissing, uiFailed: uiFailed, deps: b.deps, node: b.node, sec: sec };
+  if (b.lib) rec.lib = b.lib;
+  if (b.targets) {
+    const t: Record<string, Record<string, string>> = {};
+    for (const s of Object.keys(b.targets)) {
+      t[s] = {};
+      for (const v of Object.keys(b.targets[s])) t[s][v] = path.basename(b.targets[s][v]);
+    }
+    rec.targets = t;
+  }
   if (b.failed) {
     rec.failed = b.failed;
     if (b.logs.length > 0) rec.log = path.basename(b.logs[b.logs.length - 1]);
@@ -63,6 +75,15 @@ export function buildFromRecord(rec: BuildRecord, dir: string): Build {
   const b: Build = { role: rec.role, sha: rec.sha, core: rec.core === null ? null : path.join(dir, rec.core), ui: ui,
     uiMissing: rec.uiMissing, uiFailed: rec.uiFailed, logs: [], deps: rec.deps, node: rec.node };
   if (rec.failed) b.failed = rec.failed;
+  if (rec.lib) b.lib = rec.lib;
+  if (rec.targets) {
+    const t: Record<string, Record<string, string>> = {};
+    for (const s of Object.keys(rec.targets)) {
+      t[s] = {};
+      for (const v of Object.keys(rec.targets[s])) t[s][v] = path.join(dir, rec.targets[s][v]);
+    }
+    b.targets = t;
+  }
   return b;
 }
 
@@ -96,7 +117,7 @@ export function suiteOutcomes(specs: BuildSpec[], records: Partial<Record<Role, 
 
 // Builds `role` of the plan in `work` and writes the build folders and the record to <out>/build/, the record again to
 // <out>/build-record.json and the logs to <out>/logs/.
-export async function buildRole(o: { plan: RunPlan, project: Project, role: Role, repo: string, work: string, out: string, npm?: Npm }): Promise<BuildRecord> {
+export async function buildRole(o: { plan: RunPlan, project: Project, role: Role, repo: string, libRepo?: string, work: string, out: string, npm?: Npm }): Promise<BuildRecord> {
   const spec = o.plan.specs.find((s: BuildSpec) => s.role === o.role);
   if (!spec) throw new UsageError("the plan has no build " + o.role);
   const logs = path.join(o.out, "logs");
@@ -105,7 +126,14 @@ export async function buildRole(o: { plan: RunPlan, project: Project, role: Role
   const dest = path.join(o.out, "build");
   fs.mkdirSync(dest, { recursive: true });
   const t0 = Date.now();
-  const b = await buildAt({ work: o.work, dest: dest, repo: o.repo, logs: logs, npm: npm, m: o.plan.manifest, suites: o.plan.suites, project: o.project }, spec);
+  const bo = { work: o.work, dest: dest, repo: o.repo, logs: logs, npm: npm, m: o.plan.manifest, suites: o.plan.suites, project: o.project };
+  let b: Build;
+  if (o.project.library) {
+    if (!o.libRepo) throw new UsageError("a two-repo build needs the library repository");
+    b = await buildPairAt({ ...bo, libRepo: o.libRepo }, spec);
+  } else {
+    b = await buildAt(bo, spec);
+  }
   const rec = recordOf(b, Math.round((Date.now() - t0) / 100) / 10);
   writeJsonAtomic(path.join(dest, RECORD), rec);
   writeJsonAtomic(path.join(o.out, RECORD), rec);

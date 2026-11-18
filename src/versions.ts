@@ -11,6 +11,8 @@ export interface BuildSpec {
   // ISO date of the commit.
   date: string;
   sameAs?: Role;
+  // The survey-library commit of the same cut-off (a Creator night only).
+  lib?: { sha: string, date: string };
 }
 
 const DAY = 86400000;
@@ -40,7 +42,7 @@ function markSame(builds: Array<BuildSpec>): Array<BuildSpec> {
   return builds;
 }
 
-export function nightlyBuilds(repo: string, start: Date, branch: string): Array<BuildSpec> {
+function cutBuilds(repo: string, start: Date, branch: string): Array<BuildSpec> {
   const ref = requireBranch(repo, branch);
   const d0 = Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate());
   const builds: Array<BuildSpec> = [];
@@ -49,5 +51,26 @@ export function nightlyBuilds(repo: string, start: Date, branch: string): Array<
     const sha = git(repo, ["rev-list", "-1", "--first-parent", "--before=" + before, ref, "--"]);
     if (sha) builds.push(spec(repo, role, sha));
   }
-  return markSame(builds);
+  return builds;
+}
+
+// The nightly roles of one repo: the last first-parent commit before each cut-off; equal commits are marked sameAs.
+export function nightlyBuilds(repo: string, start: Date, branch: string): Array<BuildSpec> {
+  return markSame(cutBuilds(repo, start, branch));
+}
+
+// The nightly roles of repo with the same cut-offs applied to libRepo; a role is kept only when both repos have a
+// commit before its cut, and sameAs needs both the project commit and the library commit to be the same.
+export function pairedBuilds(repo: string, libRepo: string, start: Date, branch: string, libBranch: string): Array<BuildSpec> {
+  const libs = cutBuilds(libRepo, start, libBranch);
+  const builds: Array<BuildSpec> = [];
+  for (const b of cutBuilds(repo, start, branch)) {
+    const l = libs.find((e: BuildSpec) => e.role === b.role);
+    if (l) builds.push(Object.assign({}, b, { lib: { sha: l.sha, date: l.date } }));
+  }
+  builds.forEach((b: BuildSpec, i: number) => {
+    const first = builds.slice(0, i).find((e: BuildSpec) => e.sha === b.sha && e.lib!.sha === b.lib!.sha);
+    if (first) b.sameAs = first.role;
+  });
+  return builds;
 }

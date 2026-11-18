@@ -16,6 +16,8 @@ export interface SuiteParams {
   ref: string;
   targetCommit: string;
   only: Array<string> | null;
+  // Further variables of a two-repo build (the other targets, the library commit), set last.
+  extra?: Record<string, string>;
 }
 
 // Every inherited PERF_* is dropped, then the contract's variables of this job are set.
@@ -30,6 +32,7 @@ export function suiteEnv(base: NodeJS.ProcessEnv, p: SuiteParams): NodeJS.Proces
   env.PERF_REF = p.ref;
   env.PERF_TARGET_COMMIT = p.targetCommit;
   if (p.only) env.PERF_ONLY = p.only.join(",");
+  Object.assign(env, p.extra);
   return env;
 }
 
