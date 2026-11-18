@@ -1,0 +1,5869 @@
+{
+  "project": "survey-library",
+  "runId": "20261117T232013-598c0b1-nightly",
+  "kind": "nightly",
+  "start": "2026-11-17T23:20:13.191Z",
+  "repeats": 5,
+  "specs": [
+    {
+      "role": "today",
+      "sha": "50a7175e34f4ed7fd01e3b47d9d1cd2e868e0318",
+      "date": "2026-11-16T16:01:23+03:00"
+    },
+    {
+      "role": "yesterday",
+      "sha": "5f275a7d8daa4ae5a499c5d5302964474fd78e62",
+      "date": "2026-11-13T17:36:08+03:00"
+    },
+    {
+      "role": "week",
+      "sha": "d7f801866d9cca9cedf8ce155172020c9e52905c",
+      "date": "2026-11-09T16:28:02+03:00"
+    },
+    {
+      "role": "month",
+      "sha": "46bade337750a07a0c0795a337bd6a9d8045761d",
+      "date": "2026-10-17T21:54:43+04:00"
+    }
+  ],
+  "cells": [
+    {
+      "suite": "core",
+      "id": "calculations/answer/first",
+      "role": "today",
+      "median": 59.16
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/first",
+      "role": "yesterday",
+      "median": 58.75,
+      "delta": -0.003914893617021242,
+      "repeats": [
+        0.008683570684265396,
+        -0.005931198102016588,
+        -0.020910623946037044,
+        0.016963528413910023,
+        0.017132088401576206
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/first",
+      "role": "week",
+      "median": 58.02,
+      "delta": 0.019648397104446547,
+      "repeats": [
+        -0.0006912044237082915,
+        0.006464783940115515,
+        -0.01416666666666666,
+        0.011538461538461497,
+        0.040879422878735916
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/first",
+      "role": "month",
+      "median": 141.7,
+      "delta": -0.5766407904022582,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5797153536515238,
+        -0.5883265191033413,
+        -0.5824347332576618,
+        -0.5664497165651899,
+        -0.5731860757724032
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/next3",
+      "role": "today",
+      "median": 167.94
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/next3",
+      "role": "yesterday",
+      "median": 170.1,
+      "delta": -0.01998824221046447,
+      "repeats": [
+        -0.02008616674429431,
+        -0.01498308361527323,
+        -0.0012556053811659806,
+        -0.05079201101928388,
+        -0.033062645011601055
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/next3",
+      "role": "week",
+      "median": 168.72,
+      "delta": -0.0018373636794689618,
+      "repeats": [
+        0.011243346689791212,
+        0.0015431182859515502,
+        -0.003010448025500212,
+        -0.022186084330351963,
+        -0.030593417058508376
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/next3",
+      "role": "month",
+      "median": 409.52,
+      "delta": -0.5899101386989647,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.597262126077404,
+        -0.5951309028627355,
+        -0.5944071315178898,
+        -0.5868335040733694,
+        -0.5832221398566839
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/load/model",
+      "role": "today",
+      "median": 269.9
+    },
+    {
+      "suite": "core",
+      "id": "calculations/load/model",
+      "role": "yesterday",
+      "median": 274.615,
+      "delta": -0.00030952424303132275,
+      "repeats": [
+        -0.043560135015100365,
+        0.01578847969782826,
+        0.004510681293302454,
+        0.05049274720407482,
+        0.004166818962681562
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/load/model",
+      "role": "week",
+      "median": 269.255,
+      "delta": 0.006740821897457838,
+      "repeats": [
+        0.011283860771124976,
+        0.004186115433059134,
+        0.021201941022769732,
+        -0.012054814597684427,
+        0.0029540397452618716
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/load/model",
+      "role": "month",
+      "median": 938.56,
+      "delta": -0.7150102284350495,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7238947480558219,
+        -0.7097939262472885,
+        -0.7211796822940177,
+        -0.716064453125,
+        -0.7136962823469668
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/first",
+      "role": "today",
+      "median": 293.11
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/first",
+      "role": "yesterday",
+      "median": 294.02,
+      "delta": 0.010373443983402453,
+      "repeats": [
+        0.014137443536429872,
+        0.06438802525286791,
+        0.04567194341529146,
+        0.010760426304787352,
+        0.02554631131977758
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/first",
+      "role": "week",
+      "median": 293.29,
+      "delta": 0.005659927034675549,
+      "repeats": [
+        -0.0023820867079561436,
+        -0.02566233420868924,
+        0.012276823669443937,
+        0.05747494135210074,
+        0.025151839942836762
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/first",
+      "role": "month",
+      "median": 5561.33,
+      "delta": -0.9493790154513398,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.9490460340521972,
+        -0.949468651715011,
+        -0.9481432817817602,
+        -0.9495415235332079,
+        -0.9488047479555497
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/next3",
+      "role": "today",
+      "median": 528
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/next3",
+      "role": "yesterday",
+      "median": 529.78,
+      "delta": 0.0047189399373324115,
+      "repeats": [
+        -0.000684397635025924,
+        -0.003272851516840869,
+        -0.010822158278589122,
+        0.016642964215705103,
+        0.023734612813151257
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/next3",
+      "role": "week",
+      "median": 504.6,
+      "delta": 0.01553705905667857,
+      "repeats": [
+        0.052274456751500775,
+        0.0375683706493557,
+        -0.0688980196448411,
+        -0.049033014260597696,
+        0.0538234607466519
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/next3",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "timeout 300 s"
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/design",
+      "role": "today",
+      "median": 1255.98
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/design",
+      "role": "yesterday",
+      "median": 1256.52,
+      "delta": -0.0035415273931175273,
+      "repeats": [
+        0.040937081015117505,
+        -0.0468366902683256,
+        -0.009585146596359673,
+        -0.010507977986300765,
+        0.017482432857615526
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/design",
+      "role": "week",
+      "median": 1262.78,
+      "delta": -0.0034210234561838915,
+      "repeats": [
+        -0.009702119564355849,
+        0.005866743397915597,
+        -0.01651590767311295,
+        -0.015976326704076116,
+        0.017862945087690152
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/design",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "timeout 300 s"
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/model",
+      "role": "today",
+      "median": 2718.43
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/model",
+      "role": "yesterday",
+      "median": 2764.71,
+      "delta": -0.013972532381334779,
+      "repeats": [
+        -0.009481682615455345,
+        -0.003552891293223337,
+        -0.03332103818353338,
+        -0.03922510518934075,
+        0.002014677850479929
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/model",
+      "role": "week",
+      "median": 2701.11,
+      "delta": 0.00300987371858219,
+      "repeats": [
+        0.010168988480587782,
+        -0.009612672397155575,
+        -0.01102796954110008,
+        -0.006247869202377632,
+        0.006099565900064663
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/model",
+      "role": "month",
+      "median": 15932.97,
+      "delta": -0.8293312546248439,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.8281963640658306,
+        -0.8303477645836259,
+        -0.8279867429963886,
+        -0.8285718780183168,
+        -0.8314476208767103
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/data",
+      "role": "today",
+      "median": 0.34
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/data",
+      "role": "yesterday",
+      "median": 0.34,
+      "delta": 0,
+      "repeats": [
+        -0.02941176470588236,
+        0,
+        0.0625,
+        -0.08108108108108103,
+        0.09375
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/data",
+      "role": "week",
+      "median": 0.32,
+      "delta": 0.0625,
+      "repeats": [
+        -0.03125,
+        0,
+        0,
+        -0.08333333333333326,
+        0.16129032258064502
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/data",
+      "role": "month",
+      "median": 0.43,
+      "delta": -0.20930232558139528,
+      "repeats": [
+        -0.26190476190476186,
+        -0.07894736842105265,
+        -0.2325581395348837,
+        -0.29166666666666663,
+        -0.1250000000000001
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/dispose",
+      "role": "today",
+      "median": 50.06
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/dispose",
+      "role": "yesterday",
+      "median": 49.2,
+      "delta": 0.0018292682926828174,
+      "repeats": [
+        0.11889117043121145,
+        -0.0002032520325204734,
+        0.038979591836734606,
+        -0.005935976256094988,
+        -0.048107255520504655
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/dispose",
+      "role": "week",
+      "median": 51.5,
+      "delta": -0.01475728155339806,
+      "repeats": [
+        -0.05124340617935186,
+        -0.028965785381026343,
+        -0.00037278657968309314,
+        0.03368683718028698,
+        0.012233009708737974
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/dispose",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "timeout 300 s"
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/toJSON",
+      "role": "today",
+      "median": 72.53
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/toJSON",
+      "role": "yesterday",
+      "median": 72.31,
+      "delta": 0.026967224450283434,
+      "repeats": [
+        0.10569462743375779,
+        0.05873966353008275,
+        0.029387069689336798,
+        0.0217450765864331,
+        -0.08349197715528967
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/toJSON",
+      "role": "week",
+      "median": 71.95,
+      "delta": 0.017512161223071532,
+      "repeats": [
+        -0.016636120118426745,
+        0.07255474452554744,
+        -0.024400107845780616,
+        0.024600416956219506,
+        -0.005208333333333259
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/toJSON",
+      "role": "month",
+      "median": 101.57,
+      "delta": -0.318499556955794,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.35349264705882344,
+        -0.27367357251136937,
+        -0.3891489947672817,
+        -0.29124257845631896,
+        -0.3374851720047449
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/first",
+      "role": "today",
+      "median": 1139.85
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/first",
+      "role": "yesterday",
+      "median": 1124.24,
+      "delta": 0.00003557959154631973,
+      "repeats": [
+        -0.014679719201072694,
+        0.003282364019550732,
+        -0.0004400064654008773,
+        0.02428577775803098,
+        0.0024283071230342124
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/first",
+      "role": "week",
+      "median": 1151.82,
+      "delta": -0.010392248788873237,
+      "repeats": [
+        -0.04997284992272666,
+        0.008702184408656555,
+        0.04143255339541185,
+        -0.01620028174403043,
+        -0.018574850090033346
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/first",
+      "role": "month",
+      "median": 2773.83,
+      "delta": -0.5820327849940335,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5938143289242672,
+        -0.5781900340541957,
+        -0.5898933839637798,
+        -0.5829372020073038,
+        -0.533078535412758
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/next3",
+      "role": "today",
+      "median": 2305.42
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/next3",
+      "role": "yesterday",
+      "median": 2367.62,
+      "delta": -0.012480887980334532,
+      "repeats": [
+        0.005215101042582715,
+        0.06771476845565805,
+        -0.03343848064184862,
+        -0.03190515841282149,
+        -0.0515320039753866
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/next3",
+      "role": "week",
+      "median": 2258.07,
+      "delta": 0.026584649722993348,
+      "repeats": [
+        0.024758726235147632,
+        0.03665076813384882,
+        0.06518515189645879,
+        -0.016432162796948813,
+        -0.05782463613196387
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/next3",
+      "role": "month",
+      "median": 5326.46,
+      "delta": -0.5782940264265573,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5706324844875966,
+        -0.5855319978043019,
+        -0.5766217694231985,
+        -0.5784775615432001,
+        -0.565749837713252
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/load/model",
+      "role": "today",
+      "median": 5409.26
+    },
+    {
+      "suite": "core",
+      "id": "expressions/load/model",
+      "role": "yesterday",
+      "median": 5308.3,
+      "delta": -0.0005576173162782361,
+      "repeats": [
+        0.01572203724721999,
+        -0.011637671573909714,
+        -0.0035372521571592763,
+        -0.006858726032521134,
+        0.000391764244983106
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/load/model",
+      "role": "week",
+      "median": 5437.18,
+      "delta": 0.003150530238101412,
+      "repeats": [
+        0.013006960888765073,
+        0.032508685164676754,
+        -0.0011101131668762587,
+        0.0014408069940430313,
+        0.0028967221979041557
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/load/model",
+      "role": "month",
+      "median": 9723.02,
+      "delta": -0.4429395393612272,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.4628606707166494,
+        -0.43358770534139646,
+        -0.4482882996705898,
+        -0.4417873648592886,
+        -0.44234926140410635
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/load/design",
+      "role": "today",
+      "median": 776.87
+    },
+    {
+      "suite": "core",
+      "id": "large/load/design",
+      "role": "yesterday",
+      "median": 779.64,
+      "delta": -0.0060284233748908456,
+      "repeats": [
+        -0.0004272176479727108,
+        -0.015235299328077656,
+        0.002086301648687172,
+        -0.011446610289116643,
+        -0.012022397891963132
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/load/design",
+      "role": "week",
+      "median": 779.26,
+      "delta": -0.0005133074968559637,
+      "repeats": [
+        -0.010441614395235388,
+        0.0005031089553395596,
+        -0.03163794524543184,
+        0.040220129956239026,
+        -0.01365356770899484
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/load/design",
+      "role": "month",
+      "median": 2636.06,
+      "delta": -0.7053974492234623,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7032683291431678,
+        -0.7077833779496139,
+        -0.7068465816407821,
+        -0.7020558777016341,
+        -0.7052006225562768
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/load/model",
+      "role": "today",
+      "median": 741.45
+    },
+    {
+      "suite": "core",
+      "id": "large/load/model",
+      "role": "yesterday",
+      "median": 794.67,
+      "delta": -0.06936212515887097,
+      "repeats": [
+        -0.04333825813539405,
+        -0.048890946167415295,
+        -0.07000578456276263,
+        -0.08126436348566468,
+        -0.07808995842257782
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/load/model",
+      "role": "week",
+      "median": 785.52,
+      "delta": -0.056153885324371156,
+      "repeats": [
+        -0.055361156518185406,
+        -0.05995463581222282,
+        -0.053568943926533996,
+        -0.06039359615262929,
+        -0.06140800327919238
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/load/model",
+      "role": "month",
+      "median": 1715.99,
+      "delta": -0.5673284809352035,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5623177179609058,
+        -0.5630452391913706,
+        -0.5747737517635318,
+        -0.569316415007541,
+        -0.567363777802381
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/data",
+      "role": "today",
+      "median": 0.07
+    },
+    {
+      "suite": "core",
+      "id": "large/output/data",
+      "role": "yesterday",
+      "median": 0.07,
+      "delta": 0,
+      "repeats": [
+        0,
+        0,
+        0.1428571428571428,
+        0,
+        0
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/data",
+      "role": "week",
+      "median": 0.08,
+      "delta": -0.12499999999999989,
+      "repeats": [
+        -0.12499999999999989,
+        -0.12499999999999989,
+        0.1428571428571428,
+        0,
+        -0.12499999999999989
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/data",
+      "role": "month",
+      "median": 0.08,
+      "delta": -0.12499999999999989,
+      "repeats": [
+        0,
+        -0.12499999999999989,
+        -0.12499999999999989,
+        -0.12499999999999989,
+        0.125
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/dispose",
+      "role": "today",
+      "median": 41.72
+    },
+    {
+      "suite": "core",
+      "id": "large/output/dispose",
+      "role": "yesterday",
+      "median": 40.86,
+      "delta": -0.022515907978463034,
+      "repeats": [
+        -0.024657534246575352,
+        -0.12139737991266364,
+        -0.06148867313915851,
+        -0.03002070393374756,
+        0.06327119978997109
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/dispose",
+      "role": "week",
+      "median": 43.57,
+      "delta": -0.030755106724810743,
+      "repeats": [
+        -0.028293135435992545,
+        0.020689655172413834,
+        0.05904581955597554,
+        -0.09063926940639266,
+        -0.05064177362893818
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/dispose",
+      "role": "month",
+      "median": 204.3,
+      "delta": -0.7934410181106216,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7688802714493457,
+        -0.8025901295064753,
+        -0.8040137053352913,
+        -0.792344875209628,
+        -0.78658358485055
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/toJSON",
+      "role": "today",
+      "median": 122.94
+    },
+    {
+      "suite": "core",
+      "id": "large/output/toJSON",
+      "role": "yesterday",
+      "median": 123.05,
+      "delta": 0.01747257212515252,
+      "repeats": [
+        0.020941558441558428,
+        -0.014810618323081837,
+        0.011206543967280158,
+        0.030951223464592337,
+        0.02194229987809826
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/toJSON",
+      "role": "week",
+      "median": 124.51,
+      "delta": -0.02288972773271225,
+      "repeats": [
+        -0.024260498105907913,
+        -0.08172339773075743,
+        -0.00757452353803556,
+        -0.03185411285904349,
+        -0.018429487179487114
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/toJSON",
+      "role": "month",
+      "median": 184.13,
+      "delta": -0.3331341986639874,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.35356992417860145,
+        -0.3167684772439602,
+        -0.2912115331300249,
+        -0.3562307119293392,
+        -0.3540301441677588
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/load/model",
+      "role": "today",
+      "median": 783.23
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/load/model",
+      "role": "yesterday",
+      "median": 788.91,
+      "delta": -0.00968424788632416,
+      "repeats": [
+        -0.05725497842883953,
+        0.024715173485240882,
+        -0.023890999672898428,
+        -0.01078662509189554,
+        0.03639288997854728
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/load/model",
+      "role": "week",
+      "median": 782.32,
+      "delta": -0.0013165967890378383,
+      "repeats": [
+        -0.004882912363227354,
+        0.01173742189009852,
+        0.021421691388942454,
+        0.01332765100151101,
+        -0.015342354772966083
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/load/model",
+      "role": "month",
+      "median": 935.45,
+      "delta": -0.15908920840237328,
+      "repeats": [
+        -0.1505393866310335,
+        -0.15228884453692304,
+        -0.15045750098760413,
+        -0.17786288696980634,
+        -0.1573586608505061
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/last",
+      "role": "today",
+      "median": 9.7
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/last",
+      "role": "yesterday",
+      "median": 11.6,
+      "delta": -0.264655172413793,
+      "repeats": [
+        0.19838056680161942,
+        -0.29889923793395434,
+        -0.2956298200514138,
+        -0.5327659574468084,
+        0.0011723329425556983
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/last",
+      "role": "week",
+      "median": 11.42,
+      "delta": -0.23423817863397534,
+      "repeats": [
+        0.34365781710914445,
+        -0.06772908366533881,
+        -0.2532637075718016,
+        -0.03933253873659115,
+        -0.26212765957446804
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/last",
+      "role": "month",
+      "median": 12.945,
+      "delta": -0.08072614909231379,
+      "repeats": [
+        -0.2920908379013313,
+        0.10287303058387409,
+        -0.07538461538461538,
+        -0.1016320474777449,
+        -0.10427606901725439
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/locale",
+      "role": "today",
+      "median": 28.865000000000002
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/locale",
+      "role": "yesterday",
+      "median": 30.07,
+      "delta": -0.002993016295310902,
+      "repeats": [
+        -0.017282277194171525,
+        -0.020165289256198315,
+        0.05785123966942152,
+        -0.01979544704717906,
+        0.0023056653491435597
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/locale",
+      "role": "week",
+      "median": 29.14,
+      "delta": -0.02041866849691143,
+      "repeats": [
+        0.00850460666194186,
+        0.009742519137091232,
+        -0.04607843137254897,
+        -0.08075148319050751,
+        -0.046487953851374164
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/locale",
+      "role": "month",
+      "median": 32.019999999999996,
+      "delta": -0.12601499063085564,
+      "repeats": [
+        -0.09199999999999997,
+        -0.17878131766161454,
+        -0.10057471264367812,
+        -0.13004063769928098,
+        -0.1585889570552148
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/next10",
+      "role": "today",
+      "median": 76.19
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/next10",
+      "role": "yesterday",
+      "median": 76.4,
+      "delta": -0.003534031413612748,
+      "repeats": [
+        -0.029956286963229606,
+        0.001183587585481094,
+        0.020824936181647047,
+        0.004185742315238716,
+        0.0076466710613054545
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/next10",
+      "role": "week",
+      "median": 76.44,
+      "delta": 0.0024856096284666673,
+      "repeats": [
+        0.010165515443763873,
+        0.017385534173855355,
+        -0.011013215859030923,
+        0.003677436301549708,
+        -0.0018236290217532591
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/next10",
+      "role": "month",
+      "median": 90.43,
+      "delta": -0.1614508459581998,
+      "repeats": [
+        -0.16448516579406647,
+        -0.13064810588772258,
+        -0.17285698725629017,
+        -0.17008310249307468,
+        -0.14249051550993097
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/prev",
+      "role": "today",
+      "median": 24.335
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/prev",
+      "role": "yesterday",
+      "median": 23.445,
+      "delta": 0.014288760929835886,
+      "repeats": [
+        -0.010056843025798012,
+        0.004495300367797217,
+        0.0037672666387609244,
+        0,
+        0.030026109660574507
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/prev",
+      "role": "week",
+      "median": 24.08,
+      "delta": 0.02553986710963474,
+      "repeats": [
+        0.03874300473525616,
+        -0.027117229870671666,
+        0.00040617384240437815,
+        0.07074089577228948,
+        0.0032051282051281937
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/prev",
+      "role": "month",
+      "median": 27.31,
+      "delta": -0.10106188209447098,
+      "repeats": [
+        -0.09364293871336127,
+        -0.0773460410557184,
+        -0.09172259507829983,
+        -0.12444595976815542,
+        -0.09034833091436856
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/preview",
+      "role": "today",
+      "median": 1142.63
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/preview",
+      "role": "yesterday",
+      "median": 1157.23,
+      "delta": -0.00779447473708772,
+      "repeats": [
+        -0.010673736582510696,
+        -0.029186465326276223,
+        0.008285976492181879,
+        0.036851643324653294,
+        -0.01981807757801879
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/preview",
+      "role": "week",
+      "median": 1148.51,
+      "delta": -0.008915899730955745,
+      "repeats": [
+        0.018570225590568423,
+        -0.02047398923692567,
+        -0.013137300182177514,
+        0.01804577464788726,
+        -0.01820619759514508
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/preview",
+      "role": "month",
+      "median": 1895.8,
+      "delta": -0.3999261525477371,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.39017186532364345,
+        -0.40346440503726555,
+        -0.3991750421193285,
+        -0.4238791011710096,
+        -0.39794225203116695
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/validate",
+      "role": "today",
+      "median": 103.79
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/validate",
+      "role": "yesterday",
+      "median": 103.83000000000001,
+      "delta": 0.0286044495810458,
+      "repeats": [
+        -0.09341983317886948,
+        0.07727916863486062,
+        0.16782938010763404,
+        -0.03657231786791171,
+        -0.0033569563595673424
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/validate",
+      "role": "week",
+      "median": 98.26,
+      "delta": 0.02986973336047205,
+      "repeats": [
+        -0.008821248545948013,
+        0.025263373222869978,
+        0.07187894073139978,
+        -0.026915737671989515,
+        0.06639937414433783
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/validate",
+      "role": "month",
+      "median": 114.31,
+      "delta": -0.09596710698976463,
+      "repeats": [
+        -0.06988867291040834,
+        -0.12120400142908172,
+        -0.00037707390648555883,
+        -0.13409774741806946,
+        -0.15283400809716607
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/data",
+      "role": "today",
+      "median": 1246.63
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/data",
+      "role": "yesterday",
+      "median": 1249.21,
+      "delta": -0.0025536138839746814,
+      "repeats": [
+        0.009300201864846702,
+        -0.017451343690119803,
+        -0.002885586495455117,
+        0.0010549797459995514,
+        0.0010244343601686356
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/data",
+      "role": "week",
+      "median": 1245.09,
+      "delta": 0.0034375025098587475,
+      "repeats": [
+        -0.010666074106993939,
+        0.019984006332846027,
+        0.012711253504204878,
+        0.006217658473480103,
+        -0.0022654969632699418
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/data",
+      "role": "month",
+      "median": 602.08,
+      "delta": 1.0569857826202496,
+      "verdict": "up",
+      "rerun": "confirmed",
+      "repeats": [
+        1.0149582691840209,
+        1.0154765004556698,
+        1.0659259878038596,
+        1.1177645380548795,
+        1.0546268506564278
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/model",
+      "role": "today",
+      "median": 96.53
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/model",
+      "role": "yesterday",
+      "median": 95.53,
+      "delta": -0.006385428661153658,
+      "repeats": [
+        0.037371134020618646,
+        -0.005695601729775457,
+        -0.008943781942078455,
+        -0.00010598834128239254,
+        -0.03782844289949905
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/model",
+      "role": "week",
+      "median": 97.9,
+      "delta": -0.0026557711950970786,
+      "repeats": [
+        -0.003839369098267098,
+        -0.021168753726893308,
+        0.001811411894937942,
+        -0.0023928422804827543,
+        -0.012769024817217534
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/model",
+      "role": "month",
+      "median": 63.260000000000005,
+      "delta": 0.5244230161239329,
+      "verdict": "up",
+      "rerun": "confirmed",
+      "repeats": [
+        0.5611404087013845,
+        0.5530582758067104,
+        0.49587694259435455,
+        0.5028928136419,
+        0.49565352375038785
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/data",
+      "role": "today",
+      "median": 0.07
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/data",
+      "role": "yesterday",
+      "median": 0.08,
+      "delta": 0,
+      "repeats": [
+        -0.14285714285714302,
+        0,
+        -0.11111111111111105,
+        0,
+        0
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/data",
+      "role": "week",
+      "median": 0.07,
+      "delta": 0.1428571428571428,
+      "repeats": [
+        0.1428571428571428,
+        0,
+        0.1428571428571428,
+        0,
+        0
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/data",
+      "role": "month",
+      "median": 0.08,
+      "delta": -0.12499999999999989,
+      "repeats": [
+        0,
+        -0.14285714285714302,
+        -0.12499999999999989,
+        0,
+        -0.29999999999999993
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/dispose",
+      "role": "today",
+      "median": 9.13
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/dispose",
+      "role": "yesterday",
+      "median": 8.49,
+      "delta": 0.11660777385159005,
+      "repeats": [
+        0.48060941828254844,
+        0.4764309764309762,
+        0.1260115606936416,
+        -0.10955710955710962,
+        -0.34982332155477036
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/dispose",
+      "role": "week",
+      "median": 8.63,
+      "delta": 0.03244495944380055,
+      "repeats": [
+        -0.3337195828505215,
+        -0.026897214217098897,
+        0.0011614401858304202,
+        -0.08333333333333337,
+        0.28021248339973437
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/dispose",
+      "role": "month",
+      "median": 8.56,
+      "delta": 0.002336448598130758,
+      "repeats": [
+        0.005875440658049458,
+        -0.03664302600472824,
+        0.15201005025125625,
+        0.2473572938689217,
+        0.04701834862385312
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/toJSON",
+      "role": "today",
+      "median": 20.305
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/toJSON",
+      "role": "yesterday",
+      "median": 19.985,
+      "delta": 0.017763322491869182,
+      "repeats": [
+        0.08079748163693612,
+        0.062140992167101894,
+        -0.09348198970840482,
+        0.017644006227296227,
+        -0.07732201791607729
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/toJSON",
+      "role": "week",
+      "median": 20.295,
+      "delta": 0.00689825080068962,
+      "repeats": [
+        -0.010500000000000065,
+        0.06308068459657701,
+        0.033382425135002336,
+        -0.0063725490196078205,
+        -0.001974333662389083
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/toJSON",
+      "role": "month",
+      "median": 31.825,
+      "delta": -0.36323644933228594,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.37280296022201664,
+        -0.32520064205457466,
+        -0.38370325326847066,
+        -0.33615723483564897,
+        -0.3857995601633678
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/add-row@orders",
+      "role": "today",
+      "median": 265.79
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/add-row@orders",
+      "role": "yesterday",
+      "median": 270.69,
+      "delta": -0.0181018877682958,
+      "repeats": [
+        0.022625473756747505,
+        -0.035560071120142034,
+        -0.0020857825476886527,
+        -0.03416479923588389,
+        -0.018619084561675825
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/add-row@orders",
+      "role": "week",
+      "median": 266.06,
+      "delta": -0.00383372171690588,
+      "repeats": [
+        -0.012896973311465554,
+        -0.013922405791720771,
+        0.018952485852101963,
+        0.004789599726308547,
+        -0.028503474673900797
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/add-row@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "today",
+      "median": 448.73
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "yesterday",
+      "median": 454.39,
+      "delta": -0.0013864741741675957,
+      "repeats": [
+        -0.008466124421001253,
+        -0.007750910897648344,
+        -0.008665244452264131,
+        -0.0012764365412970546,
+        0.00008748523686619158
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "week",
+      "median": 448.89,
+      "delta": -0.0017376194613378804,
+      "repeats": [
+        0.010097625270871102,
+        0.00872027180067958,
+        0.004310727935294745,
+        -0.009490863934716987,
+        -0.015445796897657793
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-change@orders",
+      "role": "today",
+      "median": 686.84
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-change@orders",
+      "role": "yesterday",
+      "median": 684.51,
+      "delta": -0.0002045258652174642,
+      "repeats": [
+        -0.002766092318331026,
+        0.0019355791962176738,
+        -0.015557978916757587,
+        0.013757080850437697,
+        0.0000732998108863292
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-change@orders",
+      "role": "week",
+      "median": 674.65,
+      "delta": 0.01806862817757371,
+      "repeats": [
+        0.0033808506278723005,
+        0.014585340546950265,
+        0.012775226657247174,
+        0.015171116076678759,
+        0.0086865982448312
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-change@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-clear@orders",
+      "role": "today",
+      "median": 496.19
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-clear@orders",
+      "role": "yesterday",
+      "median": 501.34,
+      "delta": -0.010272469780986948,
+      "repeats": [
+        -0.0228208446065169,
+        -0.005312324593055862,
+        -0.009443439823186628,
+        0.0016477775098464598,
+        -0.01429248262792171
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-clear@orders",
+      "role": "week",
+      "median": 489.24,
+      "delta": 0.013878668955931595,
+      "repeats": [
+        0.02097859076367814,
+        0.007640568165653949,
+        0.020170658990438906,
+        0.021086118645104568,
+        -0.008496929427161959
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-clear@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "today",
+      "median": 390.94
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "yesterday",
+      "median": 390.52,
+      "delta": -0.0013059510396394858,
+      "repeats": [
+        0.08981346434328707,
+        0.00898157229133334,
+        0.009887223852927729,
+        -0.004583984224948212,
+        -0.0176524530032095
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "week",
+      "median": 387.78,
+      "delta": 0.010211975862602696,
+      "repeats": [
+        0.011526325397032355,
+        0.010840667991637076,
+        0.011372427665170992,
+        0.013786883133616756,
+        -0.001801477211313296
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/first-visit@orders",
+      "role": "today",
+      "median": 428.73
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/first-visit@orders",
+      "role": "yesterday",
+      "median": 430.83,
+      "delta": -0.00032495415825262164,
+      "repeats": [
+        0.015181734988384932,
+        -0.012046514866652758,
+        0.005738812872015053,
+        -0.003201216001473939,
+        -0.008072677092916258
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/first-visit@orders",
+      "role": "week",
+      "median": 421.01,
+      "delta": 0.016626683451699487,
+      "repeats": [
+        0.026922805614992162,
+        0.008411082838563733,
+        -0.004736867036142289,
+        0.02490092154896617,
+        0.02730408589612776
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/first-visit@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: check failed: the first row has the largest total: expected 4000, got 32"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/last@orders",
+      "role": "today",
+      "median": 161.05
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/last@orders",
+      "role": "yesterday",
+      "median": 163.72,
+      "delta": -0.01740776936232591,
+      "repeats": [
+        0.0009161983874907964,
+        -0.014614161672985126,
+        -0.012992584421155695,
+        -0.0637048460762798,
+        -0.029163887709937608
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/last@orders",
+      "role": "week",
+      "median": 163.69,
+      "delta": -0.013440039098295498,
+      "repeats": [
+        0.02974371765292738,
+        -0.01990653638405049,
+        -0.03669947745777147,
+        0.010055797412471534,
+        0.00596846139347873
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/last@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/next@orders",
+      "role": "today",
+      "median": 269.17
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/next@orders",
+      "role": "yesterday",
+      "median": 270.97,
+      "delta": -0.007343986419160786,
+      "repeats": [
+        -0.009410635863748795,
+        -0.002854494902687632,
+        0.005884982121573179,
+        -0.024942398420070955,
+        -0.0007328423289730823
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/next@orders",
+      "role": "week",
+      "median": 272.05,
+      "delta": -0.004374195919867652,
+      "repeats": [
+        -0.02988213961922037,
+        -0.016087163175020902,
+        0.02091142962146275,
+        0.010709948106436995,
+        -0.008801973999189694
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/next@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/prev@orders",
+      "role": "today",
+      "median": 170.2
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/prev@orders",
+      "role": "yesterday",
+      "median": 170.41,
+      "delta": -0.005281380200692465,
+      "repeats": [
+        -0.017055860805860745,
+        0.010391450670130364,
+        -0.051380018248175285,
+        -0.016110065851364097,
+        -0.01483013293943869
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/prev@orders",
+      "role": "week",
+      "median": 170.1,
+      "delta": 0.005996472663139407,
+      "repeats": [
+        0.005271670760198965,
+        0.0336965533578113,
+        0.009008485412065559,
+        -0.019151926906407435,
+        0.024468464188145855
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/prev@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/remove-row@orders",
+      "role": "today",
+      "median": 1125.56
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/remove-row@orders",
+      "role": "yesterday",
+      "median": 1133.12,
+      "delta": -0.005718723524427927,
+      "repeats": [
+        -0.01401302965915674,
+        -0.002861292919393743,
+        0.0016213055496490103,
+        -0.003070497562184027,
+        -0.011800869165812689
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/remove-row@orders",
+      "role": "week",
+      "median": 1120.22,
+      "delta": 0.005784578029315757,
+      "repeats": [
+        -0.01096898545645697,
+        0.012542179214797056,
+        0.002294067434912339,
+        -0.0012104258008983626,
+        0.01901776575522729
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/remove-row@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-1@orders",
+      "role": "today",
+      "median": 188.34
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-1@orders",
+      "role": "yesterday",
+      "median": 185.65,
+      "delta": 0.007325612712092644,
+      "repeats": [
+        0.03261225827597514,
+        -0.03186407556182824,
+        0.0078103959062751915,
+        -0.017728619813717206,
+        -0.005439087500660134
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-1@orders",
+      "role": "week",
+      "median": 187.58,
+      "delta": 0.006877065785264813,
+      "repeats": [
+        0.03921032483867437,
+        0.010178934961962982,
+        -0.002221399481673436,
+        0.013802221047065188,
+        -0.02516259729182213
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-1@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-3@orders",
+      "role": "today",
+      "median": 395.61
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-3@orders",
+      "role": "yesterday",
+      "median": 389.11,
+      "delta": 0.012155945619490627,
+      "repeats": [
+        0.001802442182224251,
+        0.05061682638852116,
+        0.011334721258385416,
+        -0.01953135025537056,
+        0.015452141995431212
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-3@orders",
+      "role": "week",
+      "median": 393.85,
+      "delta": 0.007921797638694938,
+      "repeats": [
+        -0.0010848723382783643,
+        0.05115432270462983,
+        0.019518709710558246,
+        0.017158245704026687,
+        -0.006342277570933308
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-3@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-reverse@orders",
+      "role": "today",
+      "median": 178.02
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-reverse@orders",
+      "role": "yesterday",
+      "median": 179.5,
+      "delta": -0.021671309192200505,
+      "repeats": [
+        -0.08953427524856084,
+        -0.013427804125478504,
+        -0.03245546934761223,
+        -0.0006287870126899797,
+        0.012314297011805975
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-reverse@orders",
+      "role": "week",
+      "median": 179.72,
+      "delta": -0.00506343200534165,
+      "repeats": [
+        0.005424648245465402,
+        -0.026947414357407773,
+        0.0173947532438099,
+        -0.005229485396383904,
+        -0.0002777777777778212
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-reverse@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/data",
+      "role": "today",
+      "median": 200.85500000000002
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/data",
+      "role": "yesterday",
+      "median": 198.71,
+      "delta": 0.016808414272054817,
+      "repeats": [
+        0.09870704834733601,
+        -0.016895299576356604,
+        0.0040892568659125494,
+        0.005418841660452367,
+        0.03845178308730279
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/data",
+      "role": "week",
+      "median": 200.52,
+      "delta": -0.0010971474167165152,
+      "repeats": [
+        0.01151282569177936,
+        -0.024099306599427828,
+        -0.01453300927533363,
+        -0.009738955823293205,
+        0.023547323014463162
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/data",
+      "role": "month",
+      "median": 53.125,
+      "delta": 2.756894117647059,
+      "verdict": "up",
+      "rerun": "confirmed",
+      "repeats": [
+        2.725403001667593,
+        2.8810934811699482,
+        2.8065686461714723,
+        2.8003054600992745,
+        2.6520358610384758
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/model",
+      "role": "today",
+      "median": 94.92500000000001
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/model",
+      "role": "yesterday",
+      "median": 99.145,
+      "delta": -0.041202279489636284,
+      "repeats": [
+        0.013058493416792771,
+        -0.04447533009034055,
+        -0.05265237577793147,
+        -0.08501552795031064,
+        -0.01742738589211623
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/model",
+      "role": "week",
+      "median": 94.13,
+      "delta": 0.014819929884202887,
+      "repeats": [
+        -0.02895091833558172,
+        0.02508167351670343,
+        0.042589437819420706,
+        0.015460070369975432,
+        0.013340448239060887
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/model",
+      "role": "month",
+      "median": 61.55,
+      "delta": 0.5356620633631195,
+      "verdict": "up",
+      "rerun": "confirmed",
+      "repeats": [
+        0.5354190306370563,
+        0.5724410746662272,
+        0.5191087981785656,
+        0.517109050207867,
+        0.5314285714285714
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/filter-set@orders",
+      "role": "today",
+      "median": 264.51
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/filter-set@orders",
+      "role": "yesterday",
+      "median": 267.89,
+      "delta": -0.009705476128261448,
+      "repeats": [
+        -0.04597659895197759,
+        -0.024454310025897152,
+        -0.007238138547824624,
+        -0.003963209451880667,
+        -0.009564494178133875
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/filter-set@orders",
+      "role": "week",
+      "median": 261.99,
+      "delta": 0.009122485591052998,
+      "repeats": [
+        0.018929882171141443,
+        0.011343374179597188,
+        0.026187150837988726,
+        0.0016181229773462036,
+        0.005992595137219059
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/filter-set@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@orders",
+      "role": "today",
+      "median": 71.325
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@orders",
+      "role": "yesterday",
+      "median": 71.255,
+      "delta": -0.0024559680022454566,
+      "repeats": [
+        -0.011378002528445008,
+        -0.03952459922609175,
+        -0.0009828699803424712,
+        -0.026106380008376284,
+        0.03782707622298087
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@orders",
+      "role": "week",
+      "median": 71.09,
+      "delta": 0.006470670980447402,
+      "repeats": [
+        0.0035117291754460656,
+        0.016324233042499303,
+        0.004010886692450866,
+        0.005762107284949858,
+        -0.0015423443634323686
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "today",
+      "median": 34.394999999999996
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "yesterday",
+      "median": 34.19,
+      "delta": -0.007165837964317023,
+      "repeats": [
+        -0.026444380569129122,
+        0.0100147275405007,
+        0.006240713224368477,
+        0.006142146826557449,
+        -0.008613008613008621
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "week",
+      "median": 34.61,
+      "delta": -0.0007223345853800689,
+      "repeats": [
+        -0.012456546929316303,
+        -0.0026056745801967818,
+        -0.027517730496453896,
+        0.0035097981866043515,
+        0.0017162471395881784
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@orders",
+      "role": "today",
+      "median": 53.739999999999995
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@orders",
+      "role": "yesterday",
+      "median": 54.97,
+      "delta": -0.009641622703292718,
+      "repeats": [
+        -0.00432510362227434,
+        0.0035945363048166534,
+        0.025535110777318737,
+        -0.0648550724637682,
+        0.0003669051550174718
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@orders",
+      "role": "week",
+      "median": 53.93,
+      "delta": -0.010291118116076414,
+      "repeats": [
+        0.006446991404011504,
+        0.003945885005637084,
+        -0.004592422502870175,
+        -0.02742772424017803,
+        -0.019960079840319334
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@ordersPanel",
+      "role": "today",
+      "median": 29.625
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@ordersPanel",
+      "role": "yesterday",
+      "median": 29.105,
+      "delta": -0.004981961862222994,
+      "repeats": [
+        0.011752506049083955,
+        0.005862068965517331,
+        -0.010667584308327593,
+        0.00274160383824551,
+        -0.03137651821862342
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@ordersPanel",
+      "role": "week",
+      "median": 30.405,
+      "delta": -0.010524584772241385,
+      "repeats": [
+        -0.01041327692808336,
+        -0.060703907006780744,
+        -0.015904572564612307,
+        0.016688918558077415,
+        -0.020019691499835846
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@ordersPanel",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "today",
+      "median": 19.155
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "yesterday",
+      "median": 19.115000000000002,
+      "delta": -0.01124771122155388,
+      "repeats": [
+        -0.14369369369369356,
+        -0.0024461839530333096,
+        0.01235230934479059,
+        -0.019786096256684593,
+        -0.01211801896733411
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "week",
+      "median": 19.335,
+      "delta": 0.00853374709076804,
+      "repeats": [
+        0.008355091383811963,
+        0.008776458440887813,
+        0.039630836047773954,
+        0.0036269430051814044,
+        -0.03974793989335923
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "not in this build: paneldynamic.allowSort"
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@orders30",
+      "role": "today",
+      "median": 36.795
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@orders30",
+      "role": "yesterday",
+      "median": 36.16,
+      "delta": 0.029175884955752407,
+      "repeats": [
+        0.027910685805422775,
+        0.04885898186073723,
+        0.03544929925803797,
+        0.061107938320959176,
+        0.03763590744354617
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@orders30",
+      "role": "week",
+      "median": 36.65,
+      "delta": -0.009549795361528002,
+      "repeats": [
+        -0.01676284693597141,
+        0.010241404535479282,
+        -0.043261231281198076,
+        0.007997793712079426,
+        -0.012372834753917927
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@orders30",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "not in this build: matrixdynamic.allowSort"
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@ordersPaged",
+      "role": "today",
+      "median": 24.43
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@ordersPaged",
+      "role": "yesterday",
+      "median": 23.869999999999997,
+      "delta": -0.0016757436112274648,
+      "repeats": [
+        0.005421184320266947,
+        -0.013003355704697905,
+        0.011859381617958631,
+        -0.03659026940088461,
+        -0.0116038126813095
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@ordersPaged",
+      "role": "week",
+      "median": 25.475,
+      "delta": -0.012365063788027486,
+      "repeats": [
+        0.026628430970913497,
+        -0.025691699604743157,
+        -0.12743297833272127,
+        -0.004362050163576936,
+        0.02427983539094658
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@ordersPaged",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "not in this build: matrixdynamic.allowSort"
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "today",
+      "median": 53.94
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "yesterday",
+      "median": 54.785,
+      "delta": -0.016245322624806047,
+      "repeats": [
+        -0.0023640661938534313,
+        -0.015344795710852344,
+        -0.00949251551661201,
+        0.019622641509434047,
+        -0.07487753673897823
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "week",
+      "median": 54.545,
+      "delta": -0.006508387569896468,
+      "repeats": [
+        -0.005488474204171201,
+        -0.015118397085610136,
+        -0.0011031439602868787,
+        0.010451661067562457,
+        -0.034230276404905835
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "not in this build: paneldynamic.allowSort"
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "today",
+      "median": 29.52
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "yesterday",
+      "median": 29.27,
+      "delta": 0.009395285275025644,
+      "repeats": [
+        -0.04202801867911943,
+        -0.012512681772066325,
+        0.026485568760611145,
+        0.054603854389721596,
+        0.03457814661134173
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "week",
+      "median": 29.42,
+      "delta": 0.005948334466349348,
+      "repeats": [
+        0.04270213510675536,
+        -0.007552351527634671,
+        0.004940711462450675,
+        -0.012048192771084376,
+        -0.030577956989247368
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "not in this build: paneldynamic.allowSort"
+    },
+    {
+      "suite": "react",
+      "id": "calculations/load/paint",
+      "role": "today",
+      "median": 382.9
+    },
+    {
+      "suite": "react",
+      "id": "calculations/load/paint",
+      "role": "yesterday",
+      "median": 386.8,
+      "delta": 0.0031023784901758056,
+      "repeats": [
+        0.007511007511007417,
+        0.008054040010392338,
+        -0.015893360676749624,
+        -0.005205622071837612,
+        0.13875968992248056
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "calculations/load/paint",
+      "role": "week",
+      "median": 376.6,
+      "delta": 0.00849707912904929,
+      "repeats": [
+        0.011134676564156898,
+        0.009458749343142392,
+        0.015936254980079667,
+        0.008629989212513456,
+        -0.010355815188529016
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "calculations/load/paint",
+      "role": "month",
+      "median": 987.6,
+      "delta": -0.6122924260834346,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.6176110884631064,
+        -0.6089613034623218,
+        -0.6075654900374229,
+        -0.61166027839419,
+        -0.611352828088637
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/first",
+      "role": "today",
+      "median": 268.8
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/first",
+      "role": "yesterday",
+      "median": 271.3,
+      "delta": 0.007371913011426479,
+      "repeats": [
+        -0.000731261425959695,
+        0.006691449814126393,
+        0.015481017323995427,
+        0.03305785123966953,
+        0.005050505050505194
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/first",
+      "role": "week",
+      "median": 266.1,
+      "delta": 0.005261180007515964,
+      "repeats": [
+        0.010928961748633892,
+        -0.022702702702702693,
+        0.003772161448510003,
+        0.0007575757575757347,
+        -0.0026405130139571797
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/first",
+      "role": "month",
+      "median": 4551.5,
+      "delta": -0.9413160496539602,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.94122177721051,
+        -0.9404907439748516,
+        -0.9405513630063145,
+        -0.9464514368479607,
+        -0.9419424971159819
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/type",
+      "role": "today",
+      "median": 421.5
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/type",
+      "role": "yesterday",
+      "median": 430.3,
+      "delta": -0.004880316058563872,
+      "repeats": [
+        -0.016035324192423928,
+        -0.006453099792578798,
+        0.011339967600092482,
+        -0.0037655919039772945,
+        0.008953817153628751
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/type",
+      "role": "week",
+      "median": 416.2,
+      "delta": 0.0016818837097549721,
+      "repeats": [
+        0.017733045770429,
+        0.00023752969121138,
+        0.020873786407767048,
+        -0.003858210754762448,
+        0.008515815085158085
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/type",
+      "role": "month",
+      "median": 13189.9,
+      "delta": -0.9685516948574288,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.9684010055610573,
+        -0.9678508824951644,
+        -0.9692442440645842,
+        -0.9697715047584019,
+        -0.9704925738633349
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/load/paint",
+      "role": "today",
+      "median": 1672.8
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/load/paint",
+      "role": "yesterday",
+      "median": 1668.7,
+      "delta": 0.0020974411218313005,
+      "repeats": [
+        0.005822589269799838,
+        0.026516549772363618,
+        -0.008673286278262915,
+        0.02780138399902876,
+        -0.004994584185822548
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/load/paint",
+      "role": "week",
+      "median": 1660,
+      "delta": 0.007710843373494036,
+      "repeats": [
+        0.018123795761079142,
+        -0.015511450381679448,
+        -0.0011987532965715975,
+        0.039571665948673784,
+        0.0005383097075182253
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/load/paint",
+      "role": "month",
+      "median": 8546.5,
+      "delta": -0.804118645059381,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.803687760410672,
+        -0.8007991867923867,
+        -0.8035883793697484,
+        -0.8106710349265781,
+        -0.8089489990467111
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "expressions/load/paint",
+      "role": "today",
+      "median": 6157.7
+    },
+    {
+      "suite": "react",
+      "id": "expressions/load/paint",
+      "role": "yesterday",
+      "median": 6028,
+      "delta": -0.009074319840743139,
+      "repeats": [
+        -0.0068224993805237055,
+        -0.0005687901498929726,
+        -0.00619096886159598,
+        -0.0013011710539485577,
+        -0.02491591287594297
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "expressions/load/paint",
+      "role": "week",
+      "median": 6163.7,
+      "delta": -0.0013790418093028167,
+      "repeats": [
+        -0.013508008668589477,
+        0.003820295947817076,
+        -0.006167856104885794,
+        0.009151824794283003,
+        0.001350844277673513
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "expressions/load/paint",
+      "role": "month",
+      "median": 10817.7,
+      "delta": -0.3661776532904407,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.36604603895316856,
+        -0.36207793655808085,
+        -0.3688511751752859,
+        -0.3639860813999394,
+        -0.3595469493487168
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "large/load/paint",
+      "role": "today",
+      "median": 560.6
+    },
+    {
+      "suite": "react",
+      "id": "large/load/paint",
+      "role": "yesterday",
+      "median": 579.6,
+      "delta": -0.026397515527950444,
+      "repeats": [
+        -0.020196789228378975,
+        -0.035012073128664944,
+        -0.0029704700331992795,
+        -0.03329882677708773,
+        -0.052943166441136835
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "large/load/paint",
+      "role": "week",
+      "median": 573.6,
+      "delta": -0.027370990237099102,
+      "repeats": [
+        -0.043852106620808295,
+        -0.0005312555339119784,
+        -0.028218080473785156,
+        -0.031010452961672375,
+        -0.025241016652059578
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "large/load/paint",
+      "role": "month",
+      "median": 1263.1,
+      "delta": -0.5561713245190404,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5520774957969738,
+        -0.5713293191292266,
+        -0.5434397163120568,
+        -0.5689668377115724,
+        -0.5424002584396705
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/load/paint",
+      "role": "today",
+      "median": 533.7
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/load/paint",
+      "role": "yesterday",
+      "median": 536.4,
+      "delta": -0.009134973900074561,
+      "repeats": [
+        -0.026962142197599293,
+        0.06437606192184231,
+        -0.08472533149646988,
+        0.01909490166125649,
+        -0.033614988978692084
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/load/paint",
+      "role": "week",
+      "median": 533.5,
+      "delta": -0.0024367385192126667,
+      "repeats": [
+        0.012151804075528183,
+        -0.012849162011173143,
+        0.01912777352716133,
+        -0.031220962646348438,
+        0.025023877745940837
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/load/paint",
+      "role": "month",
+      "median": 736.5,
+      "delta": -0.27196198234894764,
+      "rerun": "unconfirmed",
+      "repeats": [
+        -0.28718291054739653,
+        -0.2706529209621993,
+        -0.2616885756877626,
+        -0.2799039871982931,
+        -0.24703120684893687
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/locale",
+      "role": "today",
+      "median": 91.3
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/locale",
+      "role": "yesterday",
+      "median": 89.6,
+      "delta": 0.005580357142857206,
+      "repeats": [
+        -0.02209944751381221,
+        0.025842696629213346,
+        0.014192139737991383,
+        0,
+        0.005580357142857206
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/locale",
+      "role": "week",
+      "median": 91.5,
+      "delta": 0.007650273224043769,
+      "repeats": [
+        0.10623556581986149,
+        0.05251141552511429,
+        0.04480874316939887,
+        -0.047826086956521796,
+        -0.02265372168284796
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/locale",
+      "role": "month",
+      "median": 111.1,
+      "delta": -0.17191719171917186,
+      "repeats": [
+        -0.1901408450704225,
+        -0.19982394366197176,
+        -0.1952983725135623,
+        -0.1749773345421577,
+        -0.13217866909753873
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/next10",
+      "role": "today",
+      "median": 334.1
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/next10",
+      "role": "yesterday",
+      "median": 336.4,
+      "delta": -0.0014863258026159842,
+      "repeats": [
+        0.015375517445298525,
+        0.002413273001508287,
+        0.023191943851083474,
+        0.01844140392623439,
+        -0.0386241894558782
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/next10",
+      "role": "week",
+      "median": 336.9,
+      "delta": 0,
+      "repeats": [
+        -0.025455597338733038,
+        0.006530127634313043,
+        0.0190102595051298,
+        -0.018090154211150566,
+        0.00936838924146266
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/next10",
+      "role": "month",
+      "median": 357.3,
+      "delta": -0.07108872096277652,
+      "repeats": [
+        -0.05367074527252502,
+        -0.06597707576181144,
+        -0.07026563838903177,
+        -0.09571788413098237,
+        -0.0700476323900252
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/preview",
+      "role": "today",
+      "median": 8837.4
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/preview",
+      "role": "yesterday",
+      "median": 8868.8,
+      "delta": 0.009742016958325994,
+      "repeats": [
+        0.010070373888265483,
+        0.0024350468020462035,
+        -0.025241779497098604,
+        -0.002685866474066878,
+        -0.006165637153969339
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/preview",
+      "role": "week",
+      "median": 8826,
+      "delta": -0.0007024699750737273,
+      "repeats": [
+        -0.025326797385621047,
+        0.013171971884454736,
+        0.008437959506843118,
+        0.0019267385982411067,
+        -0.010645338598046061
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/preview",
+      "role": "month",
+      "median": 11822,
+      "delta": -0.2549906953138217,
+      "rerun": "unconfirmed",
+      "repeats": [
+        -0.246285738066503,
+        -0.254338371626067,
+        -0.2436939629408248,
+        -0.25953307392996117,
+        -0.28214876301027847
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/load/paint",
+      "role": "today",
+      "median": 3137.8
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/load/paint",
+      "role": "yesterday",
+      "median": 3143.7,
+      "delta": 0.00232210452651338,
+      "repeats": [
+        0.0023332807819644863,
+        -0.0028442309515532838,
+        0.0013408677329758145,
+        0.009677005895924129,
+        -0.003727539186950568
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/load/paint",
+      "role": "week",
+      "median": 3123.1,
+      "delta": 0.006531971438634709,
+      "repeats": [
+        0.012135378310012435,
+        -0.0007946093700337276,
+        0.005405751207497644,
+        0.009290130450263723,
+        -0.004331643457614054
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/load/paint",
+      "role": "month",
+      "median": 2477.6,
+      "delta": 0.2599693251533741,
+      "verdict": "up",
+      "rerun": "confirmed",
+      "repeats": [
+        0.266240336746671,
+        0.2609259184252095,
+        0.26323582376245547,
+        0.2609363008442056,
+        0.25515962592712027
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/add-row@orders",
+      "role": "today",
+      "median": 289.9
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/add-row@orders",
+      "role": "yesterday",
+      "median": 290.6,
+      "delta": -0.002064693737095724,
+      "repeats": [
+        0.06530898876404478,
+        -0.02053388090349073,
+        -0.050392670157068165,
+        -0.01561439239646989,
+        0.024036762106751652
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/add-row@orders",
+      "role": "week",
+      "median": 288.3,
+      "delta": 0.002081165452653355,
+      "repeats": [
+        0.004226840436773571,
+        -0.01489951489951491,
+        0.006985679357317531,
+        0.01968232044198892,
+        0.001021798365122395
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/add-row@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "today",
+      "median": 391
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "yesterday",
+      "median": 384,
+      "delta": 0.012760416666666607,
+      "repeats": [
+        0.04516806722689082,
+        0.02832936192745561,
+        -0.021635220125786225,
+        0.008398950131233596,
+        -0.013066871637202215
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "week",
+      "median": 390.6,
+      "delta": 0.0023041474654377225,
+      "repeats": [
+        0.01024065540194563,
+        0.0484864032837351,
+        -0.02007024586051176,
+        -0.009836914315298984,
+        -0.0007855459544382493
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "today",
+      "median": 809.3
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "yesterday",
+      "median": 808.2,
+      "delta": 0.0027220984904725576,
+      "repeats": [
+        -0.006008583690987113,
+        -0.009203196899975619,
+        0.0023509032417718956,
+        0.01194029850746281,
+        0.020400405473897543
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "week",
+      "median": 802.3,
+      "delta": -0.0004985666209647022,
+      "repeats": [
+        -0.019086319418790798,
+        0.012103818317943604,
+        -0.006626656664165953,
+        0.00391533096782104,
+        0.005811796710770256
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/last@orders",
+      "role": "today",
+      "median": 406.3
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/last@orders",
+      "role": "yesterday",
+      "median": 408.8,
+      "delta": -0.0061154598825832185,
+      "repeats": [
+        0.012567767373090177,
+        -0.0066014669926650615,
+        -0.011508325171400546,
+        -0.026875152699731286,
+        0.016987259555333534
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/last@orders",
+      "role": "week",
+      "median": 404.2,
+      "delta": 0,
+      "repeats": [
+        -0.014535599901453478,
+        0.02294264339152119,
+        0.006248437890527425,
+        -0.00492368291482026,
+        0.00915388421573482
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/last@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/next@orders",
+      "role": "today",
+      "median": 411.9
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/next@orders",
+      "role": "yesterday",
+      "median": 408.6,
+      "delta": 0.008810572687224516,
+      "repeats": [
+        0.018110621634850554,
+        -0.027621608408702092,
+        0.015282228247473384,
+        0.0177702044790653,
+        0.009064184223419813
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/next@orders",
+      "role": "week",
+      "median": 418.8,
+      "delta": -0.015759312320916985,
+      "repeats": [
+        -0.018805046417519677,
+        -0.009985387238188093,
+        -0.02884160756501175,
+        0.0009696969696968427,
+        -0.014478993591265144
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/next@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "today",
+      "median": 452.8
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "yesterday",
+      "median": 452.5,
+      "delta": 0.006629834254143541,
+      "repeats": [
+        0.0004509582863585493,
+        0.03256231753873795,
+        0.00962379702537186,
+        0.0238674033149171,
+        0.0104259094942325
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "week",
+      "median": 454.6,
+      "delta": -0.003959524857017227,
+      "repeats": [
+        0.006379234491860952,
+        -0.0071864111498257666,
+        -0.023513753327418008,
+        0.0006678539626001623,
+        -0.01449593674500338
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/load/paint",
+      "role": "today",
+      "median": 747.4
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/load/paint",
+      "role": "yesterday",
+      "median": 741.4,
+      "delta": 0.00782303749662816,
+      "repeats": [
+        0.08446312364425146,
+        -0.006211180124223614,
+        -0.008767197194496923,
+        0.020000000000000018,
+        0.00782303749662816
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/load/paint",
+      "role": "week",
+      "median": 744.6,
+      "delta": 0.0034918076819769883,
+      "repeats": [
+        -0.01906022501654525,
+        0.009932885906040134,
+        0.008891283847501041,
+        0.005639097744360999,
+        0.0005404675043911844
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/load/paint",
+      "role": "month",
+      "median": 1033.3,
+      "delta": -0.27513790767444113,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.28099412388016565,
+        -0.2689996122528111,
+        -0.2799305957200695,
+        -0.2754002911208151,
+        -0.27165392432013935
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "today",
+      "median": 50.6
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "yesterday",
+      "median": 47.5,
+      "delta": 0.01263157894736855,
+      "repeats": [
+        0.11594202898550732,
+        0.03687635574837311,
+        0.058064516129032295,
+        0.004132231404958775,
+        -0.07692307692307698
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "week",
+      "median": 51.5,
+      "delta": 0.007766990291262044,
+      "repeats": [
+        0.012578616352201033,
+        0.040776699029126284,
+        0.007619047619047636,
+        -0.0019646365422396617,
+        0.0216110019646365
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "today",
+      "median": 55.5
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "yesterday",
+      "median": 55.4,
+      "delta": -0.0036101083032490378,
+      "repeats": [
+        -0.007285974499089187,
+        -0.0035714285714286698,
+        -0.04173913043478261,
+        0.02169981916817365,
+        -0.012612612612612706
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "week",
+      "median": 55.5,
+      "delta": -0.003603603603603678,
+      "repeats": [
+        0.00540540540540535,
+        -0.003603603603603678,
+        -0.008928571428571397,
+        0.014388489208633004,
+        -0.0036101083032490378
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "not in this build: paneldynamic.allowSort"
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "today",
+      "median": 103.6
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "yesterday",
+      "median": 108.9,
+      "delta": -0.017447199265381186,
+      "repeats": [
+        0.08512673362027745,
+        -0.13205181780192232,
+        -0.07905314872711044,
+        0.02151051625239009,
+        0.02937062937062951
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "week",
+      "median": 100,
+      "delta": 0.007000000000000117,
+      "repeats": [
+        0.09054726368159205,
+        0.0020000000000000018,
+        0.016210739614994862,
+        0.005030181086519203,
+        0.02791625124626118
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "not in this build: paneldynamic.allowSort"
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "today",
+      "median": 47.4
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "yesterday",
+      "median": 47.6,
+      "delta": 0.010504201680672232,
+      "repeats": [
+        -0.04276985743380857,
+        0.05197505197505192,
+        0.017021276595744705,
+        0.008695652173912993,
+        0.02330508474576254
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "week",
+      "median": 47,
+      "delta": 0,
+      "repeats": [
+        -0.01043841336116913,
+        -0.014675052410901501,
+        -0.014675052410901501,
+        -0.010660980810234588,
+        0.002159827213823018
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "not in this build: paneldynamic.allowSort"
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "today",
+      "median": 121.1
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "yesterday",
+      "median": 121.6,
+      "delta": -0.005756578947368363,
+      "repeats": [
+        0.054862842892768215,
+        -0.0024752475247524774,
+        -0.0024875621890546595,
+        -0.012892828364222342,
+        -0.005751848808545623
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "week",
+      "median": 121.6,
+      "delta": -0.0016447368421051989,
+      "repeats": [
+        0.0008257638315443128,
+        -0.01880621422730988,
+        -0.008045052292839916,
+        0.029239766081871288,
+        -0.016286644951140072
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "not in this build: matrixdynamic.allowSort"
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "today",
+      "median": 46.1
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "yesterday",
+      "median": 46.2,
+      "delta": 0.017316017316017174,
+      "repeats": [
+        0.14102564102564097,
+        0.019955654101995624,
+        0.017316017316017174,
+        0.015283842794759916,
+        -0.002159827213822796
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "week",
+      "median": 44.7,
+      "delta": 0.01118568232662187,
+      "repeats": [
+        0.042128603104212736,
+        0.0045045045045044585,
+        0.03146067415730336,
+        -0.01777777777777767,
+        -0.01333333333333342
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "not in this build: matrixdynamic.allowSort"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "calculations/load/paint",
+      "role": "today",
+      "median": 408.8
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "calculations/load/paint",
+      "role": "yesterday",
+      "median": 404.7,
+      "delta": -0.002718062762540052,
+      "repeats": [
+        -0.00789928412737606,
+        0.1070201276386844,
+        -0.0002465483234714849,
+        -0.00475356517388037,
+        0.001982160555004775
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "calculations/load/paint",
+      "role": "week",
+      "median": 404.8,
+      "delta": 0.015810276679841806,
+      "repeats": [
+        0.014713216957605857,
+        0.008627064333251111,
+        0.01778656126482203,
+        0.02144441705693856,
+        0.02172303135028386
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "calculations/load/paint",
+      "role": "month",
+      "median": 1004.2,
+      "delta": -0.5921131248755228,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5934611944748087,
+        -0.5876402243589743,
+        -0.5936912884406209,
+        -0.5924630147940824,
+        -0.5936665017318159
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/first",
+      "role": "today",
+      "median": 218.4
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/first",
+      "role": "yesterday",
+      "median": 217.7,
+      "delta": -0.014699127239320098,
+      "repeats": [
+        -0.015813953488372112,
+        -0.019916628068550324,
+        -0.0249665626393224,
+        -0.001799370220422869,
+        0.011143410852713087
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/first",
+      "role": "week",
+      "median": 213.5,
+      "delta": -0.014051522248243575,
+      "repeats": [
+        -0.019654841802492773,
+        0.004739336492890933,
+        0.026605504587156048,
+        -0.04246575342465764,
+        0.01937046004842613
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/first",
+      "role": "month",
+      "median": 4709.5,
+      "delta": -0.9493789149591252,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.9521284924949108,
+        -0.9491036384852021,
+        -0.9496360375567043,
+        -0.9495887390825065,
+        -0.9459519622465107
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/type",
+      "role": "today",
+      "median": 389.4
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/type",
+      "role": "yesterday",
+      "median": 397.3,
+      "delta": 0.003020387616410769,
+      "repeats": [
+        -0.05987261146496814,
+        -0.008557764913163957,
+        0.010118897040222619,
+        0.008745627186406812,
+        0.0004911591355598599
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/type",
+      "role": "week",
+      "median": 379.5,
+      "delta": 0.022397891963109373,
+      "repeats": [
+        -0.005413385826771644,
+        -0.01846698709840633,
+        0.03381510771748042,
+        -0.012671594508975703,
+        0.07984189723320156
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/type",
+      "role": "month",
+      "median": 13116.9,
+      "delta": -0.9705799388575045,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.9726639296865965,
+        -0.9722570102022114,
+        -0.9722030888858275,
+        -0.9699361142427658,
+        -0.9703705945553319
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/load/paint",
+      "role": "today",
+      "median": 2205.1
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/load/paint",
+      "role": "yesterday",
+      "median": 2153,
+      "delta": 0.009335810496980956,
+      "repeats": [
+        0.003037809038650252,
+        0.008203179311303765,
+        0.012769725497506768,
+        0.020742613662967813,
+        -0.013794355204646558
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/load/paint",
+      "role": "week",
+      "median": 2210.3,
+      "delta": 0.011355924535130901,
+      "repeats": [
+        -0.029942718278076708,
+        -0.011006492110580801,
+        0.03408673281881658,
+        -0.000317589946009611,
+        -0.005734471052390111
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/load/paint",
+      "role": "month",
+      "median": 11329.9,
+      "delta": -0.802460745461125,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.8072213361687046,
+        -0.7953199887228644,
+        -0.8141572123176661,
+        -0.8036443161594786,
+        -0.8023806997063921
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "expressions/load/paint",
+      "role": "today",
+      "median": 6071.5
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "expressions/load/paint",
+      "role": "yesterday",
+      "median": 6089.1,
+      "delta": 0.000032845576521944864,
+      "repeats": [
+        0.006752094627895611,
+        0.007405689292400597,
+        0.0032171403933536347,
+        -0.013965022187418463,
+        -0.022404440124172864
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "expressions/load/paint",
+      "role": "week",
+      "median": 6025.4,
+      "delta": 0.02150894546420168,
+      "repeats": [
+        0.032281960952161404,
+        0.021523920072962444,
+        0.008066536399619295,
+        0.020816387510167456,
+        0.030316175857178607
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "expressions/load/paint",
+      "role": "month",
+      "median": 9614.8,
+      "delta": -0.3735803136830719,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.37737923594759726,
+        -0.3727407530304758,
+        -0.37457648387501563,
+        -0.3752276104564767,
+        -0.3633660547653441
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "large/load/paint",
+      "role": "today",
+      "median": 1149.1
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "large/load/paint",
+      "role": "yesterday",
+      "median": 1166.2,
+      "delta": -0.010632824558394871,
+      "repeats": [
+        -0.010484360107442914,
+        -0.0006023578005334151,
+        -0.004551309574924778,
+        -0.016315025198599287,
+        -0.027575706310269066
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "large/load/paint",
+      "role": "week",
+      "median": 1160.9,
+      "delta": -0.015419071410112895,
+      "repeats": [
+        -0.005348977655077025,
+        -0.011383235598482089,
+        -0.019565592139286325,
+        -0.01815209910529947,
+        -0.024360953851432332
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "large/load/paint",
+      "role": "month",
+      "median": 2309.8,
+      "delta": -0.5019482206251624,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5073538815705333,
+        -0.5033006166941718,
+        -0.499630707737759,
+        -0.4990696265524255,
+        -0.5035077082972458
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/load/paint",
+      "role": "today",
+      "median": 647.3
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/load/paint",
+      "role": "yesterday",
+      "median": 655.5,
+      "delta": -0.0035087719298244613,
+      "repeats": [
+        0.017400677548506494,
+        -0.015513307984790892,
+        -0.00898568382576903,
+        0.012683681361175703,
+        -0.0016581248115767888
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/load/paint",
+      "role": "week",
+      "median": 654.2,
+      "delta": -0.007490064200550428,
+      "repeats": [
+        0.013451543870375948,
+        0.0016378796902918324,
+        -0.0344827586206895,
+        -0.01778656126482203,
+        0.013679245283019004
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/load/paint",
+      "role": "month",
+      "median": 891.5,
+      "delta": -0.2846887268648345,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.28257933828494264,
+        -0.2870743727598566,
+        -0.28611422172452405,
+        -0.282120093928212,
+        -0.27465344302941497
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/locale",
+      "role": "today",
+      "median": 65.5
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/locale",
+      "role": "yesterday",
+      "median": 65.6,
+      "delta": 0.051829268292683084,
+      "repeats": [
+        0.09121061359867322,
+        0.1195286195286196,
+        -0.05965463108320257,
+        0.023255813953488413,
+        -0.060802069857697316
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/locale",
+      "role": "week",
+      "median": 72.6,
+      "delta": -0.028925619834710647,
+      "repeats": [
+        -0.015151515151515138,
+        -0.01377410468319562,
+        0.015988372093023395,
+        -0.06349206349206349,
+        0.2415730337078652
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/locale",
+      "role": "month",
+      "median": 68.4,
+      "delta": -0.2134502923976609,
+      "repeats": [
+        -0.2012012012012011,
+        -0.1946107784431138,
+        -0.27595269382391585,
+        -0.23623188405797102,
+        -0.20765832106038307
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/next10",
+      "role": "today",
+      "median": 204.5
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/next10",
+      "role": "yesterday",
+      "median": 201.8,
+      "delta": 0.0252725470763131,
+      "repeats": [
+        0.054213898472153854,
+        0.026959560659011395,
+        0.019733596447952584,
+        0.0251851851851852,
+        0.014903129657227954
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/next10",
+      "role": "week",
+      "median": 203.5,
+      "delta": -0.0009828009828009021,
+      "repeats": [
+        -0.004413928396272748,
+        -0.0009876543209875743,
+        -0.009178743961352653,
+        0.02429350520575113,
+        -0.012370113805047045
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/next10",
+      "role": "month",
+      "median": 220,
+      "delta": -0.08272727272727265,
+      "repeats": [
+        -0.08859609268514312,
+        -0.06148867313915862,
+        -0.10264455401165395,
+        -0.078125,
+        -0.08257713248638843
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/load/paint",
+      "role": "today",
+      "median": 2445.3
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/load/paint",
+      "role": "yesterday",
+      "median": 2449.4,
+      "delta": -0.005797338123622264,
+      "repeats": [
+        -0.007956702613191258,
+        -0.004092490280335537,
+        -0.0011117974058060254,
+        -0.007759181020474459,
+        -0.011407461535338892
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/load/paint",
+      "role": "week",
+      "median": 2444.6,
+      "delta": 0.0015135400474517446,
+      "repeats": [
+        0.0030649775234981025,
+        -0.002859593937660887,
+        -0.001058718136656256,
+        0.006330154554422762,
+        0.012618427040668623
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/load/paint",
+      "role": "month",
+      "median": 1940.4,
+      "delta": 0.2607194392908678,
+      "verdict": "up",
+      "rerun": "confirmed",
+      "repeats": [
+        0.25368426495682295,
+        0.2564023449552606,
+        0.2705090666255716,
+        0.25648014811767106,
+        0.27118993606929265
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/add-row@orders",
+      "role": "today",
+      "median": 286
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/add-row@orders",
+      "role": "yesterday",
+      "median": 291.1,
+      "delta": -0.008588114050154583,
+      "repeats": [
+        0.05493387589013232,
+        -0.018880878819086844,
+        -0.007901064926142287,
+        -0.02440701271914736,
+        -0.0038181187087817925
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/add-row@orders",
+      "role": "week",
+      "median": 287,
+      "delta": -0.0045296167247387276,
+      "repeats": [
+        -0.02002762430939231,
+        -0.031207133058985037,
+        0.005952380952380931,
+        -0.006631762652704931,
+        0.008471584892340234
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/add-row@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "today",
+      "median": 302.1
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "yesterday",
+      "median": 307.1,
+      "delta": -0.014978834255942708,
+      "repeats": [
+        0.0022493573264781297,
+        -0.0825435646591256,
+        -0.035435630689206854,
+        -0.000671591672263272,
+        0.006635700066357053
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "week",
+      "median": 300.1,
+      "delta": 0.005664778407197479,
+      "repeats": [
+        0.036840358446730725,
+        0.017397122783539887,
+        0.01241610738255039,
+        -0.0027155465037339566,
+        -0.024942566458811877
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "today",
+      "median": 829.8
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "yesterday",
+      "median": 842.7,
+      "delta": -0.00913729678414621,
+      "repeats": [
+        0.017696998684682663,
+        -0.012531032036883771,
+        -0.014309366130558221,
+        -0.007802340702210642,
+        -0.0066950699939135605
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "week",
+      "median": 813.9,
+      "delta": 0.019289839046565893,
+      "repeats": [
+        0.021308225966303107,
+        0.019289839046565893,
+        0.026753791147823947,
+        -0.014604707302353637,
+        0.03519387503087179
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/last@orders",
+      "role": "today",
+      "median": 246.7
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/last@orders",
+      "role": "yesterday",
+      "median": 246.6,
+      "delta": 0.012976480129764933,
+      "repeats": [
+        -0.015279453156413325,
+        0.04487443392342527,
+        0.004858299595141613,
+        -0.006882591093117396,
+        0.023567655424624245
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/last@orders",
+      "role": "week",
+      "median": 241.8,
+      "delta": 0.017369727047146455,
+      "repeats": [
+        0.02255947497949129,
+        -0.004870129870129913,
+        0.0326986754966887,
+        -0.003705228489090162,
+        0.0054553084347459535
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/last@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/next@orders",
+      "role": "today",
+      "median": 430
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/next@orders",
+      "role": "yesterday",
+      "median": 430.4,
+      "delta": -0.005808550185873562,
+      "repeats": [
+        0.0006925207756232066,
+        -0.007890461824089035,
+        -0.010042036431574086,
+        0.00022988505747134624,
+        -0.005808550185873562
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/next@orders",
+      "role": "week",
+      "median": 424.2,
+      "delta": 0.013672795851013664,
+      "repeats": [
+        0.018584703359542543,
+        0.0011837121212121549,
+        0.000692840646651316,
+        -0.005899705014749235,
+        0.015348288075560879
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/next@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "today",
+      "median": 468.3
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "yesterday",
+      "median": 469.9,
+      "delta": -0.006809959565865054,
+      "repeats": [
+        0.007437314067148426,
+        -0.01811288963774227,
+        -0.006809959565865054,
+        -0.00064516129032266,
+        -0.01163041137195786
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "week",
+      "median": 468.4,
+      "delta": -0.00021349274124671247,
+      "repeats": [
+        0.02216370419135405,
+        -0.009787234042553217,
+        0.02685284640171859,
+        0.00043516100957341486,
+        -0.00021349274124671247
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/load/paint",
+      "role": "today",
+      "median": 786.6
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/load/paint",
+      "role": "yesterday",
+      "median": 784.7,
+      "delta": -0.002293870268892606,
+      "repeats": [
+        -0.0045912511159291736,
+        -0.09589358010410642,
+        0.000509748948642752,
+        -0.005741260525644276,
+        0.00496499045194132
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/load/paint",
+      "role": "week",
+      "median": 778.6,
+      "delta": 0.0065502183406114245,
+      "repeats": [
+        0.008350462487153099,
+        0.0019285163281048678,
+        0.01695134575569357,
+        0.004107303298677811,
+        0.012307692307692353
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/load/paint",
+      "role": "month",
+      "median": 1077.4,
+      "delta": -0.2659179506218675,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.26605846211133877,
+        -0.26426174496644295,
+        -0.268358430935118,
+        -0.2626403191390668,
+        -0.26741510996595197
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "today",
+      "median": 48.6
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "yesterday",
+      "median": 49.1,
+      "delta": -0.022403258655804503,
+      "repeats": [
+        -0.08795411089866145,
+        -0.0020703933747411307,
+        -0.012345679012345734,
+        0.012295081967213184,
+        0.018329938900203624
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "week",
+      "median": 49.6,
+      "delta": -0.01008064516129037,
+      "repeats": [
+        0.006085192697768749,
+        -0.004106776180698213,
+        -0.031746031746031744,
+        -0.01836734693877551,
+        0.00390625
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "today",
+      "median": 44.6
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "yesterday",
+      "median": 45.6,
+      "delta": -0.026315789473684292,
+      "repeats": [
+        0.012931034482758674,
+        -0.04999999999999993,
+        -0.07478632478632474,
+        -0.015659955257270708,
+        0.027027027027027195
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "week",
+      "median": 45,
+      "delta": 0.004444444444444473,
+      "repeats": [
+        0.002277904328018332,
+        0.022172949002217335,
+        -0.025531914893617058,
+        -0.034858387799564294,
+        0.026066350710900243
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "not in this build: paneldynamic.allowSort"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "today",
+      "median": 133.7
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "yesterday",
+      "median": 134.8,
+      "delta": 0.002225519287833766,
+      "repeats": [
+        -0.036416605972323324,
+        0.03611738148984189,
+        -0.033576642335766405,
+        0.022255192878338326,
+        0.017319277108433617
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "week",
+      "median": 135.9,
+      "delta": -0.023546725533480584,
+      "repeats": [
+        0.009893455098934467,
+        -0.004480955937266606,
+        -0.02541757443718229,
+        0.012232415902140525,
+        -0.03076923076923066
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "not in this build: paneldynamic.allowSort"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "today",
+      "median": 47.6
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "yesterday",
+      "median": 47,
+      "delta": 0.010638297872340496,
+      "repeats": [
+        0.03947368421052633,
+        0.004282655246252487,
+        0.004273504273504258,
+        0.03347280334728042,
+        0.0331262939958592
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "week",
+      "median": 47.4,
+      "delta": 0.0021097046413502962,
+      "repeats": [
+        0.006249999999999867,
+        0.025423728813559254,
+        0.0021186440677964935,
+        -0.010752688172043001,
+        -0.008438818565400852
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "not in this build: paneldynamic.allowSort"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "today",
+      "median": 97.3
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "yesterday",
+      "median": 98.4,
+      "delta": -0.011178861788617933,
+      "repeats": [
+        -0.08574181117533708,
+        -0.004065040650406582,
+        0.018614270941054833,
+        0.0041279669762641635,
+        -0.006179196704428347
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "week",
+      "median": 97.3,
+      "delta": 0.0030832476875641834,
+      "repeats": [
+        -0.01747173689619741,
+        -0.002057613168724326,
+        0.010266940451745477,
+        -0.0020263424518743856,
+        0.016563146997929712
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "not in this build: matrixdynamic.allowSort"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "today",
+      "median": 44.3
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "yesterday",
+      "median": 43.7,
+      "delta": 0.01830663615560635,
+      "repeats": [
+        0.016055045871559592,
+        0.04387990762124727,
+        0.03196347031963476,
+        -0.04867256637168149,
+        0.027906976744186185
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "week",
+      "median": 43.9,
+      "delta": 0.006833712984054774,
+      "repeats": [
+        -0.009111617312072884,
+        0,
+        0.004629629629629539,
+        -0.016055045871559703,
+        -0.054824561403508776
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "not in this build: matrixdynamic.allowSort"
+    },
+    {
+      "suite": "vue3",
+      "id": "calculations/load/paint",
+      "role": "today",
+      "median": 433.7
+    },
+    {
+      "suite": "vue3",
+      "id": "calculations/load/paint",
+      "role": "yesterday",
+      "median": 432.8,
+      "delta": 0.00046210720887240875,
+      "repeats": [
+        0.002596789423984891,
+        -0.1347109080071528,
+        -0.033879291002916645,
+        0.011542012927054479,
+        0.1533002129169625
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "calculations/load/paint",
+      "role": "week",
+      "median": 429.8,
+      "delta": 0.008841321544904579,
+      "repeats": [
+        -0.012859480944587331,
+        0.019460726846424414,
+        -0.0018357044515833199,
+        0.006694367497691589,
+        -0.0009306654257794644
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "calculations/load/paint",
+      "role": "month",
+      "median": 1012.8,
+      "delta": -0.5700039494470774,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5678451510961879,
+        -0.5712173484475112,
+        -0.574150868878357,
+        -0.5721422274463708,
+        -0.5688218960729869
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/answer/type",
+      "role": "today",
+      "median": 471.8
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/answer/type",
+      "role": "yesterday",
+      "median": 468.8,
+      "delta": -0.013651877133105894,
+      "repeats": [
+        -0.015257469802924306,
+        -0.027930596699111354,
+        -0.027266962587190968,
+        -0.010503751339764111,
+        0.0309026233881724
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/answer/type",
+      "role": "week",
+      "median": 477.7,
+      "delta": 0.02805107808247853,
+      "repeats": [
+        0.006873614190687327,
+        0.023932729624838167,
+        -0.005712034666141341,
+        0.005855943782939743,
+        0.07793683253805939
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/answer/type",
+      "role": "month",
+      "median": 13252.2,
+      "delta": -0.9648888486439987,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.9674771731974697,
+        -0.9628384046366202,
+        -0.963029591012556,
+        -0.9653777631649373,
+        -0.9664726126044177
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/load/paint",
+      "role": "today",
+      "median": 1503
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/load/paint",
+      "role": "yesterday",
+      "median": 1508.5,
+      "delta": -0.00921445144182964,
+      "repeats": [
+        -0.021437740693196483,
+        -0.017273971709797276,
+        0.008463760327802827,
+        -0.020823662046554836,
+        -0.0008713720758765087
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/load/paint",
+      "role": "week",
+      "median": 1511.9,
+      "delta": -0.0127653945366758,
+      "repeats": [
+        -0.02571691660089459,
+        -0.012650642519475341,
+        -0.0017899761336516162,
+        0.001597337770382845,
+        -0.0032211412043124943
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/load/paint",
+      "role": "month",
+      "median": 10004.7,
+      "delta": -0.848251321878717,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.8481469235624756,
+        -0.846529994271217,
+        -0.8516984588427383,
+        -0.8471183194685499,
+        -0.847237678855326
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "expressions/load/paint",
+      "role": "today",
+      "median": 6168.7
+    },
+    {
+      "suite": "vue3",
+      "id": "expressions/load/paint",
+      "role": "yesterday",
+      "median": 6170,
+      "delta": -0.002009724473257646,
+      "repeats": [
+        0.00496326212836351,
+        -0.004631428941572646,
+        0.009030998291432724,
+        -0.0055595061089922515,
+        -0.002352979358691387
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "expressions/load/paint",
+      "role": "week",
+      "median": 6099,
+      "delta": 0.010919822921790612,
+      "repeats": [
+        0.008052397752515317,
+        0.005001225790635111,
+        0.01009353783432787,
+        0.013422046985378744,
+        0.01403809398273248
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "expressions/load/paint",
+      "role": "month",
+      "median": 9649.8,
+      "delta": -0.35688822566270806,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.3608054052933739,
+        -0.35816824576514505,
+        -0.35456193477947384,
+        -0.3627165382900861,
+        -0.36330547317336215
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "large/load/paint",
+      "role": "today",
+      "median": 595.6
+    },
+    {
+      "suite": "vue3",
+      "id": "large/load/paint",
+      "role": "yesterday",
+      "median": 616.1,
+      "delta": -0.025158253530271013,
+      "repeats": [
+        -0.03292181069958844,
+        -0.12352767962308608,
+        -0.028312570781426905,
+        -0.01741536458333326,
+        -0.007811228641171564
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "large/load/paint",
+      "role": "week",
+      "median": 609.1,
+      "delta": -0.027581677885404776,
+      "repeats": [
+        -0.027314360484134714,
+        -0.02394526795895091,
+        -0.020418326693226962,
+        -0.01888031521917588,
+        -0.02197802197802201
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "large/load/paint",
+      "role": "month",
+      "median": 1286,
+      "delta": -0.5350699844479005,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5318299271787643,
+        -0.5437687687687687,
+        -0.5512578378786734,
+        -0.5347812401636765,
+        -0.5356946084218812
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/load/paint",
+      "role": "today",
+      "median": 491.7
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/load/paint",
+      "role": "yesterday",
+      "median": 493.3,
+      "delta": -0.0032434623961078435,
+      "repeats": [
+        -0.007669021190716441,
+        -0.0169525731584258,
+        -0.017593528816986836,
+        0.025391021734714636,
+        0.026745610453246194
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/load/paint",
+      "role": "week",
+      "median": 493.7,
+      "delta": -0.00020255215718045783,
+      "repeats": [
+        -0.008797054009820005,
+        0.008153281695882697,
+        -0.015996800639872077,
+        0.017886513157894912,
+        -0.02811087084725772
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/load/paint",
+      "role": "month",
+      "median": 691.1,
+      "delta": -0.294024019678773,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.29267247536066276,
+        -0.29119769119769123,
+        -0.2813138686131387,
+        -0.3027429238400934,
+        -0.314211960418758
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/pages/next10",
+      "role": "today",
+      "median": 470
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/pages/next10",
+      "role": "yesterday",
+      "median": 473.8,
+      "delta": -0.006120726044744673,
+      "repeats": [
+        -0.03768736616702362,
+        -0.008142275551746292,
+        -0.03982211441277539,
+        0.07439446366782021,
+        0.01141961486789067
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/pages/next10",
+      "role": "week",
+      "median": 455,
+      "delta": 0.052527472527472474,
+      "repeats": [
+        0.0673055493648318,
+        0.0035118525021948788,
+        0.021538461538461506,
+        0.0008760402978535975,
+        0.07581467523830643
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/pages/next10",
+      "role": "month",
+      "median": 501.3,
+      "delta": -0.1011370436864153,
+      "repeats": [
+        -0.09657506969334928,
+        -0.07622392067754602,
+        -0.13678160919540228,
+        -0.07984480294057583,
+        -0.06987704918032789
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/load/paint",
+      "role": "today",
+      "median": 1933.2
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/load/paint",
+      "role": "yesterday",
+      "median": 1937.6,
+      "delta": -0.0010838150289016468,
+      "repeats": [
+        0.00025839793281656753,
+        0.0009018089226036086,
+        -0.023957042544403118,
+        0.003388973191704725,
+        0.01597411269197191
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/load/paint",
+      "role": "week",
+      "median": 1915.6,
+      "delta": 0.0012006681979537248,
+      "repeats": [
+        0.01687236369317291,
+        0.04886078595317733,
+        -0.0018772196854388579,
+        0.01811967666684766,
+        -0.006299044466983372
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/load/paint",
+      "role": "month",
+      "median": 1530.3,
+      "delta": 0.26328170946873164,
+      "rerun": "unconfirmed",
+      "repeats": [
+        0.20060590094836672,
+        0.19587246663371238,
+        0.26875942066976855,
+        0.2649977002431172,
+        0.2772655426765016
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "today",
+      "median": 299.9
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "yesterday",
+      "median": 305.3,
+      "delta": -0.018670160497870958,
+      "repeats": [
+        -0.08664041199636485,
+        -0.0181347150259068,
+        0.012662445851382653,
+        -0.04299999999999993,
+        -0.0026899798251511786
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "week",
+      "median": 299.5,
+      "delta": 0.0013355592654422654,
+      "repeats": [
+        0.026711185308847973,
+        -0.02258385918299577,
+        0.004716981132075304,
+        -0.02279484638255691,
+        -0.011861614497528872
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "today",
+      "median": 284.6
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "yesterday",
+      "median": 282.4,
+      "delta": 0.006019830028328732,
+      "repeats": [
+        -0.021716287215411523,
+        0.001413427561837377,
+        0.007790368271954895,
+        0.04733096085409261,
+        0.021762397431323466
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "week",
+      "median": 287.6,
+      "delta": -0.0073018080667595076,
+      "repeats": [
+        -0.03654371584699445,
+        -0.010442046641141678,
+        -0.00863856254319284,
+        0.021985815602836745,
+        0.017235314808301094
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "vue3",
+      "id": "records-1k/load/paint",
+      "role": "today",
+      "median": 853.8
+    },
+    {
+      "suite": "vue3",
+      "id": "records-1k/load/paint",
+      "role": "yesterday",
+      "median": 844.8,
+      "delta": 0.004853219696969724,
+      "repeats": [
+        0.01799242424242431,
+        -0.08108695652173914,
+        0.0076399665751460955,
+        0.017746545974273387,
+        -0.012402012402012441
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-1k/load/paint",
+      "role": "week",
+      "median": 848.6,
+      "delta": 0.01095922696205509,
+      "repeats": [
+        0.017556346381969012,
+        0.01186521120075934,
+        0.0030816640986131016,
+        0.0073632538569423645,
+        -0.0006902105142067017
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-1k/load/paint",
+      "role": "month",
+      "median": 1139.6,
+      "delta": -0.2506142506142506,
+      "rerun": "unconfirmed",
+      "repeats": [
+        -0.25110705912998177,
+        -0.25282622031373225,
+        -0.2541120591081011,
+        -0.25092543627710207,
+        -0.24719199719199714
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "today",
+      "median": 95.1
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "yesterday",
+      "median": 94.9,
+      "delta": 0.02212855637513167,
+      "repeats": [
+        0.1217948717948718,
+        0.07446808510638303,
+        0.005252100840336116,
+        -0.012591815320042055,
+        0.006198347107438051
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "week",
+      "median": 93.6,
+      "delta": 0.011752136752136932,
+      "repeats": [
+        0.026709401709401615,
+        -0.04437564499484015,
+        -0.004206098843322681,
+        0.03455964325529526,
+        0.030167597765363263
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "not in this build: matrixdynamic.allowSort"
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "today",
+      "median": 49.1
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "yesterday",
+      "median": 49,
+      "delta": -0.008163265306122436,
+      "repeats": [
+        -0.027613412228796985,
+        -0.028806584362139898,
+        -0.006263048016701411,
+        -0.014112903225806495,
+        -0.02008032128514059
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "week",
+      "median": 48.6,
+      "delta": 0.020576131687242816,
+      "repeats": [
+        0.02079002079002068,
+        0.010224948875255713,
+        0.014198782961460488,
+        -0.006134969325153339,
+        0.03541666666666665
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "not in this build: matrixdynamic.allowSort"
+    },
+    {
+      "suite": "angular",
+      "id": "calculations/load/paint",
+      "role": "today",
+      "median": 514.4
+    },
+    {
+      "suite": "angular",
+      "id": "calculations/load/paint",
+      "role": "yesterday",
+      "median": 506.6,
+      "delta": -0.01085669166995662,
+      "repeats": [
+        0.0015926737009754888,
+        -0.0663570599267661,
+        -0.015208374481532672,
+        -0.006940313305572099,
+        -0.010280743376828716
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "calculations/load/paint",
+      "role": "week",
+      "median": 522.2,
+      "delta": -0.018383761011106947,
+      "repeats": [
+        -0.022029749576351065,
+        0,
+        -0.06366833240792147,
+        -0.0078125,
+        0.001366653650917371
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "calculations/load/paint",
+      "role": "month",
+      "median": 1013.3,
+      "delta": -0.46284417250567456,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.4676206290291073,
+        -0.4461659923023783,
+        -0.46397924565954896,
+        -0.466309266181389,
+        -0.4568396465928709
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/answer/type",
+      "role": "today",
+      "median": 484.3
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/answer/type",
+      "role": "yesterday",
+      "median": 484.2,
+      "delta": 0.007228418009087134,
+      "repeats": [
+        -0.030290709493799528,
+        -0.004543577034283319,
+        -0.0006106248727865138,
+        0.002705515088449628,
+        0.029558701082431416
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/answer/type",
+      "role": "week",
+      "median": 483.3,
+      "delta": -0.0035174839644113165,
+      "repeats": [
+        -0.017746595130004206,
+        0.00964360587002111,
+        0.011064718162839382,
+        0,
+        0.0010397171969225294
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/answer/type",
+      "role": "month",
+      "median": 14208.6,
+      "delta": -0.9656123756035078,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.9667600727584293,
+        -0.9653051982054657,
+        -0.9654990948511767,
+        -0.965966889749912,
+        -0.9656123756035078
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/load/paint",
+      "role": "today",
+      "median": 1513.8
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/load/paint",
+      "role": "yesterday",
+      "median": 1536.5,
+      "delta": -0.015099251545720782,
+      "repeats": [
+        -0.007597589730154564,
+        -0.017426360621627057,
+        -0.01441205371765475,
+        -0.014318255776114563,
+        -0.018251493894517967
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/load/paint",
+      "role": "week",
+      "median": 1518.7,
+      "delta": -0.005926121024560471,
+      "repeats": [
+        -0.020226484257380384,
+        -0.021001509483494107,
+        0.0012523894271967428,
+        0.0054025563315325265,
+        -0.0023718539992093612
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/load/paint",
+      "role": "month",
+      "median": 10045.8,
+      "delta": -0.8489119831173226,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.850944902848017,
+        -0.8492266508030935,
+        -0.8454451992662326,
+        -0.8498214765234169,
+        -0.8454531607006854
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "expressions/load/paint",
+      "role": "today",
+      "median": 4051
+    },
+    {
+      "suite": "angular",
+      "id": "expressions/load/paint",
+      "role": "yesterday",
+      "median": 4044.1,
+      "delta": 0.003511288049256933,
+      "repeats": [
+        0.0155556663509,
+        -0.011305498015922621,
+        -0.013898489187321061,
+        0.005744575936883711,
+        0.009078126156351063
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "expressions/load/paint",
+      "role": "week",
+      "median": 4098.2,
+      "delta": -0.0012688497389097275,
+      "repeats": [
+        -0.008598764684510152,
+        0.014887063655030675,
+        0.006237657145609754,
+        -0.012482290292637699,
+        0.007845969911328021
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "expressions/load/paint",
+      "role": "month",
+      "median": 6676.9,
+      "delta": -0.394584313079423,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.39468162744024804,
+        -0.39980712166172105,
+        -0.3916881150643452,
+        -0.39553166918361904,
+        -0.4126680019739325
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "large/load/paint",
+      "role": "today",
+      "median": 609.1
+    },
+    {
+      "suite": "angular",
+      "id": "large/load/paint",
+      "role": "yesterday",
+      "median": 626.5,
+      "delta": -0.03447725458898643,
+      "repeats": [
+        -0.048959799781010394,
+        -0.022450288646568284,
+        -0.03492213308164238,
+        -0.04060995184590688,
+        -0.03181301736731057
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "large/load/paint",
+      "role": "week",
+      "median": 620.8,
+      "delta": -0.020296391752577136,
+      "repeats": [
+        -0.024271844660194164,
+        -0.02750651041666663,
+        -0.04200869145340402,
+        -0.015783540022547893,
+        -0.005183025591188772
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "large/load/paint",
+      "role": "month",
+      "median": 1293.1,
+      "delta": -0.5261000696001856,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5267953667953669,
+        -0.5363947603453408,
+        -0.5308883328120113,
+        -0.5291781240452185,
+        -0.5213266426219225
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/load/paint",
+      "role": "today",
+      "median": 538.2
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/load/paint",
+      "role": "yesterday",
+      "median": 547,
+      "delta": -0.006032906764168122,
+      "repeats": [
+        -0.011605415860735047,
+        -0.016551473263004546,
+        -0.021643433602347883,
+        0.021503365744203418,
+        -0.005130084279955982
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/load/paint",
+      "role": "week",
+      "median": 542.4,
+      "delta": -0.008480825958702143,
+      "repeats": [
+        -0.011410400299289192,
+        0.008390826030207021,
+        -0.015418102666424849,
+        0.011893870082342106,
+        -0.022631094756209613
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/load/paint",
+      "role": "month",
+      "median": 733.8,
+      "delta": -0.27705096756609426,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.27171522814733373,
+        -0.27036183764737776,
+        -0.2823101777059773,
+        -0.27401596476740986,
+        -0.27829868188612583
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/pages/next10",
+      "role": "today",
+      "median": 377.7
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/pages/next10",
+      "role": "yesterday",
+      "median": 366.1,
+      "delta": -0.01939360830374226,
+      "repeats": [
+        -0.03948832035595118,
+        0.011576626240352716,
+        0.005013927576601684,
+        -0.05120000000000002,
+        -0.03573407202216061
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/pages/next10",
+      "role": "week",
+      "median": 373.1,
+      "delta": 0.009916912355936613,
+      "repeats": [
+        0.024611032531824506,
+        0.03115605356654827,
+        0.0005515719801434393,
+        -0.016018907563025264,
+        0.03245223763412719
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/pages/next10",
+      "role": "month",
+      "median": 440,
+      "delta": -0.08772727272727276,
+      "repeats": [
+        -0.015740740740740722,
+        -0.11608359836437976,
+        -0.06496519721577731,
+        -0.11430558775794109,
+        -0.12113636363636371
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/load/paint",
+      "role": "today",
+      "median": 1961.1
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/load/paint",
+      "role": "yesterday",
+      "median": 1968.2,
+      "delta": -0.0020831216339803893,
+      "repeats": [
+        -0.02905533654548098,
+        -0.0240216194575118,
+        -0.007002657943160906,
+        0.012305335716109145,
+        0.0105800990916598
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/load/paint",
+      "role": "week",
+      "median": 1954.2,
+      "delta": 0.002558591751100181,
+      "repeats": [
+        -0.009706743361922787,
+        0.00529963310232362,
+        0.0026097635861221935,
+        0.00991211935417935,
+        0.008213974023307147
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/load/paint",
+      "role": "month",
+      "median": 1757.2,
+      "delta": 0.1181994081493285,
+      "repeats": [
+        0.11234140715109575,
+        0.11394733816258462,
+        0.11224141850420555,
+        0.12511384335154818,
+        0.11348988398811866
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "today",
+      "median": 585.3
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "yesterday",
+      "median": 587.7,
+      "delta": -0.0040837161817255385,
+      "repeats": [
+        -0.019326891036321237,
+        0.0024748099699487547,
+        -0.02091000334560056,
+        0.007033585370142426,
+        0.020248426067721592
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "week",
+      "median": 587.9,
+      "delta": -0.003742133015818938,
+      "repeats": [
+        -0.003029792964147515,
+        -0.020076961686464778,
+        -0.019168235495464536,
+        0.04487406881873013,
+        -0.03180813063446153
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "today",
+      "median": 285.9
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "yesterday",
+      "median": 289.9,
+      "delta": -0.008623663332183562,
+      "repeats": [
+        -0.01779483600837417,
+        0.036421499292786486,
+        -0.022564102564102684,
+        -0.012114918656974782,
+        -0.0055191445325972754
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "week",
+      "median": 281.9,
+      "delta": 0.00993260021284148,
+      "repeats": [
+        -0.011323425336164372,
+        0.031249999999999778,
+        0.01989869753979745,
+        0.015923566878981,
+        0.012384996461429543
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'map')"
+    },
+    {
+      "suite": "angular",
+      "id": "records-1k/load/paint",
+      "role": "today",
+      "median": 956
+    },
+    {
+      "suite": "angular",
+      "id": "records-1k/load/paint",
+      "role": "yesterday",
+      "median": 953.5,
+      "delta": 0.003985317252228615,
+      "repeats": [
+        -0.0004183662796778398,
+        -0.004264614104431019,
+        0.0216267538769912,
+        -0.007462686567164201,
+        0.012642090725592414
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-1k/load/paint",
+      "role": "week",
+      "median": 959.9,
+      "delta": -0.0059381185540159365,
+      "repeats": [
+        -0.0254627262501278,
+        -0.008910070451719876,
+        -0.0005259835893119957,
+        -0.007471204731762993,
+        -0.0045977011494252595
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-1k/load/paint",
+      "role": "month",
+      "median": 1254.1,
+      "delta": -0.23570688142891316,
+      "repeats": [
+        -0.235733804854525,
+        -0.2346108257605689,
+        -0.2368126598465473,
+        -0.24324964471814303,
+        -0.24653695251821606
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "today",
+      "median": 192.1
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "yesterday",
+      "median": 189.7,
+      "delta": 0.01265155508697946,
+      "repeats": [
+        0.05820105820105814,
+        -0.051941502773575454,
+        -0.011831275720164625,
+        0.007923930269413626,
+        0.015287295730100237
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "week",
+      "median": 189.2,
+      "delta": 0.007399577167019,
+      "repeats": [
+        0.015450186467767635,
+        0.02752779248279502,
+        0.0015568240788792487,
+        -0.024615384615384706,
+        -0.0010570824524311906
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "not in this build: matrixdynamic.allowSort"
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "today",
+      "median": 61.3
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "yesterday",
+      "median": 63,
+      "delta": -0.025396825396825418,
+      "repeats": [
+        -0.06422018348623859,
+        -0.030063291139240556,
+        -0.007911392405063333,
+        -0.022727272727272707,
+        -0.0016103059581320522
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "week",
+      "median": 62.4,
+      "delta": -0.022435897435897467,
+      "repeats": [
+        0.036006546644844484,
+        -0.027113237639553422,
+        -0.027243589743589647,
+        -0.027331189710610992,
+        0.006493506493506551
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "not in this build: matrixdynamic.allowSort"
+    }
+  ]
+}
