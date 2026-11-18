@@ -58,11 +58,12 @@ Attachments, in this order:
    `suite failed`, `incomplete N`, `not run`; then `· N ⚑` when present. The suite's name gets `· N failed` when
    scenarios failed on today's build. Every cell stays on one line: a quiet night is 728 px wide, a busy one grows
    wider instead of wrapping. If Chromium gives no PNG, the same summary goes into the message as text.
-2. `<suite>.md` for each suite: a table of scenarios (today's time in ms; for the other builds only the delta;
-   `🔴 **+31%**` for a highlighted slowdown, `🟢 **−55%**` for a speedup, `n/a¹` with a footnote, `ʳ` when every repeat
-   agrees), then the sections for scenarios that failed on today, `jsonErrors` that differ, the repeats of each
-   highlighted or unconfirmed cell, the differences of the work counters, the log tails of failed columns, and the last line
-   `Δ = today / build − 1.`
+2. `<suite>.md` for each suite, where the older builds are named `1D`, `7D`, `30D` as in the picture: a table of
+   scenarios (today's time in ms; for the other builds only the delta; `🔴 **+31%**` for a highlighted slowdown,
+   `🟢 **−55%**` for a speedup, `n/a¹` with a footnote, `ʳ` when every repeat agrees), then the sections for scenarios
+   that failed on today, `jsonErrors` that differ, a table of the repeats of each highlighted or unconfirmed cell (both
+   medians in ms, the pooled delta, a column per repeat, whether all agree), the differences of the work counters, the
+   log tails of failed columns, and the last line `Δ = today / build − 1.`
 3. `results.tar.gz`: all raw result files of the night.
 4. The logs of failed builds and suites, up to Discord's 10 files.
 

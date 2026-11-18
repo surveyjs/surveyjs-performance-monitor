@@ -122,6 +122,9 @@ export const samplesOf = (e: ResultEntry): number[] => (e.samples && e.samples.l
 const SUP = "⁰¹²³⁴⁵⁶⁷⁸⁹";
 const sup = (n: number): string => String(n).split("").map((d: string) => SUP[Number(d)]).join("");
 const esc = (s: string): string => s.replace(/\|/g, "\\|");
+// The builds' names in <suite>.md, as in overview.png: an older build by its age in days.
+const LABEL: Record<Role, string> = { today: "today", yesterday: "1D", week: "7D", month: "30D" };
+const label = (r: string): string => LABEL[r as Role] || r;
 
 function median(v: number | undefined): string {
   if (v === undefined) return "—";
@@ -139,17 +142,17 @@ export function suiteMarkdown(project: Project, m: SuiteMatrix, date: Date, note
   for (const role of m.roles) {
     const n = m.incomplete[role];
     const why = m.notRunReason[role];
-    if (why) roleLines.push("- " + role + " — not run: " + why);
+    if (why) roleLines.push("- " + label(role) + " — not run: " + why);
     if (n === undefined) continue;
     const reason = m.incompleteReason[role] || "";
-    roleLines.push("- " + role + " — incomplete: " + n + " unrun" + (reason ? " (" + reason + ")" : ""));
+    roleLines.push("- " + label(role) + " — incomplete: " + n + " unrun" + (reason ? " (" + reason + ")" : ""));
   }
   if (roleLines.length > 0) out.push("", ...roleLines);
 
   const notes: string[] = [];
   if (m.rows.length > 0) {
     const sorted = m.roles;
-    out.push("", "| scenario | " + ref + ", ms | " + sorted.slice(1).join(" | ") + " |", "|---|--:|" + sorted.slice(1).map(() => "--:").join("|") + "|");
+    out.push("", "| scenario | " + label(ref) + ", ms | " + sorted.slice(1).map(label).join(" | ") + " |", "|---|--:|" + sorted.slice(1).map(() => "--:").join("|") + "|");
     for (const row of m.rows) {
       const cells: string[] = [esc(row.id) + (row.counterOnly ? " ᶜ" : "")];
       for (const role of sorted) {
@@ -161,7 +164,7 @@ export function suiteMarkdown(project: Project, m: SuiteMatrix, date: Date, note
           let i = notes.indexOf(reason);
           if (i < 0) i = notes.push(reason) - 1;
           cells.push("n/a" + sup(i + 1));
-        } else if (c.mark === "same") cells.push("= " + (c.reason || ref));
+        } else if (c.mark === "same") cells.push("= " + label(c.reason || ref));
         else if (c.mark) cells.push(c.mark);
         else {
           let t = pct(c.delta);
@@ -191,7 +194,7 @@ export function suiteMarkdown(project: Project, m: SuiteMatrix, date: Date, note
   }
 
   if (m.failedToday.length > 0) {
-    out.push("", "## Failed on " + ref, ...m.failedToday.map((f) => "- " + f.id + ": " + (f.error.split(/\r?\n/)[0] || "failed")));
+    out.push("", "## Failed on " + label(ref), ...m.failedToday.map((f) => "- " + f.id + ": " + (f.error.split(/\r?\n/)[0] || "failed")));
   }
   const flagged: string[] = [];
   const judged: string[] = [];
@@ -200,26 +203,32 @@ export function suiteMarkdown(project: Project, m: SuiteMatrix, date: Date, note
     for (const role of m.roles) {
       const c = row.cells[role];
       if (!c) continue;
-      if (c.flags.indexOf("jsonErrors") > -1) flagged.push("- " + row.id + " (" + role + "): jsonErrors differ from " + ref);
-      if (c.counterDiffs.length > 0) (row.counterOnly ? judged : counters).push("- " + row.id + " (" + role + "): " + c.counterDiffs.join(", "));
+      if (c.flags.indexOf("jsonErrors") > -1) flagged.push("- " + row.id + " (" + label(role) + "): jsonErrors differ from " + label(ref));
+      if (c.counterDiffs.length > 0) (row.counterOnly ? judged : counters).push("- " + row.id + " (" + label(role) + "): " + c.counterDiffs.join(", "));
     }
   }
   if (flagged.length > 0) out.push("", "## ⚑ jsonErrors differ", ...flagged);
-  const ms = (today?: number, build?: number): string => "(" + median(today) + " / " + median(build) + " ms)";
+  // A row per highlighted or unconfirmed cell: its medians in ms, the pooled delta, a column per repeat.
   const repeated: string[] = [];
+  const nums = Array.from({ length: longest }, (_: unknown, i: number) => String(i + 1));
   for (const row of m.rows) {
     for (const role of m.roles) {
       const c = row.cells[role];
       if (!c || !c.repeats || (c.rerun !== "confirmed" && c.rerun !== "unconfirmed") || c.median === undefined || c.delta === undefined) continue;
-      repeated.push("- " + row.id + " (" + role + "): " + c.repeats.map((x: Repeat) => pct(x.delta)).join(" · ") + " → " + pct(c.delta) + " " +
-        ms(c.median * (1 + c.delta), c.median) + " — " + (c.rerun === "confirmed" ? "every repeat agrees" : "not every repeat agrees"));
+      const reps: Repeat[] = c.repeats;
+      const deltas = nums.map((_: string, i: number) => (reps[i] ? pct(reps[i].delta) : "—"));
+      repeated.push("| " + [esc(row.id), label(role), median(c.median * (1 + c.delta)), median(c.median), pct(c.delta), ...deltas,
+        c.rerun === "confirmed" ? "yes" : "no"].join(" | ") + " |");
     }
   }
-  if (repeated.length > 0) out.push("", "## Repeats", ...repeated);
+  if (repeated.length > 0) {
+    out.push("", "## Repeats", "", "| scenario | build | today, ms | build, ms | Δ | " + nums.join(" | ") + " | all agree |",
+      "|---|---|--:|--:|--:|" + nums.map(() => "--:|").join("") + "---|", ...repeated);
+  }
   if (judged.length > 0) out.push("", "## Work counters of ᶜ scenarios (judged)", ...judged);
   if (counters.length > 0) out.push("", "## Work counters (information)", ...counters);
   for (const f of m.failed) {
-    out.push("", "## " + f.role + ": " + f.reason);
+    out.push("", "## " + label(f.role) + ": " + f.reason);
     // The log is the file attached to the Discord post; a build log is also in the run's artifact buildlog-<role>.
     if (f.log) out.push("log: " + f.log.split(/[\\/]/).pop() + " (attached to the post" + (f.kind === "build failed" ? "; artifact buildlog-" + f.role : "") + ")");
     if (f.tail && f.tail.length > 0) out.push("", "```", ...f.tail, "```");

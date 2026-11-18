@@ -106,10 +106,11 @@ describe("suiteMarkdown", () => {
     expect(md.startsWith("# survey-library · core · 12.11.2026 09:37 UTC")).toBe(true);
     expect(md).not.toContain("| build |");
     expect(md).not.toContain("/commit/");
-    expect(md).toContain("| scenario | today, ms | yesterday | week | month |");
+    expect(md).toContain("| scenario | today, ms | 1D | 7D | 30D |");
     expect(md).toContain("| calculations/load/model | 638 | −3% | = today | 🟢 **−71%** |");
     expect(md).toContain("| zz/slow | 130 | 🔴 **+30%** | = today | n/a¹ |");
     expect(md).toContain("| zz/same | 0.49 | −2% | = today | n/a¹ |");
+    expect(md).not.toMatch(/\b(yesterday|week|month)\b/);
     expect(md).not.toContain("⚪");
     expect(md.trimEnd().split("\n").pop()).toBe("Δ = today / build − 1.");
     const o = suiteMarkdown(other, matrix(), date);
@@ -138,14 +139,14 @@ describe("suiteMarkdown", () => {
     ], { failedToday: [{ id: "bad", error: "Error: boom\nat x" }], incomplete: { week: 1 }, incompleteReason: { week: "killed" }, flagged: { week: 1 } });
     const md = suiteMarkdown(surveyLibrary, m, date, "test run");
     expect(md).toContain("🔴 slower · 🟢 faster (over 25% and over 2 ms)");
-    expect(md).toContain("## Work counters (information)\n- a (week): expressionRuns 5300 → 2401");
+    expect(md).toContain("## Work counters (information)\n- a (7D): expressionRuns 5300 → 2401");
     expect(md).not.toContain("ᶜ");
     expect(md).toContain("bad");
     expect(md).toContain("Error: boom");
     expect(md).toContain("0% ⚑");
-    expect(md).toContain("## ⚑ jsonErrors differ\n- j (week): jsonErrors differ from today");
+    expect(md).toContain("## ⚑ jsonErrors differ\n- j (7D): jsonErrors differ from today");
     expect(md).toContain("= today");
-    expect(md).toContain("incomplete: 1 unrun (killed)");
+    expect(md).toContain("- 7D — incomplete: 1 unrun (killed)");
     expect(md).toContain("> test run");
     expect(md.trimEnd().split("\n").pop()).toBe("Δ = today / build − 1.");
     const r = matrixOf("react", { roles: roles });
@@ -170,30 +171,35 @@ describe("suiteMarkdown", () => {
     expect(md).toContain("| dispose ᶜ | 10.3 | 0% 🔴 **work** |");
     expect(md).toContain("| plain | 5 | 0% |");
     expect(md).toContain("ᶜ counter-only: the time is for reference; judged by work counters (over 2% and over 1)");
-    expect(md).toContain("## Work counters of ᶜ scenarios (judged)\n- dispose (yesterday): expressionRuns 0 → 12");
-    expect(md).toContain("## Work counters (information)\n- plain (yesterday): expressionRuns 9 → 7");
+    expect(md).toContain("## Work counters of ᶜ scenarios (judged)\n- dispose (1D): expressionRuns 0 → 12");
+    expect(md).toContain("## Work counters (information)\n- plain (1D): expressionRuns 9 → 7");
+  });
+
+  test("a build equal to an older one is named as in the picture", () => {
+    const m = mx([row("a", { today: own(5), yesterday: vs(5, 5), week: markCell("same", "yesterday") })]);
+    expect(suiteMarkdown(surveyLibrary, m, date)).toContain("| a | 5 | 0% | = 1D |");
   });
 
   test("a failed column names its log as the post attaches it, not by a runner path", () => {
     const m = mx([row("a", { today: own(5), week: markCell("build failed") })],
       { failed: [{ role: "week", kind: "build failed", reason: "survey-core does not build", log: "/out/logs/build-week-survey-core.log" }] });
     const md = suiteMarkdown(surveyLibrary, m, date);
-    expect(md).toContain("## week: survey-core does not build\nlog: build-week-survey-core.log (attached to the post; artifact buildlog-week)");
+    expect(md).toContain("## 7D: survey-core does not build\nlog: build-week-survey-core.log (attached to the post; artifact buildlog-week)");
     expect(md).not.toContain("/out/");
   });
 
   test("a role not run for a reason keeps the reason", () => {
     const m = matrixOf("react", { roles: roles, notRun: ["yesterday", "week"], notRunReason: { yesterday: "today build failed" } });
     const md = suiteMarkdown(surveyLibrary, m, date);
-    expect(md).toContain("- yesterday — not run: today build failed");
-    expect(md).not.toContain("- week — not run");
+    expect(md).toContain("- 1D — not run: today build failed");
+    expect(md).not.toContain("- 7D — not run");
   });
 
   test("the incomplete reason is listed for every role that has one", () => {
     const m = matrixOf("core", { roles: roles, incomplete: { today: 2, week: 1 }, incompleteReason: { today: "killed", week: "timeout" } });
     const md = suiteMarkdown(surveyLibrary, m, date);
-    expect(md).toContain("today — incomplete: 2 unrun (killed)");
-    expect(md).toContain("week — incomplete: 1 unrun (timeout)");
+    expect(md).toContain("- today — incomplete: 2 unrun (killed)");
+    expect(md).toContain("- 7D — incomplete: 1 unrun (timeout)");
   });
 });
 
@@ -223,19 +229,22 @@ describe("suiteMarkdown with repeats", () => {
     up: rerun === "confirmed" ? { yesterday: 1 } : {}
   });
 
-  test("a confirmed cell: highlighted, ʳ, listed with every repeat", () => {
+  test("a confirmed cell: highlighted, ʳ, a row of the repeats table", () => {
     const md = suiteMarkdown(surveyLibrary, withRepeats("confirmed"), date);
     expect(md).toContain("| a | 131 | 🔴 **+31%** ʳ |");
-    expect(md).toContain("## Repeats");
-    expect(md).toContain("- a (yesterday): +30% · +31% · +32% · +29% · +33% → +31% (131 / 100 ms) — every repeat agrees");
+    expect(md).toContain("## Repeats\n\n" +
+      "| scenario | build | today, ms | build, ms | Δ | 1 | 2 | 3 | 4 | 5 | all agree |\n" +
+      "|---|---|--:|--:|--:|--:|--:|--:|--:|--:|---|\n" +
+      "| a | 1D | 131 | 100 | +31% | +30% | +31% | +32% | +29% | +33% | yes |\n");
+    expect(md).not.toContain("- a (");
     expect(md).toContain("ʳ every repeat agrees: all 5 interleaved runs of each build on one machine are over the threshold in the same direction");
     expect(md).not.toContain("Measured twice");
     expect(md).not.toContain("ʳ measured twice");
   });
-  test("an unconfirmed cell: neither highlighted nor marked, listed as not agreeing", () => {
+  test("an unconfirmed cell: neither highlighted nor marked, a row that does not agree", () => {
     const md = suiteMarkdown(surveyLibrary, withRepeats("unconfirmed"), date);
     expect(md).toContain("| a | 131 | +31% |");
-    expect(md).toContain("— not every repeat agrees");
+    expect(md).toContain("| a | 1D | 131 | 100 | +31% | +30% | +31% | +32% | +29% | +33% | no |");
   });
   test("a quiet cell with repeats is not listed", () => {
     const md = suiteMarkdown(surveyLibrary, withRepeats(undefined, 0.05), date);
