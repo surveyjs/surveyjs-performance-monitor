@@ -1,0 +1,38 @@
+{
+  "content": "📊 survey-creator nightly\nrun: <https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/44296512392>",
+  "embeds": [
+    {
+      "title": "Builds",
+      "description": "**today** [0841d9bb3](https://github.com/surveyjs/survey-creator/commit/0841d9bb3ed0db5eeb5f3889cd98efe60d0a8d35) · 17.11.2026 · library [598c0b174](https://github.com/surveyjs/survey-library/commit/598c0b174c63e788956d935970c907535f8d1cac)\n**yesterday** [a59eed4d6](https://github.com/surveyjs/survey-creator/commit/a59eed4d6d577a582519cb5628d526af3f942d6b) · 16.11.2026 · library [50a7175e3](https://github.com/surveyjs/survey-library/commit/50a7175e34f4ed7fd01e3b47d9d1cd2e868e0318)\n**week** [e8dbc17ab](https://github.com/surveyjs/survey-creator/commit/e8dbc17abafc1d5ada888694eebd33bcf8a48a59) · 10.11.2026 · library [4d2704f53](https://github.com/surveyjs/survey-library/commit/4d2704f53761b2864b3b81bb0b55104dd73e0182)\n**month** [0e6dd8b80](https://github.com/surveyjs/survey-creator/commit/0e6dd8b802726984d58c881c1e921341d4ef521c) · 16.10.2026 · library [46bade337](https://github.com/surveyjs/survey-library/commit/46bade337750a07a0c0795a337bd6a9d8045761d)"
+    },
+    {
+      "title": "Commits since yesterday (5)",
+      "description": "[0841d9bb3](https://github.com/surveyjs/survey-creator/commit/0841d9bb3ed0db5eeb5f3889cd98efe60d0a8d35) Release: 3.2.6 \\[azurepipelines skip\\]\n[8689cf3a6](https://github.com/surveyjs/survey-creator/commit/8689cf3a6ca6253fe2cb1eec7cffb7ce520c82e5) updated survey-creator translation for master \\[azurepipelines skip\\]\n[#8135](https://github.com/surveyjs/survey-creator/pull/8135) \\[library:12160\\] Feature/11890 filter creator\n[#8178](https://github.com/surveyjs/survey-creator/pull/8178) update etalon after the timer position is changed\n[#8189](https://github.com/surveyjs/survey-creator/pull/8189) test(e2e): reuse one browser context per worker"
+    },
+    {
+      "title": "survey-library commits since yesterday (12)",
+      "description": "[598c0b174](https://github.com/surveyjs/survey-library/commit/598c0b174c63e788956d935970c907535f8d1cac) updated survey-library docs \\[azurepipelines skip\\]\n[51e39caec](https://github.com/surveyjs/survey-library/commit/51e39caec888ed8862093bd8e7fb12a6e91c54e5) Release: 3.2.6 \\[azurepipelines skip\\]\n[d1db9deb9](https://github.com/surveyjs/survey-library/commit/d1db9deb983f9c4514af783f0a84a8e937284488) updated survey-library translation for master \\[azurepipelines skip\\]\n[#12341](https://github.com/surveyjs/survey-library/pull/12341) test(filter): check the fallback to English with a locale of the tests' own, as the l10n …\n[#12160](https://github.com/surveyjs/survey-library/pull/12160) \\[creator:8135\\] Feature/11890 filter UI\n[d43083c52](https://github.com/surveyjs/survey-library/commit/d43083c52303248eb275c13bf143bcf5c2ea7e76) updated survey-library docs \\[azurepipelines skip\\]\n[#12321](https://github.com/surveyjs/survey-library/pull/12321) \\[creator:8178\\] Timer appears incorrectly with Advanced Header\n[#12337](https://github.com/surveyjs/survey-library/pull/12337) fix(themes): Tailwind adapter dark-mode hover fills and left title alignment (\\#12173)\n+4 more"
+    }
+  ],
+  "allowed_mentions": {
+    "parse": []
+  },
+  "attachments": [
+    {
+      "id": 0,
+      "filename": "overview.png"
+    },
+    {
+      "id": 1,
+      "filename": "core.md"
+    },
+    {
+      "id": 2,
+      "filename": "react.md"
+    },
+    {
+      "id": 3,
+      "filename": "results.tar.gz"
+    }
+  ]
+}
