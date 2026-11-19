@@ -1,0 +1,61 @@
+{
+  "content": "📊 survey-library nightly\nrun: <https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/44434251526>",
+  "embeds": [
+    {
+      "title": "Builds",
+      "description": "**today** [9e5b74b48](https://github.com/surveyjs/survey-library/commit/9e5b74b48124c0d084c1b5ab07b69729d86674ce) · 18.11.2026\n**yesterday** [598c0b174](https://github.com/surveyjs/survey-library/commit/598c0b174c63e788956d935970c907535f8d1cac) · 17.11.2026\n**week** [146b23de8](https://github.com/surveyjs/survey-library/commit/146b23de877984df53557499b7d941c95bc27fcb) · 11.11.2026\n**month** [31c2a41fa](https://github.com/surveyjs/survey-library/commit/31c2a41fa4a8c9f68d107f669b741c8abb38ebe5) · 19.10.2026"
+    },
+    {
+      "title": "Commits since yesterday (7)",
+      "description": "[#12348](https://github.com/surveyjs/survey-library/pull/12348) feat(survey-core): setLicenseKey accepts the embedded-\\<name\\> marker\n[#12266](https://github.com/surveyjs/survey-library/pull/12266) Read-Only Form - When navigating using TAB, some fields show a focus outline while others…\n[186b21258](https://github.com/surveyjs/survey-library/commit/186b212584ab062e3014f7f9c536fc4683f60f6d) updated survey-library docs \\[azurepipelines skip\\]\n[86861c723](https://github.com/surveyjs/survey-library/commit/86861c723035aff0cf84eb6ec6ece698418efc74) Release: 3.2.7 \\[azurepipelines skip\\]\n[#12334](https://github.com/surveyjs/survey-library/pull/12334) perf(survey-core): toJSON checks a property for emptiness without the per-property call c…\n[#12332](https://github.com/surveyjs/survey-library/pull/12332) perf(survey-core): render the choices once per visible-choices update\n[#12344](https://github.com/surveyjs/survey-library/pull/12344) fix(core): the complete page follows completedHtml changed after completion"
+    },
+    {
+      "title": "core · 4 faster vs yesterday",
+      "description": "`records-10k/records/remove-row@orders` 593 ms · y 🟢 −47% · w 🟢 −47% · m n/a\n`records-10k/load/data` 1202 ms · y 🟢 −39% · w 🟢 −39% · m +16%\n`records-10k/load/model` 59.6 ms · y 🟢 −37% · w 🟢 −35% · m 0%\n`records-1k/load/model` 117 ms · y 🟢 −35% · w 🟢 −35% · m −1%",
+      "color": 6266484
+    },
+    {
+      "title": "react · 1 faster vs yesterday",
+      "description": "`records-10k/load/paint` 1287 ms · y 🟢 −28% · w 🟢 −27% · m +7%",
+      "color": 6266484
+    },
+    {
+      "title": "vue3 · 1 faster vs yesterday",
+      "description": "`records-10k/load/paint` 1355 ms · y 🟢 −27% · w 🟢 −27% · m +7%",
+      "color": 6266484
+    }
+  ],
+  "allowed_mentions": {
+    "parse": []
+  },
+  "attachments": [
+    {
+      "id": 0,
+      "filename": "overview.png"
+    },
+    {
+      "id": 1,
+      "filename": "core.md"
+    },
+    {
+      "id": 2,
+      "filename": "react.md"
+    },
+    {
+      "id": 3,
+      "filename": "survey-js-ui.md"
+    },
+    {
+      "id": 4,
+      "filename": "vue3.md"
+    },
+    {
+      "id": 5,
+      "filename": "angular.md"
+    },
+    {
+      "id": 6,
+      "filename": "results.tar.gz"
+    }
+  ]
+}
