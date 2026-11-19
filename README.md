@@ -26,8 +26,12 @@ for both.
   samples is over 25% and its absolute difference is over `minDelta` (2 ms for `core`, 8 ms for the browser suites),
   and every repeat agrees: each one is over the same threshold in the same direction. A cell that is not confirmed by
   every repeat is not highlighted. A scenario the runner marks `counterOnly` (too short or not repeatable to judge by
-  time) shows its time without a highlight; its work counters decide instead (slower when one grew over 2% and over 1,
-  faster when they only fell).
+  time) shows its time without a highlight; its counters decide instead.
+- The counter rule, for every scenario: a counter of a kind the monitor judges changed when it did so in every repeat
+  (today's run against the build's run of the same repeat), by its kind's threshold: `work` (calls in survey-core) and
+  `render` (layouts and style recalcs) over 2% and over 1, `leak` (listeners and nodes kept per sample) by 1 or more,
+  `heap` (KB of heap kept per sample) over 25% and over 16 KB. Slower when one grew, faster when they only fell. Other
+  kinds (`dom`, and any the runner adds later) are not judged. A cell is slower when its time or its counters are.
 
 The `post` job runs no library code, and the webhook secret is only in its send step.
 
@@ -71,10 +75,13 @@ Attachments, in this order:
    wider instead of wrapping. If Chromium gives no PNG, the same summary goes into the message as text.
 2. `<suite>.md` for each suite, where the older builds are named `1D`, `7D`, `30D` as in the picture: a table of
    scenarios (today's time in ms; for the other builds only the delta; `🔴 **+31%**` for a highlighted slowdown,
-   `🟢 **−55%**` for a speedup, `n/a¹` with a footnote, `ʳ` when every repeat agrees), then the sections for scenarios
-   that failed on today, `jsonErrors` that differ, a table of the repeats of each highlighted or unconfirmed cell (both
-   medians in ms, the pooled delta, a column per repeat, whether all agree), the differences of the work counters, the
-   log tails of failed columns, and the last line `Δ = today / build − 1.`
+   `🟢 **−55%**` for a speedup, `🔴 **leak**` and the like after the delta when a counter decided, `n/a¹` with a
+   footnote, `ʳ` when every repeat agrees), then the sections for scenarios that failed on today, `jsonErrors` that
+   differ, a table of the repeats of each highlighted or unconfirmed cell (both medians in ms, the pooled delta, a column
+   per repeat, whether all agree), the differences of the counters (the medians over the repeats: `Work counters` of
+   the ᶜ scenarios and as information, `Counters (judged)` with each kind for the other cells a counter decided,
+   `Counters (information)` for the other kinds), the log tails of failed columns, and the last line
+   `Δ = today / build − 1.`
 3. `results.tar.gz`: all raw result files of the night.
 4. The logs of failed builds and suites, up to Discord's 10 files.
 
@@ -82,7 +89,9 @@ Marks:
 
 - `n/a`: the runner skipped the scenario (`not in this build: <api>`), it failed or hung (`timeout 300 s`), or the build
   has no UI package for that suite.
-- `ᶜ`: a counter-only scenario, judged by its work counters (`🔴 **work**`, `🟢 **work**`).
+- `ᶜ`: a counter-only scenario, judged by its counters (`🔴 **work**`, `🟢 **work**`).
+- `🔴 **<kind>**`, `🟢 **<kind>**` after a delta: the counters decided the cell, by a counter of that kind (`work`,
+  `render`, `leak`, `heap`); in Discord the line shows `<kind>: <name> <build> → <today>` instead of the delta.
 - `ʳ`: every repeat agrees with the highlighted delta.
 - `⚑`: the build does not know part of the test's JSON (jsonErrors) and measured less work than today.
 

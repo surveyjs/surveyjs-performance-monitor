@@ -8,7 +8,7 @@ import { readResult } from "../contract.ts";
 import type { ResultFile, ResultEntry } from "../contract.ts";
 import { PAIR } from "./measure.ts";
 import type { PairFile, Stop } from "./measure.ts";
-import { markCell, naReason, timeVerdict, verdictOf, compareCounters, deltaOf, samplesOf } from "../report.ts";
+import { markCell, naReason, timeVerdict, verdictOf, counterVerdictOfRepeats, deltaOf, samplesOf } from "../report.ts";
 import type { Outcome, SuiteMatrix, Row, Cell, Repeat } from "../report.ts";
 import type { Role } from "../versions.ts";
 import { median } from "../util/stats.ts";
@@ -141,11 +141,15 @@ function pairCell(id: string, role: Role, p: LoadedPair | undefined, row: Row, s
     const c: Cell = { median: buildMedian, delta: deltaOf(todayMedian, buildMedian), flags: [], counterDiffs: [] };
     c.repeats = t.map((e: ResultEntry, i: number): Repeat => ({ today: e.median, build: b[i].median, delta: deltaOf(e.median, b[i].median) }));
     if (t[0].jsonErrors !== b[0].jsonErrors) c.flags.push("jsonErrors");
-    const counters = compareCounters(t[0], b[0]);
+    // The counters over every repeat, in any row: a verdict only when all of them agree.
+    const counters = counterVerdictOfRepeats(t, b);
     c.counterDiffs = counters.diffs;
-    if (row.counterOnly) {
-      if (counters.verdict) c.counterVerdict = counters.verdict;
-    } else {
+    if (counters.kindDiffs.length > 0) c.kindDiffs = counters.kindDiffs;
+    if (counters.verdict) {
+      c.counterVerdict = counters.verdict;
+      if (counters.kind) c.counterKind = counters.kind;
+    }
+    if (!row.counterOnly) {
       const v = timeVerdict(c.median, c.delta, suite);
       if (v !== undefined) {
         c.rerun = (c.repeats as Repeat[]).every((r: Repeat) => timeVerdict(r.build, r.delta, suite) === v) ? "confirmed" : "unconfirmed";

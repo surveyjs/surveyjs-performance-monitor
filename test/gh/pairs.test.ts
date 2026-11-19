@@ -70,13 +70,36 @@ describe("pairMatrix", () => {
     expect(same.flagged).toEqual({});
   });
 
-  test("a row that is not counterOnly keeps its counter differences as information: no counter verdict", () => {
+  test("a row that is not counterOnly is judged by its counters too; a change under the thresholds is information", () => {
     const counters = (n: number): Extra => ({ counters: { rows: { value: n, kind: "work" } } });
     const m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [100, 100], [100, 100], { today: counters(120), build: counters(100) })] }], 2);
     expect(cellOf(m, "yesterday").counterDiffs).toEqual(["rows 100 → 120"]);
+    expect(cellOf(m, "yesterday").counterVerdict).toBe("up");
+    expect(cellOf(m, "yesterday").counterKind).toBe("work");
+    expect(verdictOf(m.rows[0], "yesterday", "core")).toBe("up");
+    expect(m.up.yesterday).toBe(1);
+    const info = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [100, 100], [100, 100], { today: counters(101), build: counters(100) })] }], 2);
+    expect(cellOf(info, "yesterday").counterDiffs).toEqual(["rows 100 → 101"]);
+    expect(cellOf(info, "yesterday").counterVerdict).toBeUndefined();
+    expect(verdictOf(info.rows[0], "yesterday", "core")).toBeUndefined();
+    expect(info.up).toEqual({});
+  });
+
+  test("a leak in every repeat of a time row: slower, judged by the leak", () => {
+    const leak = (n: number): Extra => ({ counters: { listenerGrowth: { value: n, kind: "leak" } } });
+    const m = pairMatrix("react", roles, {}, [{ id: "a", pairs: [pair("yesterday", [100, 100, 100, 100, 100], [100, 100, 100, 100, 100], { today: leak(341), build: leak(0) })] }], 5);
+    expect(cellOf(m, "yesterday")).toMatchObject({ counterVerdict: "up", counterKind: "leak", kindDiffs: [{ kind: "leak", text: "listenerGrowth 0 → 341" }] });
+    expect(verdictOf(m.rows[0], "yesterday", "react")).toBe("up");
+    expect(m.up.yesterday).toBe(1);
+  });
+
+  test("render counts a step of one apart between repeats: no verdict", () => {
+    const run = (n: number) => result([["a", 100, { counters: { layoutCount: { value: n, kind: "render" } } }]]);
+    const p: LoadedPair = { role: "yesterday", today: [27, 26, 27, 27, 26].map(run), build: [26, 27, 27, 26, 27].map(run) };
+    const m = pairMatrix("react", roles, {}, [{ id: "a", pairs: [p] }], 5);
     expect(cellOf(m, "yesterday").counterVerdict).toBeUndefined();
-    expect(verdictOf(m.rows[0], "yesterday", "core")).toBeUndefined();
     expect(m.up).toEqual({});
+    expect(m.down).toEqual({});
   });
 
   test("every repeat faster: confirmed down, counted in m.down", () => {

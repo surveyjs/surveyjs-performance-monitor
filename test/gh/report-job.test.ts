@@ -3,7 +3,8 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { execFileSync, spawnSync } from "node:child_process";
-import { runReport, workerNote } from "../../src/gh/report-job.ts";
+import { runReport, workerNote, cellsFile } from "../../src/gh/report-job.ts";
+import { matrix } from "../helpers/matrix.ts";
 import type { ReportInput, CellsFile, JobResults } from "../../src/gh/report-job.ts";
 import { RECORD } from "../../src/gh/build.ts";
 import type { BuildRecord } from "../../src/gh/build.ts";
@@ -190,4 +191,15 @@ describe("runReport", () => {
 test("workerNote", () => {
   const items = ["a", "b", "c", "d", "e", "f", "g"].map((x) => ({ suite: "core", id: x }));
   expect(workerNote(items)).toBe("not run (worker failed): core a, core b, core c, core d, core e, +2 more");
+});
+
+test("cellsFile: the counter kind of a cell its counters decided", () => {
+  const m = matrix("react", { rows: [{ id: "a", cells: {
+    today: { median: 5, flags: [], counterDiffs: [] },
+    yesterday: { median: 5, delta: 0, flags: [], counterDiffs: [], counterVerdict: "up", counterKind: "leak" },
+    week: { median: 5, delta: 0, flags: [], counterDiffs: [] }
+  } }] });
+  const cells = cellsFile(fakePlan(), [m]).cells;
+  expect(cells.find((c) => c.role === "yesterday")).toMatchObject({ verdict: "up", counterKind: "leak" });
+  expect(cells.find((c) => c.role === "week")!.counterKind).toBeUndefined();
 });

@@ -51,7 +51,9 @@ export interface Manifest {
   builds?: Array<CreatorBuild>;
 }
 
-export interface Counters { [name: string]: { value: number | null, kind: "work" | "dom" } }
+// `kind` says what a counter counts (work, dom, render, leak, heap: the runner's perf/CONTRACT.md); a kind the monitor
+// does not know is skipped (src/report.ts).
+export interface Counters { [name: string]: { value: number | null, kind: string } }
 
 export interface ResultEntry {
   id: string;

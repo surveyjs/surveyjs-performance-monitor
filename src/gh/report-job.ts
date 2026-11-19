@@ -55,7 +55,7 @@ export interface CellsFile {
   start: string;
   repeats: number;
   specs: BuildSpec[];
-  cells: Array<{ suite: string, id: string, role: Role, median?: number, delta?: number, mark?: string, reason?: string, verdict?: Verdict, rerun?: string, repeats?: Array<number | null> }>;
+  cells: Array<{ suite: string, id: string, role: Role, median?: number, delta?: number, mark?: string, reason?: string, verdict?: Verdict, counterKind?: string, rerun?: string, repeats?: Array<number | null> }>;
 }
 
 export const OUTBOX = "discord/1-result";
@@ -84,6 +84,8 @@ export function cellsFile(plan: RunPlan, matrices: SuiteMatrix[]): CellsFile {
         if (c.reason !== undefined) e.reason = c.reason;
         const v = verdictOf(row as Row, role, m.suite);
         if (v !== undefined) e.verdict = v;
+        // The kind of the counter that decided the cell's counter verdict.
+        if (c.counterKind !== undefined) e.counterKind = c.counterKind;
         if (c.rerun !== undefined) e.rerun = c.rerun;
         if (c.repeats) e.repeats = c.repeats.map((r: { delta?: number }) => (r.delta === undefined ? null : r.delta));
         cells.push(e);

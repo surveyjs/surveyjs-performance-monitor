@@ -3,8 +3,8 @@ import * as path from "node:path";
 import type { CommitPr } from "./pr.ts";
 import type { BuildSpec, Role } from "./versions.ts";
 import type { Project } from "./project.ts";
-import type { SuiteMatrix, Row } from "./report.ts";
-import { verdictOf } from "./report.ts";
+import type { SuiteMatrix, Row, KindDiff } from "./report.ts";
+import { verdictOf, cellTimeVerdict } from "./report.ts";
 import { overviewText } from "./overview.ts";
 import { pct, fixedMs, stripAnsi, dateUtc } from "./util/format.ts";
 import { writeJsonAtomic } from "./util/json.ts";
@@ -111,8 +111,13 @@ function scenarioLine(m: SuiteMatrix, row: Row): string {
     if (c.mark) return label + " " + c.mark;
     const v = verdictOf(row, role, m.suite);
     const badge = v === "up" ? "🔴 " : v === "down" ? "🟢 " : "";
-    // A counterOnly row is judged by its work counters: the first one that changed, not its time.
-    if (row.counterOnly && v) return label + " " + badge + "work: " + (c.counterDiffs[0] || "changed");
+    // A row its counters decided (a counterOnly row, or a time row whose time did not): the first change of the kind
+    // that decided, not its time.
+    if (v && (row.counterOnly || (c.counterVerdict === v && cellTimeVerdict(c, m.suite) !== v))) {
+      const kind = c.counterKind || "work";
+      const diff = kind === "work" ? c.counterDiffs[0] : (c.kindDiffs || []).find((d: KindDiff) => d.kind === kind)?.text;
+      return label + " " + badge + kind + ": " + (diff || "changed");
+    }
     return label + " " + badge + pct(c.delta);
   }).filter((p: string | undefined): p is string => p !== undefined);
   return "`" + row.id.replace(/`/g, "'") + "`" + (today && today.median !== undefined ? " " + median(today.median) + " ms" : "") + (parts.length ? " · " + parts.join(" · ") : "");

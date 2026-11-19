@@ -1,6 +1,6 @@
 import { describe, test, expect } from "vitest";
 import * as path from "node:path";
-import { compareCounters, markCell, minDeltaOf, naReason, suiteMarkdown, timeVerdict, verdictOf } from "../src/report.ts";
+import { compareCounters, counterVerdictOfRepeats, markCell, minDeltaOf, naReason, suiteMarkdown, timeVerdict, verdictOf } from "../src/report.ts";
 import type { Cell, Row, SuiteMatrix } from "../src/report.ts";
 import { loadProject } from "../src/project.ts";
 import { dateUtc, timeUtc } from "../src/util/format.ts";
@@ -67,7 +67,62 @@ describe("compareCounters", () => {
   });
 });
 
+// The entry of one scenario with counters of any kind: name -> [value, kind].
+function kinded(o: Record<string, [number | null, string]>): ResultEntry {
+  return result([["a", 10, { counters: Object.fromEntries(Object.entries(o).map(([k, [v, kind]]) => [k, { value: v, kind: kind }])) }]]).results[0];
+}
+const judgeKind = (kind: string, today: number, build: number) => compareCounters(kinded({ c: [today, kind] }), kinded({ c: [build, kind] }));
+
+describe("compareCounters of every kind", () => {
+  test("render: as work, over 2% and over 1, so a step of one is not judged", () => {
+    expect(judgeKind("render", 27, 26)).toEqual({ diffs: ["c 26 → 27 (render)"], verdict: undefined });
+    expect(judgeKind("render", 18, 2).verdict).toBe("up");
+    expect(judgeKind("render", 2, 18).verdict).toBe("down");
+  });
+  test("leak: a growth of 1 or more per sample", () => {
+    expect(judgeKind("leak", 1, 0).verdict).toBe("up");
+    expect(judgeKind("leak", 0.5, 0).verdict).toBeUndefined();
+    expect(judgeKind("leak", 0, 341).verdict).toBe("down");
+  });
+  test("heap: over 25% and over 16 KB per sample", () => {
+    expect(judgeKind("heap", 130, 100).verdict).toBe("up");
+    expect(judgeKind("heap", 120, 100).verdict).toBeUndefined();
+    expect(judgeKind("heap", 20, 10).verdict).toBeUndefined();
+    expect(judgeKind("heap", 70, 100).verdict).toBe("down");
+  });
+  test("a kind the monitor does not know is neither listed nor judged; null values are skipped", () => {
+    expect(judgeKind("other", 100, 1)).toEqual({ diffs: [], verdict: undefined });
+    expect(compareCounters(kinded({ c: [null, "leak"] }), kinded({ c: [5, "leak"] }))).toEqual({ diffs: [], verdict: undefined });
+  });
+});
+
+describe("counterVerdictOfRepeats", () => {
+  const runs = (kind: string, name: string, values: number[]): ResultEntry[] => values.map((v: number) => kinded({ [name]: [v, kind] }));
+  test("a verdict when every repeat agrees, with the kind that decided it", () => {
+    const r = counterVerdictOfRepeats(runs("leak", "listenerGrowth", [341, 341, 341, 341, 341]), runs("leak", "listenerGrowth", [0, 0, 0, 0, 0]));
+    expect(r).toEqual({ diffs: [], kindDiffs: [{ kind: "leak", text: "listenerGrowth 0 → 341" }], verdict: "up", kind: "leak" });
+  });
+  test("one repeat under the threshold or the other way: no verdict; the difference is of the medians", () => {
+    const low = counterVerdictOfRepeats(runs("render", "layoutCount", [18, 18, 18, 18, 3]), runs("render", "layoutCount", [2, 2, 2, 2, 2]));
+    expect(low.verdict).toBeUndefined();
+    expect(low.kindDiffs).toEqual([{ kind: "render", text: "layoutCount 2 → 18" }]);
+    const mixed = counterVerdictOfRepeats(runs("work", "rows", [120, 120, 80, 120, 120]), runs("work", "rows", [100, 100, 100, 100, 100]));
+    expect(mixed.verdict).toBeUndefined();
+    expect(mixed.diffs).toEqual(["rows 100 → 120"]);
+  });
+  test("a step of one between repeats is noise: no verdict, and no difference when the medians are equal", () => {
+    const r = counterVerdictOfRepeats(runs("render", "layoutCount", [27, 26, 27, 27, 26]), runs("render", "layoutCount", [26, 27, 27, 26, 27]));
+    expect(r).toEqual({ diffs: [], kindDiffs: [], verdict: undefined, kind: undefined });
+  });
+});
+
 describe("verdictOf", () => {
+  test("a time row: a confirmed counter verdict counts too, and slower wins", () => {
+    expect(verdictOf(row("a", { today: own(5), yesterday: vs(5, 5, { counterVerdict: "up", counterKind: "leak" }) }), "yesterday", "core")).toBe("up");
+    expect(verdictOf(row("a", { today: own(5), yesterday: vs(5, 5, { counterVerdict: "down", counterKind: "leak" }) }), "yesterday", "core")).toBe("down");
+    expect(verdictOf(row("a", { today: own(70), yesterday: vs(70, 100, { rerun: "confirmed", counterVerdict: "up" }) }), "yesterday", "core")).toBe("up");
+    expect(verdictOf(row("a", { today: own(130), yesterday: vs(130, 100, { rerun: "unconfirmed", counterVerdict: "down" }) }), "yesterday", "core")).toBe("down");
+  });
   test("a counterOnly row: its time is not judged, its work verdict is", () => {
     // 13.11: manyPages/pages/last 10.95 → 14.1 ms (+29%).
     const last = row("last", { today: own(14.1), yesterday: vs(14.1, 10.95) }, true);
@@ -173,6 +228,32 @@ describe("suiteMarkdown", () => {
     expect(md).toContain("ᶜ counter-only: the time is for reference; judged by work counters (over 2% and over 1)");
     expect(md).toContain("## Work counters of ᶜ scenarios (judged)\n- dispose (1D): expressionRuns 0 → 12");
     expect(md).toContain("## Work counters (information)\n- plain (1D): expressionRuns 9 → 7");
+  });
+
+  test("counter verdicts of time rows: the kind in the cell, a legend line and their own sections", () => {
+    const leakCell = vs(5.15, 5, { counterVerdict: "up", counterKind: "leak", kindDiffs: [{ kind: "leak", text: "listenerGrowth 0 → 341" }] });
+    const m = mx([
+      row("sort", { today: own(5.15), yesterday: leakCell }),
+      row("slow", { today: own(130), yesterday: vs(130, 100, { counterVerdict: "up", counterKind: "render", kindDiffs: [{ kind: "render", text: "layoutCount 2 → 18" }] }) }),
+      row("work", { today: own(5), yesterday: vs(5, 5, { counterVerdict: "up", counterKind: "work", counterDiffs: ["expressionRuns 9 → 20"] }) }),
+      row("noise", { today: own(5), yesterday: vs(5, 5, { kindDiffs: [{ kind: "render", text: "layoutCount 26 → 27" }] }) })
+    ]);
+    const md = suiteMarkdown(surveyLibrary, m, date);
+    expect(md).toContain("| sort | 5.15 | +3% 🔴 **leak** |");
+    expect(md).toContain("| slow | 130 | 🔴 **+30%** 🔴 **render** |");
+    expect(md).toContain("| work | 5 | 0% 🔴 **work** |");
+    expect(md).toContain("| noise | 5 | 0% |");
+    expect(md).toContain("🔴/🟢 **work** · **render** · **leak** · **heap**: a counter changed in every repeat (work, render: over 2% and over 1; " +
+      "leak: by 1 or more per sample; heap: over 25% and over 16 KB per sample)");
+    expect(md).toContain("## Counters (judged)\n- sort (1D): listenerGrowth 0 → 341 (leak)\n- slow (1D): layoutCount 2 → 18 (render)\n" +
+      "- work (1D): expressionRuns 9 → 20 (work)");
+    expect(md).toContain("## Counters (information)\n- noise (1D): layoutCount 26 → 27 (render)");
+    expect(md).not.toContain("## Work counters");
+  });
+
+  test("no counter verdict: no counter legend line", () => {
+    const m = mx([row("a", { today: own(5), yesterday: vs(5, 5, { counterDiffs: ["rows 100 → 101"] }) })]);
+    expect(suiteMarkdown(surveyLibrary, m, date)).not.toContain("a counter changed in every repeat");
   });
 
   test("a build equal to an older one is named as in the picture", () => {

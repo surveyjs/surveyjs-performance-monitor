@@ -96,6 +96,12 @@ describe("reportMessage", () => {
     ]);
     expect(r.payload.content).toBe("🔺 survey-library nightly");
   });
+  test("a time row judged by a counter: the counter's kind and difference, not its time", () => {
+    const leak = hotRow("records-10k/records/sort-header@orders", "yesterday", 0.02);
+    Object.assign(leak.cells.yesterday!, { counterVerdict: "up", counterKind: "leak", kindDiffs: [{ kind: "render", text: "layoutCount 1 → 4" }, { kind: "leak", text: "listenerGrowth 0 → 341" }] });
+    const e = make({ matrices: [matrix("react", { rows: [leak], up: { yesterday: 1 } })] }).payload.embeds.find((x) => x.title!.startsWith("react"))!;
+    expect(e.description).toBe("`records-10k/records/sort-header@orders` 240 ms · y 🔴 leak: listenerGrowth 0 → 341");
+  });
   test("limits hold for a huge report", () => {
     const mats = ["core", "react", "survey-js-ui", "vue3", "angular"].map((s) => matrix(s, {
       rows: Array.from({ length: 300 }, (_, i) => hotRow(s + "/very/long/scenario/id/number/" + "x".repeat(60) + i)), up: { yesterday: 300 },
