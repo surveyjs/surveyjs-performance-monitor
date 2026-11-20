@@ -3,6 +3,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { spawn } from "node:child_process";
 import type { SuiteMatrix } from "./report.ts";
+import { judgedByInterval, intervalLegend } from "./report.ts";
 import type { Role } from "./versions.ts";
 import { dateUtc, durationText } from "./util/format.ts";
 import { runLogged } from "./util/proc.ts";
@@ -87,7 +88,14 @@ export function overviewHtml(i: { project: string, sha: string, date: Date, dura
     "<table>\n" +
     "<tr><th>suite</th>" + columns.map(([, label]) => "<th>" + label + "</th>").join("") + "</tr>\n" +
     rows.join("\n") + "\n</table>\n" +
-    '<div class="leg">slower / faster: over 25% · n/a: see &lt;suite&gt;.md</div>\n</body></html>\n';
+    '<div class="leg">slower / faster: ' + html(rule(i.matrices)) + " · n/a: see &lt;suite&gt;.md</div>\n</body></html>\n";
+}
+
+// The time rule the matrices were judged by: the 99% interval of the repeats, or 25% for a run of one repeat.
+function rule(matrices: SuiteMatrix[]): string {
+  if (!matrices.some(judgedByInterval)) return "over 25%";
+  const t = intervalLegend();
+  return t.practical + " or more, its 99% interval over " + t.confident;
 }
 
 // The picture's replacement: a line per suite.

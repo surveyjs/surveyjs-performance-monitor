@@ -22,11 +22,16 @@ for both.
 - One worker per scenario: today and each older build are measured on that one worker, so every compared pair shares
   one machine.
 - 5 interleaved repeats, in the order A B B A A B B A A B (A is today, B the older build).
-- The highlight rule: delta = today / build − 1 (plus: today is slower). A cell is highlighted when the delta over all
-  samples is over 25% and its absolute difference is over `minDelta` (2 ms for `core`, 8 ms for the browser suites),
-  and every repeat agrees: each one is over the same threshold in the same direction. A cell that is not confirmed by
-  every repeat is not highlighted. A scenario the runner marks `counterOnly` (too short or not repeatable to judge by
-  time) shows its time without a highlight; its leak and heap counters decide instead.
+- The highlight rule: delta = today / build − 1 (plus: today is slower). Each repeat gives l = ln(today / build) of its
+  two medians; the change is the mean of l with its 99% t-interval. A cell is highlighted when the change is 5% or
+  more and the whole interval is past 2% and past `minDelta` (2 ms for `core`, 8 ms for the browser suites) on the
+  same side: confirmed. A change of 5% or more whose interval is not is unconfirmed and not highlighted. Why: on the
+  nights of 2026-11-17..20 the repeats of one pair were 1.5–2.4% apart (the median per suite), so the former fixed 25%
+  in every repeat left out changes of 5–20% that every repeat showed; replayed on those nights, this rule kept every
+  former highlight, and about 0.01 a night would come from the noise alone. A run of one repeat (`PERF_REPEATS=1`) has
+  no interval and keeps the former rule: the delta over all samples over 25% and over `minDelta`. A scenario the
+  runner marks `counterOnly` (too short or not repeatable to judge by time) shows its time without a highlight; its
+  leak and heap counters decide instead.
 - The counter rule, for every scenario: only leaks are judged. A `leak` (listeners and nodes kept per sample) or `heap`
   (KB of heap kept per sample) counter changed when one and the same counter did so in every repeat (today's run
   against the build's run of the same repeat), by its kind's threshold: `leak` by 1 or more, `heap` over 25% and over
@@ -83,8 +88,9 @@ Attachments, in this order:
    verdict in some build (the scenario's name on its first row only; today's value, then each build's value:
    `🔴 **0**` when it decided slower, `🟢 **12064**` faster, the plain value when it changed without a verdict, `=` when
    it did not change, `—` when the build has none); `Repeats 1D`, `Repeats 7D`, `Repeats 30D` for each highlighted or
-   unconfirmed cell (the pooled delta, a column per repeat, and confirmed: 🟢 when every repeat agrees, 🔴 when not —
-   then its time is not judged); `Counters (information)`, the other differences of the counters, `work` and `render`
+   unconfirmed cell (the pooled delta, the 99% interval as `+5%..+7%`, a column per repeat, and confirmed: 🟢 when the
+   interval clears 2% and `minDelta`, 🔴 when not — then its time is not judged; a run of one repeat has no interval
+   column, and confirmed means its repeat agrees); `Counters (information)`, the other differences of the counters, `work` and `render`
    among them (the medians over the repeats, with their kind); the log tails of failed columns; and the last line
    `Δ = today / build − 1.`
 3. `results.tar.gz`: all raw result files of the night.

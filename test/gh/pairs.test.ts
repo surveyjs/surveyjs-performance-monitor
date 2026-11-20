@@ -37,14 +37,15 @@ describe("pairMatrix", () => {
     expect(cellOf(m, "yesterday").repeats![3]).toEqual({ today: 101, build: 100, delta: expect.closeTo(0.01) });
   });
 
-  test("a highlight needs every repeat over the threshold in the same direction", () => {
+  test("a highlight needs the repeats' 99% interval past the threshold; one repeat a little under the rest still confirms", () => {
     let m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [131, 129, 133, 130, 132], [100, 100, 100, 100, 100])] }], 5);
     expect(cellOf(m, "yesterday").rerun).toBe("confirmed");
     expect(m.up.yesterday).toBe(1);
+    // +24% in the fourth repeat: the interval is +23%..+37% (by hand), still past 2%.
     m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [131, 129, 133, 124, 132], [100, 100, 100, 100, 100])] }], 5);
-    expect(cellOf(m, "yesterday").rerun).toBe("unconfirmed");
-    expect(verdictOf(m.rows[0], "yesterday", "core")).toBeUndefined();
-    expect(m.up.yesterday).toBeUndefined();
+    expect(cellOf(m, "yesterday").rerun).toBe("confirmed");
+    expect(verdictOf(m.rows[0], "yesterday", "core")).toBe("up");
+    expect(m.up.yesterday).toBe(1);
   });
 
   test("one repeat the opposite way: unconfirmed, no highlight", () => {
@@ -134,11 +135,11 @@ describe("pairMatrix", () => {
     expect(verdictOf(m.rows[0], "yesterday", "core")).toBe("down");
     expect(m.down.yesterday).toBe(1);
     expect(m.up).toEqual({});
-    // One repeat under the threshold: unconfirmed, no highlight.
+    // One repeat only −10%: the interval is −41%..−7% (by hand), still past −2%: confirmed down.
     m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [70, 69, 71, 90, 72], [100, 100, 100, 100, 100])] }], 5);
-    expect(cellOf(m, "yesterday").rerun).toBe("unconfirmed");
-    expect(verdictOf(m.rows[0], "yesterday", "core")).toBeUndefined();
-    expect(m.down).toEqual({});
+    expect(cellOf(m, "yesterday").rerun).toBe("confirmed");
+    expect(verdictOf(m.rows[0], "yesterday", "core")).toBe("down");
+    expect(m.down.yesterday).toBe(1);
   });
 
   test("counterOnly rows are judged by their leak and heap counters", () => {
@@ -212,6 +213,32 @@ describe("pairMatrix", () => {
   test("two roles only (a young repo)", () => {
     const m = pairMatrix("core", ["today", "yesterday"], {}, [{ id: "a", pairs: [pair("yesterday", [1, 1, 1, 1, 1], [1, 1, 1, 1, 1])] }], 5);
     expect(Object.keys(m.rows[0].cells)).toEqual(["today", "yesterday"]);
+  });
+
+  // 20.11: core expressions/answer/first +6.3% in every repeat, under the 25% of one-repeat runs. Five repeats judge by
+  // the 99% interval of the repeats (test/report.test.ts, repeatsVerdict).
+  test("+12% in every repeat: the interval confirms it, highlighted", () => {
+    const m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [112, 113, 111, 112, 112], [100, 100, 100, 100, 100])] }], 5);
+    expect(cellOf(m, "yesterday").rerun).toBe("confirmed");
+    expect(cellOf(m, "yesterday").interval![0]).toBeCloseTo(0.1055, 3);
+    expect(verdictOf(m.rows[0], "yesterday", "core")).toBe("up");
+    expect(m.up.yesterday).toBe(1);
+  });
+
+  test("a quiet pair still gets its interval, and no verdict", () => {
+    const m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [104, 104, 104, 104, 104], [100, 100, 100, 100, 100])] }], 5);
+    expect(cellOf(m, "yesterday").interval![0]).toBeCloseTo(0.04, 3);
+    expect(cellOf(m, "yesterday").rerun).toBeUndefined();
+    expect(verdictOf(m.rows[0], "yesterday", "core")).toBeUndefined();
+  });
+
+  test("one repeat has no interval: the 25% rule of the pooled delta decides, as before", () => {
+    let m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [130], [100])] }], 1);
+    expect(cellOf(m, "yesterday").interval).toBeUndefined();
+    expect(cellOf(m, "yesterday").rerun).toBe("confirmed");
+    expect(verdictOf(m.rows[0], "yesterday", "core")).toBe("up");
+    m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [112], [100])] }], 1);
+    expect(verdictOf(m.rows[0], "yesterday", "core")).toBeUndefined();
   });
 });
 

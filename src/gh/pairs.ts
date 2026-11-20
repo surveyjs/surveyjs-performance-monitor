@@ -8,7 +8,7 @@ import { readResult } from "../contract.ts";
 import type { ResultFile, ResultEntry } from "../contract.ts";
 import { PAIR } from "./measure.ts";
 import type { PairFile, Stop } from "./measure.ts";
-import { markCell, naReason, timeVerdict, verdictOf, counterVerdictOfRepeats, counterChangesOfRepeats, counterValuesOf, deltaOf, samplesOf } from "../report.ts";
+import { markCell, naReason, timeVerdict, repeatsVerdict, verdictOf, counterVerdictOfRepeats, counterChangesOfRepeats, counterValuesOf, deltaOf, samplesOf } from "../report.ts";
 import type { Outcome, SuiteMatrix, Row, Cell, Repeat, CounterChange } from "../report.ts";
 import type { Role } from "../versions.ts";
 import { median } from "../util/stats.ts";
@@ -161,9 +161,17 @@ function pairCell(id: string, role: Role, p: LoadedPair | undefined, row: Row, s
       if (counters.kind) c.counterKind = counters.kind;
     }
     if (!row.counterOnly) {
-      const v = timeVerdict(c.median, c.delta, suite);
-      if (v !== undefined) {
-        c.rerun = (c.repeats as Repeat[]).every((r: Repeat) => timeVerdict(r.build, r.delta, suite) === v) ? "confirmed" : "unconfirmed";
+      // Two or more repeats: the 99% interval of their changes decides. One repeat has no interval: the pooled delta
+      // and that repeat over 25%.
+      const j = repeatsVerdict(c.repeats as Repeat[], buildMedian, suite);
+      if (j) {
+        c.interval = j.interval;
+        if (j.rerun) c.rerun = j.rerun;
+      } else {
+        const v = timeVerdict(c.median, c.delta, suite);
+        if (v !== undefined) {
+          c.rerun = (c.repeats as Repeat[]).every((r: Repeat) => timeVerdict(r.build, r.delta, suite) === v) ? "confirmed" : "unconfirmed";
+        }
       }
     }
     return c;

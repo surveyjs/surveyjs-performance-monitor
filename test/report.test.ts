@@ -1,7 +1,7 @@
 import { describe, test, expect } from "vitest";
 import * as path from "node:path";
-import { compareCounters, counterChangesOfRepeats, counterVerdictOfRepeats, markCell, minDeltaOf, naReason, suiteMarkdown, timeVerdict, verdictOf } from "../src/report.ts";
-import type { Cell, CounterChange, Row, SuiteMatrix } from "../src/report.ts";
+import { compareCounters, counterChangesOfRepeats, counterVerdictOfRepeats, markCell, minDeltaOf, naReason, repeatsVerdict, suiteMarkdown, timeVerdict, verdictOf } from "../src/report.ts";
+import type { Cell, CounterChange, Repeat, Row, SuiteMatrix } from "../src/report.ts";
 import { loadProject } from "../src/project.ts";
 import { dateUtc, timeUtc } from "../src/util/format.ts";
 import type { Role } from "../src/versions.ts";
@@ -439,5 +439,82 @@ describe("suiteMarkdown with repeats", () => {
     expect(md).toContain("## Repeats 1D\n\n| scenario | Δ | 1 | 2 | 3 | 4 | 5 | confirmed |\n|---|--:|--:|--:|--:|--:|--:|---|\n| a | +40% | +40% | +40% | +40% | +40% | +40% | 🟢 |\n\n");
     expect(md).toContain("## Repeats 30D\n\n| scenario | Δ | 1 | 2 | 3 | confirmed |\n|---|--:|--:|--:|--:|---|\n" +
       "| a | +40% | +40% | +40% | +40% | 🟢 |\n| b | −40% | −40% | −40% | −40% | 🟢 |\n");
+  });
+});
+
+// The rule of two or more repeats: l = ln(today / build) of each repeat and the 99% t-interval of their mean. A cell is
+// highlighted when the change is 5% or more and the interval clears 2% and the suite's ms, in one direction. The expected
+// values are worked out by hand (n = 5: t 0.995 with 4 degrees of freedom = 4.604).
+describe("repeatsVerdict", () => {
+  const reps = (today: number[], build = 100): Repeat[] => today.map((x: number) => ({ today: x, build: build, delta: x / build - 1 }));
+  test("+6% with the repeats about 1% apart: confirmed, the interval +4.6%..+7.5%", () => {
+    const j = repeatsVerdict(reps([106, 107, 105, 106, 106]), 100, "core");
+    expect(j?.rerun).toBe("confirmed");
+    expect(j?.interval[0]).toBeCloseTo(0.0455, 3);
+    expect(j?.interval[1]).toBeCloseTo(0.0746, 3);
+  });
+  test("+7% with one repeat the other way: unconfirmed, the interval reaches below 0", () => {
+    const j = repeatsVerdict(reps([110, 111, 109, 96, 110]), 100, "core");
+    expect(j?.rerun).toBe("unconfirmed");
+    expect(j?.interval[0]).toBeCloseTo(-0.0563, 3);
+  });
+  test("+6% whose interval stays past 0 but not past 2% (+0.6%..+11.7%): unconfirmed", () => {
+    // 1000 ms, so the low end (5.8 ms) clears the ms floor and only the 2% decides.
+    const j = repeatsVerdict(reps([1028.7, 1092.3, 1060, 1039, 1081.4], 1000), 1000, "core");
+    expect(j?.interval[0]).toBeCloseTo(0.0058, 3);
+    expect(j?.rerun).toBe("unconfirmed");
+  });
+  test("+4% in every repeat is under 5%: neither confirmed nor unconfirmed", () => {
+    const j = repeatsVerdict(reps([104, 104, 104, 104, 104]), 100, "core");
+    expect(j?.rerun).toBeUndefined();
+    expect(j?.interval[0]).toBeCloseTo(0.04, 3);
+  });
+  test("the ms floor holds for the interval's low end: +12% of 20 ms is 2.4 ms, its low end 1.76 ms", () => {
+    expect(repeatsVerdict(reps([22.4, 22.6, 22.2, 22.8, 22.0], 20), 20, "core")?.rerun).toBe("unconfirmed");
+  });
+  test("faster in every repeat: confirmed, an interval below 0", () => {
+    const j = repeatsVerdict(reps([90, 91, 89, 90, 90]), 100, "core");
+    expect(j?.rerun).toBe("confirmed");
+    expect(j?.interval[0]).toBeCloseTo(-0.1145, 3);
+    expect(j?.interval[1]).toBeCloseTo(-0.0853, 3);
+  });
+  test("one repeat has no interval", () => {
+    expect(repeatsVerdict(reps([130]), 100, "core")).toBeUndefined();
+  });
+  test("verdictOf: a confirmed interval decides the time, also under 25%", () => {
+    const up = repeatsVerdict(reps([106, 107, 105, 106, 106]), 100, "core")!;
+    expect(verdictOf(row("a", { today: own(106), yesterday: vs(106, 100, { rerun: up.rerun, interval: up.interval }) }), "yesterday", "core")).toBe("up");
+    const down = repeatsVerdict(reps([90, 91, 89, 90, 90]), 100, "core")!;
+    expect(verdictOf(row("a", { today: own(90), yesterday: vs(90, 100, { rerun: down.rerun, interval: down.interval }) }), "yesterday", "core")).toBe("down");
+    const un = repeatsVerdict(reps([110, 111, 109, 96, 110]), 100, "core")!;
+    expect(verdictOf(row("a", { today: own(107), yesterday: vs(107, 100, { rerun: un.rerun, interval: un.interval }) }), "yesterday", "core")).toBeUndefined();
+    // A quiet cell with an interval: no time verdict, whatever its pooled delta says.
+    const quiet = repeatsVerdict(reps([104, 104, 104, 104, 104]), 100, "core")!;
+    expect(verdictOf(row("a", { today: own(130), yesterday: vs(130, 100, { interval: quiet.interval }) }), "yesterday", "core")).toBeUndefined();
+  });
+});
+
+describe("suiteMarkdown with intervals", () => {
+  const cell = (rerun: "confirmed" | "unconfirmed", interval: [number, number]): Cell => ({
+    median: 100, delta: 0.06, flags: [], counterDiffs: [], rerun: rerun, interval: interval,
+    repeats: [0.06, 0.07, 0.05, 0.06, 0.06].map((d: number) => ({ today: 100 * (1 + d), build: 100, delta: d }))
+  });
+  const m = (c: Cell): SuiteMatrix => matrixOf("core", { roles: ["today", "yesterday"], rows: [{ id: "a", cells: { today: own(106), yesterday: c } }],
+    up: c.rerun === "confirmed" ? { yesterday: 1 } : {} });
+  test("a confirmed cell: highlighted, its 99% interval in the repeats table, the interval rule in the legend", () => {
+    const md = suiteMarkdown(surveyLibrary, m(cell("confirmed", [0.0455, 0.0746])), date);
+    expect(md).toContain("| a | 106 | 🔴 **+6%** |");
+    expect(md).toContain("## Repeats 1D\n\n" +
+      "| scenario | Δ | 99% | 1 | 2 | 3 | 4 | 5 | confirmed |\n" +
+      "|---|--:|--:|--:|--:|--:|--:|--:|---|\n" +
+      "| a | +6% | +5%..+7% | +6% | +7% | +5% | +6% | +6% | 🟢 |\n");
+    expect(md).toContain("🔴 slower · 🟢 faster: a change of 5% or more whose 99% interval over the repeats clears 2% and 2 ms");
+    expect(md.split("\n")).toContain("confirmed: 🟢 the 99% interval clears 2% and 2 ms · 🔴 it does not (its time is not judged)");
+    expect(md).not.toContain("over 25%");
+  });
+  test("an unconfirmed cell: not highlighted, its interval listed, not confirmed", () => {
+    const md = suiteMarkdown(surveyLibrary, m(cell("unconfirmed", [-0.0563, 0.2142])), date);
+    expect(md).toContain("| a | 106 | +6% |");
+    expect(md).toContain("| a | +6% | −6%..+21% | +6% | +7% | +5% | +6% | +6% | 🔴 |");
   });
 });

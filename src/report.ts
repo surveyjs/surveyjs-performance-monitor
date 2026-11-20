@@ -2,7 +2,7 @@ import type { ResultFile, ResultEntry, Counters } from "./contract.ts";
 import type { Project } from "./project.ts";
 import type { Role } from "./versions.ts";
 import { pct, fixedMs, stripAnsi, timeUtc } from "./util/format.ts";
-import { median as medianOf } from "./util/stats.ts";
+import { median as medianOf, mean, sd, t995 } from "./util/stats.ts";
 
 export type Outcome =
   | { kind: "result", result: ResultFile, sec: number, log: string }
@@ -39,10 +39,13 @@ export interface Cell {
   counterKind?: string;
   counterChanges?: CounterChange[];
   counterValues?: Record<string, number>;
-  // The pairs of an interleaved measurement (src/gh): each repeat's own medians. `rerun` then says whether every repeat
-  // agreed with the pooled delta: confirmed keeps its highlight, unconfirmed has none.
+  // The pairs of an interleaved measurement (src/gh): each repeat's own medians. `rerun` says whether the repeats
+  // confirm a change: confirmed keeps its highlight, unconfirmed has none. With two or more repeats the cell has the
+  // 99% `interval` of today / build − 1 (repeatsVerdict) and is judged by it alone; with one repeat, by the pooled
+  // delta and every repeat over 25% (timeVerdict).
   rerun?: "confirmed" | "unconfirmed";
   repeats?: Array<Repeat>;
+  interval?: [number, number];
 }
 
 // One repeat of an interleaved measurement: the medians of today and of the build, and their delta.
@@ -130,10 +133,50 @@ export function verdictOf(row: Row, role: Role, suite: string): Verdict | undefi
   return t || c.counterVerdict;
 }
 
-// The verdict of a cell's time alone: none for an unconfirmed one.
+// The verdict of a cell's time alone: none for an unconfirmed one. A cell with an interval is judged by it alone.
 export function cellTimeVerdict(c: Cell, suite: string): Verdict | undefined {
   if (c.rerun === "unconfirmed") return undefined;
+  if (c.interval) return c.rerun === "confirmed" ? (c.interval[0] > 0 ? "up" : "down") : undefined;
   return timeVerdict(c.median, c.delta, suite);
+}
+
+// The time rule of two or more repeats. Each repeat gives l = ln(today / build); a change is the mean of l, with the
+// 99% t-interval of that mean. A change of PRACTICAL or more (and over the suite's ms) is a candidate: confirmed when
+// the interval's end nearer to zero is still past CONFIDENT and past the suite's ms, else unconfirmed.
+// Why not the fixed 25%: on the history of 2026-11-17..20 the repeats of one pair were 1.5-2.4% apart (the median SD
+// of l per suite), so the fixed 25% left out changes of 5-20% that every repeat showed. Replayed on those six nights,
+// this rule kept every highlight of the 25% rule, and about 0.01 a night would come from the noise alone.
+const PRACTICAL = 0.05;
+const CONFIDENT = 0.02;
+const percent = (v: number): string => Math.round(v * 100) + "%";
+
+export interface RepeatsJudgement { interval: [number, number], rerun?: "confirmed" | "unconfirmed" }
+
+// `buildMedian` is the cell's median (all the build's samples), the base of the ms floor as in timeVerdict. Undefined
+// for fewer than two usable repeats: there is no interval then.
+export function repeatsVerdict(repeats: Repeat[], buildMedian: number, suite: string): RepeatsJudgement | undefined {
+  const logs = repeats.filter((r: Repeat) => r.today > 0 && r.build > 0).map((r: Repeat) => Math.log(r.today / r.build));
+  if (logs.length < 2) return undefined;
+  const m = mean(logs);
+  const half = t995(logs.length - 1) * sd(logs) / Math.sqrt(logs.length);
+  const j: RepeatsJudgement = { interval: [Math.exp(m - half) - 1, Math.exp(m + half) - 1] };
+  // The ms of a change by `l` in the direction of the mean, against the build's median.
+  const ms = (l: number): number => buildMedian * Math.abs(Math.exp(Math.sign(m) * l) - 1);
+  const size = Math.abs(m);
+  if (size < Math.log(1 + PRACTICAL) || !(ms(size) > minDeltaOf(suite))) return j;
+  const near = size - half;
+  j.rerun = near > Math.log(1 + CONFIDENT) && ms(near) > minDeltaOf(suite) ? "confirmed" : "unconfirmed";
+  return j;
+}
+
+// Whether a matrix has cells judged by repeatsVerdict: the legends then name that rule.
+export function judgedByInterval(m: SuiteMatrix): boolean {
+  return m.rows.some((r: Row) => Object.values(r.cells).some((c?: Cell) => !!c && !!c.interval));
+}
+
+// The interval rule's thresholds for a legend: "5%", "2%".
+export function intervalLegend(): { practical: string, confident: string } {
+  return { practical: percent(PRACTICAL), confident: percent(CONFIDENT) };
 }
 
 export function timeVerdict(buildMedian: number | undefined, delta: number | undefined, suite: string): Verdict | undefined {
@@ -295,7 +338,8 @@ function countersTable(m: SuiteMatrix): { lines: string[], shown: Map<string, Se
 }
 
 // A Repeats table per older build with rows, in the builds' order: a row per highlighted or unconfirmed cell, its pooled
-// delta, a column per repeat, and whether every repeat agrees (then its time is judged).
+// delta, its 99% interval when the table has intervals (repeatsVerdict), a column per repeat, and whether the repeats
+// confirm it (then its time is judged).
 function repeatsTables(m: SuiteMatrix): string[][] {
   const tables: string[][] = [];
   for (const role of m.roles.slice(1)) {
@@ -304,12 +348,16 @@ function repeatsTables(m: SuiteMatrix): string[][] {
     if (cells.length === 0) continue;
     const n = Math.max(...cells.map((x) => (x.c!.repeats as Repeat[]).length));
     const nums = Array.from({ length: n }, (_: unknown, i: number) => String(i + 1));
+    const withInterval = cells.some((x) => !!x.c!.interval);
+    const interval = (c: Cell): string => (c.interval ? pct(c.interval[0]) + ".." + pct(c.interval[1]) : "—");
     const lines = cells.map((x) => {
       const reps = x.c!.repeats as Repeat[];
-      return "| " + [esc(x.id), pct(x.c!.delta), ...nums.map((_: string, i: number) => (reps[i] ? pct(reps[i].delta) : "—")),
+      return "| " + [esc(x.id), pct(x.c!.delta), ...(withInterval ? [interval(x.c!)] : []), ...nums.map((_: string, i: number) => (reps[i] ? pct(reps[i].delta) : "—")),
         x.c!.rerun === "confirmed" ? "🟢" : "🔴"].join(" | ") + " |";
     });
-    tables.push(["## Repeats " + label(role), "", "| scenario | Δ | " + nums.join(" | ") + " | confirmed |", "|---|--:|" + nums.map(() => "--:|").join("") + "---|", ...lines]);
+    const head = "| scenario | Δ | " + (withInterval ? "99% | " : "") + nums.join(" | ") + " | confirmed |";
+    const align = "|---|--:|" + (withInterval ? "--:|" : "") + nums.map(() => "--:|").join("") + "---|";
+    tables.push(["## Repeats " + label(role), "", head, align, ...lines]);
   }
   return tables;
 }
@@ -365,7 +413,10 @@ export function suiteMarkdown(project: Project, m: SuiteMatrix, date: Date, note
 
   const table = countersTable(m);
   const repeats = repeatsTables(m);
-  out.push("", "🔴 slower · 🟢 faster (over " + RATIO * 100 + "% and over " + minDelta + " ms), in every repeat");
+  const byInterval = judgedByInterval(m);
+  out.push("", byInterval
+    ? "🔴 slower · 🟢 faster: a change of " + percent(PRACTICAL) + " or more whose 99% interval over the repeats clears " + percent(CONFIDENT) + " and " + minDelta + " ms"
+    : "🔴 slower · 🟢 faster (over " + RATIO * 100 + "% and over " + minDelta + " ms), in every repeat");
   if (m.rows.some((r: Row) => r.counterOnly)) {
     out.push("ᶜ counter-only: the time is for reference; judged by leak and heap counters");
   }
@@ -376,7 +427,11 @@ export function suiteMarkdown(project: Project, m: SuiteMatrix, date: Date, note
     out.push("Counters: 🔴/🟢 the build's value, a leak or heap counter changed in every repeat (leak: by " + LEAK_MIN + " or more per sample; heap: over " +
       HEAP_RATIO * 100 + "% and over " + HEAP_MIN + " KB per sample) · = as today");
   }
-  if (repeats.length > 0) out.push("confirmed: 🟢 every repeat agrees · 🔴 not every repeat (its time is not judged)");
+  if (repeats.length > 0) {
+    out.push(byInterval
+      ? "confirmed: 🟢 the 99% interval clears " + percent(CONFIDENT) + " and " + minDelta + " ms · 🔴 it does not (its time is not judged)"
+      : "confirmed: 🟢 every repeat agrees · 🔴 not every repeat (its time is not judged)");
+  }
 
   if (m.failedToday.length > 0) {
     out.push("", "## Failed on " + label(ref), ...m.failedToday.map((f) => "- " + f.id + ": " + (f.error.split(/\r?\n/)[0] || "failed")));

@@ -92,6 +92,13 @@ describe("overviewHtml", () => {
     expect(h).toContain("&lt;x&gt;");
     expect(h).not.toContain("<x>");
   });
+  test("cells judged by the interval of their repeats: the legend names that rule", () => {
+    const row = { id: "a", cells: { today: { median: 106, flags: [], counterDiffs: [] },
+      yesterday: { median: 100, delta: 0.06, flags: [], counterDiffs: [], rerun: "confirmed" as const, interval: [0.0455, 0.0746] as [number, number] } } };
+    const h = html([matrix("core", { rows: [row], up: { yesterday: 1 } })]);
+    expect(h).toContain("slower / faster: 5% or more, its 99% interval over 2% · n/a: see &lt;suite&gt;.md");
+    expect(h).not.toContain("over 25%");
+  });
 });
 
 describe("overviewText", () => {
