@@ -1,7 +1,7 @@
 import { describe, test, expect } from "vitest";
 import * as path from "node:path";
-import { compareCounters, counterVerdictOfRepeats, markCell, minDeltaOf, naReason, suiteMarkdown, timeVerdict, verdictOf } from "../src/report.ts";
-import type { Cell, Row, SuiteMatrix } from "../src/report.ts";
+import { compareCounters, counterChangesOfRepeats, counterVerdictOfRepeats, markCell, minDeltaOf, naReason, suiteMarkdown, timeVerdict, verdictOf } from "../src/report.ts";
+import type { Cell, CounterChange, Row, SuiteMatrix } from "../src/report.ts";
 import { loadProject } from "../src/project.ts";
 import { dateUtc, timeUtc } from "../src/util/format.ts";
 import type { Role } from "../src/versions.ts";
@@ -21,6 +21,10 @@ const own = (median: number): Cell => ({ median: median, flags: [], counterDiffs
 const vs = (today: number, build: number, extra: Partial<Cell> = {}): Cell => ({ median: build, delta: today / build - 1, flags: [], counterDiffs: [], ...extra });
 const row = (id: string, cells: Partial<Record<Role, Cell>>, counterOnly = false): Row => (counterOnly ? { id: id, cells: cells, counterOnly: true } : { id: id, cells: cells });
 const same = markCell("same", "today");
+// Today's cell with its counters, and one counter's change against a build.
+const counted = (median: number, values: Record<string, number>): Cell => ({ ...own(median), counterValues: values });
+const ch = (name: string, kind: string, build: number, today: number, verdict?: "up" | "down"): CounterChange =>
+  (verdict ? { name: name, kind: kind, build: build, today: today, verdict: verdict } : { name: name, kind: kind, build: build, today: today });
 const mx = (rows: Row[], over: Partial<SuiteMatrix> = {}): SuiteMatrix => matrixOf("core", { roles: roles, rows: rows, ...over });
 
 describe("naReason", () => {
@@ -114,6 +118,49 @@ describe("counterVerdictOfRepeats", () => {
     const r = counterVerdictOfRepeats(runs("render", "layoutCount", [27, 26, 27, 27, 26]), runs("render", "layoutCount", [26, 27, 27, 26, 27]));
     expect(r).toEqual({ diffs: [], kindDiffs: [], verdict: undefined, kind: undefined });
   });
+  test("the counter that decided comes first in its list", () => {
+    const work = counterVerdictOfRepeats(five({ conditionRuns: [40080, "work"], expressionRuns: [20555, "work"] }),
+      five({ conditionRuns: [40040, "work"], expressionRuns: [164, "work"] }));
+    expect(work).toEqual({ diffs: ["expressionRuns 164 → 20555", "conditionRuns 40040 → 40080"], kindDiffs: [], verdict: "up", kind: "work" });
+    const kinds = counterVerdictOfRepeats(five({ layoutCount: [27, "render"], listenerGrowth: [341, "leak"] }),
+      five({ layoutCount: [26, "render"], listenerGrowth: [0, "leak"] }));
+    expect(kinds.kindDiffs).toEqual([{ kind: "leak", text: "listenerGrowth 0 → 341" }, { kind: "render", text: "layoutCount 26 → 27" }]);
+    expect(kinds.kind).toBe("leak");
+  });
+  test("one and the same counter must change in every repeat: different counters in different repeats are no verdict", () => {
+    // a grew in repeats 1-3, b in repeats 4-5: each repeat is slower, but no counter is slower in all of them.
+    const today = [[120, 100], [120, 100], [120, 100], [100, 120], [100, 120]].map(([a, b]) => kinded({ a: [a, "work"], b: [b, "work"] }));
+    const r = counterVerdictOfRepeats(today, five({ a: [100, "work"], b: [100, "work"] }));
+    expect(r.verdict).toBeUndefined();
+    expect(r.diffs).toEqual(["a 100 → 120"]);
+  });
+});
+
+// Five repeats of the same counters.
+const five = (o: Record<string, [number | null, string]>): ResultEntry[] => [1, 2, 3, 4, 5].map(() => kinded(o));
+
+describe("counterChangesOfRepeats", () => {
+  const runs = (kind: string, name: string, values: number[]): ResultEntry[] => values.map((v: number) => kinded({ [name]: [v, kind] }));
+  test("every counter whose medians differ; a verdict when it changed the same way over its thresholds in every repeat", () => {
+    const r = counterChangesOfRepeats(five({ expressionRuns: [20555, "work"], conditionRuns: [40080, "work"], same: [5, "work"] }),
+      five({ expressionRuns: [164, "work"], conditionRuns: [40040, "work"], same: [5, "work"] }));
+    expect(r).toEqual([
+      { name: "expressionRuns", kind: "work", build: 164, today: 20555, verdict: "up" },
+      { name: "conditionRuns", kind: "work", build: 40040, today: 40080 }
+    ]);
+    expect(r[1].verdict).toBeUndefined();
+    expect(counterChangesOfRepeats(runs("leak", "listenerGrowth", [0, 0, 0, 0, 0]), runs("leak", "listenerGrowth", [341, 341, 341, 341, 341])))
+      .toEqual([{ name: "listenerGrowth", kind: "leak", build: 341, today: 0, verdict: "down" }]);
+  });
+  test("one repeat under the threshold: no verdict; a step of one with equal medians: not listed", () => {
+    const low = counterChangesOfRepeats(runs("render", "layoutCount", [18, 18, 18, 18, 3]), runs("render", "layoutCount", [2, 2, 2, 2, 2]));
+    expect(low).toEqual([{ name: "layoutCount", kind: "render", build: 2, today: 18 }]);
+    expect(low[0].verdict).toBeUndefined();
+    expect(counterChangesOfRepeats(runs("render", "layoutCount", [27, 26, 27, 27, 26]), runs("render", "layoutCount", [26, 27, 27, 26, 27]))).toEqual([]);
+  });
+  test("dom and unknown kinds are skipped", () => {
+    expect(counterChangesOfRepeats(five({ nodes: [900, "dom"], x: [5, "other"] }), five({ nodes: [100, "dom"], x: [1, "other"] }))).toEqual([]);
+  });
 });
 
 describe("verdictOf", () => {
@@ -194,7 +241,7 @@ describe("suiteMarkdown", () => {
     ], { failedToday: [{ id: "bad", error: "Error: boom\nat x" }], incomplete: { week: 1 }, incompleteReason: { week: "killed" }, flagged: { week: 1 } });
     const md = suiteMarkdown(surveyLibrary, m, date, "test run");
     expect(md).toContain("🔴 slower · 🟢 faster (over 25% and over 2 ms)");
-    expect(md).toContain("## Work counters (information)\n- a (7D): expressionRuns 5300 → 2401");
+    expect(md).toContain("## Counters (information)\n- a (7D): expressionRuns 5300 → 2401 (work)");
     expect(md).not.toContain("ᶜ");
     expect(md).toContain("bad");
     expect(md).toContain("Error: boom");
@@ -218,37 +265,81 @@ describe("suiteMarkdown", () => {
   test("counterOnly rows: ᶜ, the time without a badge, the work verdict and its own section", () => {
     const m = mx([
       row("last", { today: own(14.1), yesterday: vs(14.1, 10.95) }, true),
-      row("dispose", { today: own(10.3), yesterday: vs(10.3, 10.3, { counterDiffs: ["expressionRuns 0 → 12"], counterVerdict: "up" }) }, true),
+      row("dispose", { today: counted(10.3, { expressionRuns: 12 }), yesterday: vs(10.3, 10.3, { counterDiffs: ["expressionRuns 0 → 12"], counterVerdict: "up",
+        counterChanges: [ch("expressionRuns", "work", 0, 12, "up")] }) }, true),
       row("plain", { today: own(5), yesterday: vs(5, 5, { counterDiffs: ["expressionRuns 9 → 7"] }) })
     ]);
     const md = suiteMarkdown(surveyLibrary, m, date);
     expect(md).toContain("| last ᶜ | 14.1 | +29% |");
-    expect(md).toContain("| dispose ᶜ | 10.3 | 0% 🔴 **work** |");
+    expect(md).toContain("| dispose ᶜ | 10.3 | 0% |");
     expect(md).toContain("| plain | 5 | 0% |");
     expect(md).toContain("ᶜ counter-only: the time is for reference; judged by work counters (over 2% and over 1)");
-    expect(md).toContain("## Work counters of ᶜ scenarios (judged)\n- dispose (1D): expressionRuns 0 → 12");
-    expect(md).toContain("## Work counters (information)\n- plain (1D): expressionRuns 9 → 7");
+    expect(md).toContain("## Counters\n\n| scenario | counter | today | 1D | 7D | 30D |\n|---|---|--:|--:|--:|--:|\n" +
+      "| dispose ᶜ | expressionRuns | 12 | 🔴 **0** | — | — |\n");
+    expect(md).toContain("## Counters (information)\n- plain (1D): expressionRuns 9 → 7 (work)");
+    expect(md).not.toContain("- dispose (");
   });
 
-  test("counter verdicts of time rows: the kind in the cell, a legend line and their own sections", () => {
-    const leakCell = vs(5.15, 5, { counterVerdict: "up", counterKind: "leak", kindDiffs: [{ kind: "leak", text: "listenerGrowth 0 → 341" }] });
+  test("counter verdicts of time rows: only the time in the cell, the counters in their own table and a legend line", () => {
     const m = mx([
-      row("sort", { today: own(5.15), yesterday: leakCell }),
-      row("slow", { today: own(130), yesterday: vs(130, 100, { counterVerdict: "up", counterKind: "render", kindDiffs: [{ kind: "render", text: "layoutCount 2 → 18" }] }) }),
-      row("work", { today: own(5), yesterday: vs(5, 5, { counterVerdict: "up", counterKind: "work", counterDiffs: ["expressionRuns 9 → 20"] }) }),
-      row("noise", { today: own(5), yesterday: vs(5, 5, { kindDiffs: [{ kind: "render", text: "layoutCount 26 → 27" }] }) })
+      row("sort", { today: counted(5.15, { listenerGrowth: 341 }), yesterday: vs(5.15, 5, { counterVerdict: "up", counterKind: "leak",
+        kindDiffs: [{ kind: "leak", text: "listenerGrowth 0 → 341" }], counterChanges: [ch("listenerGrowth", "leak", 0, 341, "up")] }) }),
+      row("slow", { today: counted(130, { layoutCount: 18 }), yesterday: vs(130, 100, { counterVerdict: "up", counterKind: "render",
+        kindDiffs: [{ kind: "render", text: "layoutCount 2 → 18" }], counterChanges: [ch("layoutCount", "render", 2, 18, "up")] }) }),
+      row("work", { today: counted(5, { expressionRuns: 20 }), yesterday: vs(5, 5, { counterVerdict: "up", counterKind: "work",
+        counterDiffs: ["expressionRuns 9 → 20"], counterChanges: [ch("expressionRuns", "work", 9, 20, "up")] }) }),
+      row("noise", { today: counted(5, { layoutCount: 27 }), yesterday: vs(5, 5, { kindDiffs: [{ kind: "render", text: "layoutCount 26 → 27" }],
+        counterChanges: [ch("layoutCount", "render", 26, 27)] }) })
     ]);
     const md = suiteMarkdown(surveyLibrary, m, date);
-    expect(md).toContain("| sort | 5.15 | +3% 🔴 **leak** |");
-    expect(md).toContain("| slow | 130 | 🔴 **+30%** 🔴 **render** |");
-    expect(md).toContain("| work | 5 | 0% 🔴 **work** |");
+    expect(md).toContain("| sort | 5.15 | +3% |");
+    expect(md).toContain("| slow | 130 | 🔴 **+30%** |");
+    expect(md).toContain("| work | 5 | 0% |");
     expect(md).toContain("| noise | 5 | 0% |");
-    expect(md).toContain("🔴/🟢 **work** · **render** · **leak** · **heap**: a counter changed in every repeat (work, render: over 2% and over 1; " +
-      "leak: by 1 or more per sample; heap: over 25% and over 16 KB per sample)");
-    expect(md).toContain("## Counters (judged)\n- sort (1D): listenerGrowth 0 → 341 (leak)\n- slow (1D): layoutCount 2 → 18 (render)\n" +
-      "- work (1D): expressionRuns 9 → 20 (work)");
+    expect(md).toContain("Counters: 🔴/🟢 the build's value, a counter changed in every repeat (work, render: over 2% and over 1; " +
+      "leak: by 1 or more per sample; heap: over 25% and over 16 KB per sample) · = as today");
+    expect(md).toContain("## Counters\n\n| scenario | counter | today | 1D | 7D | 30D |\n|---|---|--:|--:|--:|--:|\n" +
+      "| sort | listenerGrowth | 341 | 🔴 **0** | — | — |\n| slow | layoutCount | 18 | 🔴 **2** | — | — |\n| work | expressionRuns | 20 | 🔴 **9** | — | — |\n");
     expect(md).toContain("## Counters (information)\n- noise (1D): layoutCount 26 → 27 (render)");
     expect(md).not.toContain("## Work counters");
+    expect(md).not.toContain("## Counters (judged)");
+    expect(md).not.toContain("🔴 **leak**");
+  });
+
+  test("the Counters table: a row per counter with a verdict in some build, =, —, a value without a verdict and ⚑", () => {
+    const m = mx([
+      row("a", {
+        today: counted(5, { x: 20, y: 7 }),
+        yesterday: vs(5, 5, { counterDiffs: ["y 3 → 7", "x 10 → 20"], counterValues: { x: 10, y: 3 }, counterVerdict: "up", counterKind: "work",
+          counterChanges: [ch("y", "work", 3, 7, "up"), ch("x", "work", 10, 20, "up")] }),
+        week: vs(5, 5, { counterDiffs: ["x 19 → 20"], counterValues: { x: 19, y: 7 }, flags: ["jsonErrors"], counterChanges: [ch("x", "work", 19, 20)] }),
+        month: markCell("n/a", "not in this build")
+      }, true),
+      row("b", {
+        today: counted(5, { z: 5 }),
+        yesterday: vs(5, 5, { counterValues: { z: 5 } }),
+        week: vs(5, 5, { kindDiffs: [{ kind: "leak", text: "z 9 → 5" }], counterValues: { z: 9 }, counterVerdict: "down", counterKind: "leak",
+          counterChanges: [ch("z", "leak", 9, 5, "down")] })
+      }),
+      row("c", { today: counted(5, { w: 2 }), yesterday: vs(5, 5, { counterDiffs: ["w 1 → 2"], counterValues: { w: 1 }, counterChanges: [ch("w", "work", 1, 2)] }) })
+    ]);
+    const md = suiteMarkdown(surveyLibrary, m, date);
+    expect(md).toContain("## Counters\n\n| scenario | counter | today | 1D | 7D | 30D |\n|---|---|--:|--:|--:|--:|\n" +
+      "| a ᶜ | x | 20 | 🔴 **10** | 19 ⚑ | — |\n" +
+      "| a ᶜ | y | 7 | 🔴 **3** | = | — |\n" +
+      "| b | z | 5 | = | 🟢 **9** | — |\n\n");
+    expect(md).toContain("## Counters (information)\n- c (1D): w 1 → 2 (work)\n");
+    expect(md).not.toContain("- a (1D)");
+    expect(md).not.toContain("- a (7D): x");
+    expect(md.indexOf("## Counters\n")).toBeLessThan(md.indexOf("## Counters (information)"));
+  });
+
+  test("no counter verdict: no Counters table", () => {
+    const m = mx([row("a", { today: counted(5, { rows: 101 }), yesterday: vs(5, 5, { counterDiffs: ["rows 100 → 101"], counterChanges: [ch("rows", "work", 100, 101)] }) })]);
+    const md = suiteMarkdown(surveyLibrary, m, date);
+    expect(md).not.toContain("## Counters\n");
+    expect(md).not.toContain("Counters: ");
+    expect(md).toContain("## Counters (information)\n- a (1D): rows 100 → 101 (work)");
   });
 
   test("no counter verdict: no counter legend line", () => {
@@ -310,25 +401,47 @@ describe("suiteMarkdown with repeats", () => {
     up: rerun === "confirmed" ? { yesterday: 1 } : {}
   });
 
-  test("a confirmed cell: highlighted, ʳ, a row of the repeats table", () => {
+  const confirmedLine = "confirmed: 🟢 every repeat agrees · 🔴 not every repeat (its time is not judged)";
+  test("a confirmed cell: highlighted, a row of its build's repeats table", () => {
     const md = suiteMarkdown(surveyLibrary, withRepeats("confirmed"), date);
-    expect(md).toContain("| a | 131 | 🔴 **+31%** ʳ |");
-    expect(md).toContain("## Repeats\n\n" +
-      "| scenario | build | today, ms | build, ms | Δ | 1 | 2 | 3 | 4 | 5 | all agree |\n" +
-      "|---|---|--:|--:|--:|--:|--:|--:|--:|--:|---|\n" +
-      "| a | 1D | 131 | 100 | +31% | +30% | +31% | +32% | +29% | +33% | yes |\n");
+    expect(md).toContain("| a | 131 | 🔴 **+31%** |");
+    expect(md).toContain("## Repeats 1D\n\n" +
+      "| scenario | Δ | 1 | 2 | 3 | 4 | 5 | confirmed |\n" +
+      "|---|--:|--:|--:|--:|--:|--:|---|\n" +
+      "| a | +31% | +30% | +31% | +32% | +29% | +33% | 🟢 |\n");
     expect(md).not.toContain("- a (");
-    expect(md).toContain("ʳ every repeat agrees: all 5 interleaved runs of each build on one machine are over the threshold in the same direction");
+    expect(md).toContain("🔴 slower · 🟢 faster (over 25% and over 2 ms), in every repeat");
+    expect(md.split("\n")).toContain(confirmedLine);
+    expect(md).not.toContain("ʳ");
     expect(md).not.toContain("Measured twice");
     expect(md).not.toContain("ʳ measured twice");
   });
-  test("an unconfirmed cell: neither highlighted nor marked, a row that does not agree", () => {
+  test("an unconfirmed cell: not highlighted, a row that is not confirmed", () => {
     const md = suiteMarkdown(surveyLibrary, withRepeats("unconfirmed"), date);
     expect(md).toContain("| a | 131 | +31% |");
-    expect(md).toContain("| a | 1D | 131 | 100 | +31% | +30% | +31% | +32% | +29% | +33% | no |");
+    expect(md).toContain("| a | +31% | +30% | +31% | +32% | +29% | +33% | 🔴 |");
   });
-  test("a quiet cell with repeats is not listed", () => {
+  test("a quiet cell with repeats is not listed, and no confirmed legend line", () => {
     const md = suiteMarkdown(surveyLibrary, withRepeats(undefined, 0.05), date);
     expect(md).not.toContain("## Repeats");
+    expect(md).not.toContain("confirmed: ");
+  });
+  test("a repeats table per older build, in the order of the builds, only for builds with rows", () => {
+    const reps = (d: number, n: number) => Array.from({ length: n }, () => ({ today: 100 * (1 + d), build: 100, delta: d }));
+    const cell = (d: number, n: number): Cell => ({ median: 100, delta: d, flags: [], counterDiffs: [], rerun: "confirmed", repeats: reps(d, n) });
+    const m = matrixOf("core", {
+      roles: roles,
+      rows: [
+        { id: "a", cells: { today: own(140), yesterday: cell(0.4, 5), week: vs(140, 139, { repeats: reps(0.01, 5) }), month: cell(0.4, 3) } },
+        { id: "b", cells: { today: own(60), yesterday: vs(60, 59), week: vs(60, 59), month: cell(-0.4, 3) } }
+      ]
+    });
+    const md = suiteMarkdown(surveyLibrary, m, date);
+    expect(md).not.toContain("## Repeats 7D");
+    expect(md.indexOf("## Repeats 1D")).toBeGreaterThan(-1);
+    expect(md.indexOf("## Repeats 1D")).toBeLessThan(md.indexOf("## Repeats 30D"));
+    expect(md).toContain("## Repeats 1D\n\n| scenario | Δ | 1 | 2 | 3 | 4 | 5 | confirmed |\n|---|--:|--:|--:|--:|--:|--:|---|\n| a | +40% | +40% | +40% | +40% | +40% | +40% | 🟢 |\n\n");
+    expect(md).toContain("## Repeats 30D\n\n| scenario | Δ | 1 | 2 | 3 | confirmed |\n|---|--:|--:|--:|--:|---|\n" +
+      "| a | +40% | +40% | +40% | +40% | 🟢 |\n| b | −40% | −40% | −40% | −40% | 🟢 |\n");
   });
 });

@@ -8,8 +8,8 @@ import { readResult } from "../contract.ts";
 import type { ResultFile, ResultEntry } from "../contract.ts";
 import { PAIR } from "./measure.ts";
 import type { PairFile, Stop } from "./measure.ts";
-import { markCell, naReason, timeVerdict, verdictOf, counterVerdictOfRepeats, deltaOf, samplesOf } from "../report.ts";
-import type { Outcome, SuiteMatrix, Row, Cell, Repeat } from "../report.ts";
+import { markCell, naReason, timeVerdict, verdictOf, counterVerdictOfRepeats, counterChangesOfRepeats, counterValuesOf, deltaOf, samplesOf } from "../report.ts";
+import type { Outcome, SuiteMatrix, Row, Cell, Repeat, CounterChange } from "../report.ts";
 import type { Role } from "../versions.ts";
 import { median } from "../util/stats.ts";
 import { stripAnsi } from "../util/format.ts";
@@ -107,8 +107,11 @@ export function pairMatrix(suite: string, roles: Role[], outcomes: Partial<Recor
           c = markCell("n/a", naReason(stop.reason));
         } else if (stop) c = markCell("n/a", stop.reason);
         else {
-          const samples = ([] as number[]).concat(...todayRuns().map(samplesOf));
+          const runs = todayRuns();
+          const samples = ([] as number[]).concat(...runs.map(samplesOf));
           c = samples.length > 0 ? { median: median(samples), flags: [], counterDiffs: [] } : { flags: [], counterDiffs: [] };
+          const values = counterValuesOf(runs);
+          if (Object.keys(values).length > 0) c.counterValues = values;
         }
       } else {
         const p = sc.pairs.find((x: LoadedPair) => x.role === role);
@@ -141,11 +144,19 @@ function pairCell(id: string, role: Role, p: LoadedPair | undefined, row: Row, s
     const c: Cell = { median: buildMedian, delta: deltaOf(todayMedian, buildMedian), flags: [], counterDiffs: [] };
     c.repeats = t.map((e: ResultEntry, i: number): Repeat => ({ today: e.median, build: b[i].median, delta: deltaOf(e.median, b[i].median) }));
     if (t[0].jsonErrors !== b[0].jsonErrors) c.flags.push("jsonErrors");
-    // The counters over every repeat, in any row: a verdict only when all of them agree.
+    // The counters over every repeat, in any row: a verdict only when all of them agree. A build whose jsonErrors
+    // differ from today's does other work: its counters are listed, not judged.
+    const comparable = c.flags.length === 0;
     const counters = counterVerdictOfRepeats(t, b);
+    const changes = counterChangesOfRepeats(t, b);
     c.counterDiffs = counters.diffs;
     if (counters.kindDiffs.length > 0) c.kindDiffs = counters.kindDiffs;
-    if (counters.verdict) {
+    const values = counterValuesOf(b);
+    if (Object.keys(values).length > 0) c.counterValues = values;
+    if (changes.length > 0) {
+      c.counterChanges = comparable ? changes : changes.map((x: CounterChange): CounterChange => ({ name: x.name, kind: x.kind, build: x.build, today: x.today }));
+    }
+    if (comparable && counters.verdict) {
       c.counterVerdict = counters.verdict;
       if (counters.kind) c.counterKind = counters.kind;
     }

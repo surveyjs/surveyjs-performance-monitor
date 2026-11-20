@@ -17,9 +17,15 @@ export type Mark = "n/a" | "build failed" | "suite failed" | "same" | "not run";
 // A difference of a counter of another kind than work: "name build → today" and its kind.
 export interface KindDiff { kind: string, text: string }
 
-// `counterDiffs` ("name build → today") are the work counters' differences, `kindDiffs` the other kinds'. A counter
-// change that every repeat confirms is a verdict (`counterVerdict`, decided by a counter of `counterKind`): in a
-// counterOnly row the only one, in any other row next to the time's.
+// One judged counter whose medians over the repeats differ: both medians, and a verdict when it changed the same way
+// over its kind's thresholds in every repeat (today's run i against the build's run i).
+export interface CounterChange { name: string, kind: string, build: number, today: number, verdict?: Verdict }
+
+// `counterDiffs` ("name build → today") are the work counters' differences, `kindDiffs` the other kinds'; the counter
+// that decided comes first in its list. A counter that changed in every repeat is a verdict (`counterVerdict`, decided
+// by a counter of `counterKind`): in a counterOnly row the only one, in any other row next to the time's.
+// `counterChanges` are the same differences per counter, with each one's verdict; `counterValues` (today's cell only)
+// are today's counters, the medians over all its runs.
 export interface Cell {
   median?: number;
   delta?: number;
@@ -30,6 +36,8 @@ export interface Cell {
   kindDiffs?: KindDiff[];
   counterVerdict?: Verdict;
   counterKind?: string;
+  counterChanges?: CounterChange[];
+  counterValues?: Record<string, number>;
   // The pairs of an interleaved measurement (src/gh): each repeat's own medians. `rerun` then says whether every repeat
   // agreed with the pooled delta: confirmed keeps its highlight, unconfirmed has none.
   rerun?: "confirmed" | "unconfirmed";
@@ -177,14 +185,57 @@ function pooledCounters(runs: ResultEntry[]): { counters: Counters } {
   return { counters: counters };
 }
 
-// The counters of an interleaved measurement: the differences of the medians over the repeats, and a verdict only
-// when every repeat (today's run i against the build's run i) agrees with the medians' one, as for the time.
+// The medians of every counter over the runs, by name (counters without a number left out).
+export function counterValuesOf(runs: ResultEntry[]): Record<string, number> {
+  const values: Record<string, number> = {};
+  for (const [name, c] of Object.entries(pooledCounters(runs).counters)) {
+    if (c.value !== null) values[name] = c.value;
+  }
+  return values;
+}
+
+// The judged counters of an interleaved measurement whose medians over the repeats differ, in today's order. A counter
+// has a verdict when the medians' direction by its kind's rule is the direction of every repeat, as for the time.
+export function counterChangesOfRepeats(today: ResultEntry[], build: ResultEntry[]): CounterChange[] {
+  const n = Math.min(today.length, build.length);
+  const t = pooledCounters(today.slice(0, n)).counters;
+  const b = pooledCounters(build.slice(0, n)).counters;
+  const changes: CounterChange[] = [];
+  for (const [name, c] of Object.entries(t)) {
+    const bc = b[name];
+    const rule = ruleOf(c.kind);
+    if (!rule || !bc || bc.kind !== c.kind || c.value === null || bc.value === null || c.value === bc.value) continue;
+    const change: CounterChange = { name: name, kind: c.kind, build: bc.value, today: c.value };
+    const d = directionOf(rule, c.value, bc.value);
+    let agreed = d !== undefined;
+    for (let i = 0; i < n && agreed; i++) {
+      const ti = (today[i].counters || {})[name];
+      const bi = (build[i].counters || {})[name];
+      agreed = !!ti && !!bi && ti.kind === c.kind && bi.kind === c.kind && ti.value !== null && bi.value !== null && directionOf(rule, ti.value, bi.value) === d;
+    }
+    if (agreed) change.verdict = d;
+    changes.push(change);
+  }
+  return changes;
+}
+
+// The counters of an interleaved measurement: the differences of the medians over the repeats, and a verdict when one
+// and the same counter changed in every repeat (counterChangesOfRepeats): slower when one grew, faster when one fell
+// and none grew. The counter that decided comes first in its list.
 export function counterVerdictOfRepeats(today: ResultEntry[], build: ResultEntry[]): CounterJudgement {
   const n = Math.min(today.length, build.length);
   const pooled = judgeCounters(pooledCounters(today.slice(0, n)), pooledCounters(build.slice(0, n)));
-  let agreed = n > 0 && pooled.verdict !== undefined;
-  for (let i = 0; i < n && agreed; i++) agreed = judgeCounters(today[i], build[i]).verdict === pooled.verdict;
-  return { diffs: pooled.diffs, kindDiffs: pooled.kindDiffs, verdict: agreed ? pooled.verdict : undefined, kind: agreed ? pooled.kind : undefined };
+  const changes = counterChangesOfRepeats(today, build);
+  const decided = changes.find((c: CounterChange) => c.verdict === "up") || (pooled.verdict === "up" ? undefined : changes.find((c: CounterChange) => c.verdict === "down"));
+  if (!decided) return { diffs: pooled.diffs, kindDiffs: pooled.kindDiffs, verdict: undefined, kind: undefined };
+  const text = decided.name + " " + decided.build + " → " + decided.today;
+  const first = <T>(list: T[], is: (x: T) => boolean): T[] => list.filter(is).concat(list.filter((x: T) => !is(x)));
+  return {
+    diffs: decided.kind === "work" ? first(pooled.diffs, (d: string) => d === text) : pooled.diffs,
+    kindDiffs: decided.kind === "work" ? pooled.kindDiffs : first(pooled.kindDiffs, (d: KindDiff) => d.kind === decided.kind && d.text === text),
+    verdict: decided.verdict,
+    kind: decided.kind
+  };
 }
 
 // A cell that holds no measurement, only why.
@@ -205,6 +256,60 @@ const label = (r: string): string => LABEL[r as Role] || r;
 function median(v: number | undefined): string {
   if (v === undefined) return "—";
   return fixedMs(v, v < 1 ? 2 : v < 10 ? 2 : v < 100 ? 1 : 0, "—");
+}
+
+// The Counters table: a row per scenario and counter with a verdict in some older build, the counters in today's order.
+// A build's cell is its value (bold with the verdict's colour when there is one), `=` when the counter did not change,
+// `—` when the build has no value. `shown` names each scenario's counters in the table.
+function countersTable(m: SuiteMatrix): { lines: string[], shown: Map<string, Set<string>> } {
+  const ref = m.roles[0];
+  const older = m.roles.slice(1);
+  const lines: string[] = [];
+  const shown = new Map<string, Set<string>>();
+  for (const row of m.rows) {
+    const changesOf = (role: Role): CounterChange[] => (row.cells[role] && !row.cells[role]!.mark && row.cells[role]!.counterChanges) || [];
+    const judged = new Set<string>();
+    for (const role of older) changesOf(role).forEach((x: CounterChange) => { if (x.verdict) judged.add(x.name); });
+    if (judged.size === 0) continue;
+    const values = (row.cells[ref] && row.cells[ref]!.counterValues) || {};
+    const names = Object.keys(values).filter((n: string) => judged.has(n)).concat([...judged].filter((n: string) => !(n in values)));
+    shown.set(row.id, judged);
+    for (const name of names) {
+      const first = older.map((role: Role) => changesOf(role).find((x: CounterChange) => x.name === name)).find((x?: CounterChange) => !!x) as CounterChange;
+      const cells = older.map((role: Role): string => {
+        const c = row.cells[role];
+        if (!c || c.mark) return "—";
+        const x = changesOf(role).find((y: CounterChange) => y.name === name);
+        if (!x) return c.counterValues && name in c.counterValues ? "=" : "—";
+        const v = String(x.build);
+        return (x.verdict ? (x.verdict === "up" ? "🔴 **" : "🟢 **") + v + "**" : v) + (c.flags.length > 0 ? " ⚑" : "");
+      });
+      lines.push("| " + [esc(row.id) + (row.counterOnly ? " ᶜ" : ""), esc(name), String(name in values ? values[name] : first.today), ...cells].join(" | ") + " |");
+    }
+  }
+  if (lines.length === 0) return { lines: lines, shown: shown };
+  const head = ["| scenario | counter | " + label(ref) + " | " + older.map(label).join(" | ") + " |", "|---|---|--:|" + older.map(() => "--:").join("|") + "|"];
+  return { lines: head.concat(lines), shown: shown };
+}
+
+// A Repeats table per older build with rows, in the builds' order: a row per highlighted or unconfirmed cell, its pooled
+// delta, a column per repeat, and whether every repeat agrees (then its time is judged).
+function repeatsTables(m: SuiteMatrix): string[][] {
+  const tables: string[][] = [];
+  for (const role of m.roles.slice(1)) {
+    const cells = m.rows.map((row: Row) => ({ id: row.id, c: row.cells[role] }))
+      .filter((x) => !!x.c && !!x.c.repeats && (x.c.rerun === "confirmed" || x.c.rerun === "unconfirmed") && x.c.delta !== undefined);
+    if (cells.length === 0) continue;
+    const n = Math.max(...cells.map((x) => (x.c!.repeats as Repeat[]).length));
+    const nums = Array.from({ length: n }, (_: unknown, i: number) => String(i + 1));
+    const lines = cells.map((x) => {
+      const reps = x.c!.repeats as Repeat[];
+      return "| " + [esc(x.id), pct(x.c!.delta), ...nums.map((_: string, i: number) => (reps[i] ? pct(reps[i].delta) : "—")),
+        x.c!.rerun === "confirmed" ? "🟢" : "🔴"].join(" | ") + " |";
+    });
+    tables.push(["## Repeats " + label(role), "", "| scenario | Δ | " + nums.join(" | ") + " | confirmed |", "|---|--:|" + nums.map(() => "--:|").join("") + "---|", ...lines]);
+  }
+  return tables;
 }
 
 export function suiteMarkdown(project: Project, m: SuiteMatrix, date: Date, note?: string): string {
@@ -243,18 +348,10 @@ export function suiteMarkdown(project: Project, m: SuiteMatrix, date: Date, note
         } else if (c.mark === "same") cells.push("= " + label(c.reason || ref));
         else if (c.mark) cells.push(c.mark);
         else {
+          // Only the time: a counterOnly row's time is not judged; the counters are in their own table.
           let t = pct(c.delta);
-          // The time's verdict on the delta; a counter verdict after it, by the kind that decided.
-          const badge = (v: Verdict): string => (v === "up" ? " 🔴 **" : " 🟢 **") + (c.counterKind || "work") + "**";
-          if (row.counterOnly) {
-            const v = verdictOf(row, role, m.suite);
-            if (v) t += badge(v);
-          } else {
-            const tv = cellTimeVerdict(c, m.suite);
-            if (tv) t = (tv === "up" ? "🔴 **" : "🟢 **") + t + "**";
-            if (c.counterVerdict) t += badge(c.counterVerdict);
-          }
-          if (c.repeats && c.rerun === "confirmed") t += " ʳ";
+          const tv = row.counterOnly ? undefined : cellTimeVerdict(c, m.suite);
+          if (tv) t = (tv === "up" ? "🔴 **" : "🟢 **") + t + "**";
           if (c.flags.length > 0) t += " ⚑";
           cells.push(t);
         }
@@ -264,73 +361,42 @@ export function suiteMarkdown(project: Project, m: SuiteMatrix, date: Date, note
   }
   if (notes.length > 0) out.push("", "n/a:", ...notes.map((r: string, i: number) => "- " + sup(i + 1) + " " + r));
 
-  out.push("", "🔴 slower · 🟢 faster (over " + RATIO * 100 + "% and over " + minDelta + " ms)");
+  const table = countersTable(m);
+  const repeats = repeatsTables(m);
+  out.push("", "🔴 slower · 🟢 faster (over " + RATIO * 100 + "% and over " + minDelta + " ms), in every repeat");
   if (m.rows.some((r: Row) => r.counterOnly)) {
     out.push("ᶜ counter-only: the time is for reference; judged by work counters (over " + COUNTER_RATIO * 100 + "% and over " + COUNTER_MIN + ")");
-  }
-  // The line of the counter rules, when a counter decided a cell the ᶜ line does not explain.
-  if (m.rows.some((r: Row) => Object.values(r.cells).some((c?: Cell) => !!c && !!c.counterVerdict && (!r.counterOnly || (!!c.counterKind && c.counterKind !== "work"))))) {
-    out.push("🔴/🟢 **work** · **render** · **leak** · **heap**: a counter changed in every repeat (work, render: over " + COUNTER_RATIO * 100 + "% and over " +
-      COUNTER_MIN + "; leak: by " + LEAK_MIN + " or more per sample; heap: over " + HEAP_RATIO * 100 + "% and over " + HEAP_MIN + " KB per sample)");
-  }
-  const longest = Math.max(0, ...m.rows.map((r: Row) => Math.max(0, ...Object.values(r.cells).map((c?: Cell) => (c && c.repeats ? c.repeats.length : 0)))));
-  if (longest > 0) {
-    out.push("ʳ every repeat agrees: all " + longest + " interleaved runs of each build on one machine are over the threshold in the same direction");
   }
   if (m.rows.some((r: Row) => Object.values(r.cells).some((c?: Cell) => !!c && c.flags.indexOf("jsonErrors") > -1))) {
     out.push("⚑ the build does not know part of the test's JSON (jsonErrors) and measured less work than today");
   }
+  if (table.lines.length > 0) {
+    out.push("Counters: 🔴/🟢 the build's value, a counter changed in every repeat (work, render: over " + COUNTER_RATIO * 100 + "% and over " +
+      COUNTER_MIN + "; leak: by " + LEAK_MIN + " or more per sample; heap: over " + HEAP_RATIO * 100 + "% and over " + HEAP_MIN + " KB per sample) · = as today");
+  }
+  if (repeats.length > 0) out.push("confirmed: 🟢 every repeat agrees · 🔴 not every repeat (its time is not judged)");
 
   if (m.failedToday.length > 0) {
     out.push("", "## Failed on " + label(ref), ...m.failedToday.map((f) => "- " + f.id + ": " + (f.error.split(/\r?\n/)[0] || "failed")));
   }
   const flagged: string[] = [];
-  const judged: string[] = [];
-  const counters: string[] = [];
-  // The counters of the other kinds, and the work ones of a time row a counter decided, with their kind.
-  const kindJudged: string[] = [];
-  const kindInfo: string[] = [];
+  // The counters that changed without a verdict, of every kind, except the ones the Counters table shows.
+  const info: string[] = [];
   for (const row of m.rows) {
+    const shown = table.shown.get(row.id) || new Set<string>();
     for (const role of m.roles) {
       const c = row.cells[role];
       if (!c) continue;
-      const line = (diffs: string[]): string => "- " + row.id + " (" + label(role) + "): " + diffs.join(", ");
-      const kinds = (c.kindDiffs || []).map((d: KindDiff) => d.text + " (" + d.kind + ")");
       if (c.flags.indexOf("jsonErrors") > -1) flagged.push("- " + row.id + " (" + label(role) + "): jsonErrors differ from " + label(ref));
-      if (row.counterOnly) {
-        if (c.counterDiffs.length > 0) judged.push(line(c.counterDiffs));
-        if (kinds.length > 0) (c.counterVerdict ? kindJudged : kindInfo).push(line(kinds));
-      } else if (c.counterVerdict) {
-        const all = c.counterDiffs.map((d: string) => d + " (work)").concat(kinds);
-        if (all.length > 0) kindJudged.push(line(all));
-      } else {
-        if (c.counterDiffs.length > 0) counters.push(line(c.counterDiffs));
-        if (kinds.length > 0) kindInfo.push(line(kinds));
-      }
+      const diffs = c.counterDiffs.map((d: string): KindDiff => ({ kind: "work", text: d })).concat(c.kindDiffs || [])
+        .filter((d: KindDiff) => !shown.has(d.text.split(" ")[0])).map((d: KindDiff) => d.text + " (" + d.kind + ")");
+      if (diffs.length > 0) info.push("- " + row.id + " (" + label(role) + "): " + diffs.join(", "));
     }
   }
   if (flagged.length > 0) out.push("", "## ⚑ jsonErrors differ", ...flagged);
-  // A row per highlighted or unconfirmed cell: its medians in ms, the pooled delta, a column per repeat.
-  const repeated: string[] = [];
-  const nums = Array.from({ length: longest }, (_: unknown, i: number) => String(i + 1));
-  for (const row of m.rows) {
-    for (const role of m.roles) {
-      const c = row.cells[role];
-      if (!c || !c.repeats || (c.rerun !== "confirmed" && c.rerun !== "unconfirmed") || c.median === undefined || c.delta === undefined) continue;
-      const reps: Repeat[] = c.repeats;
-      const deltas = nums.map((_: string, i: number) => (reps[i] ? pct(reps[i].delta) : "—"));
-      repeated.push("| " + [esc(row.id), label(role), median(c.median * (1 + c.delta)), median(c.median), pct(c.delta), ...deltas,
-        c.rerun === "confirmed" ? "yes" : "no"].join(" | ") + " |");
-    }
-  }
-  if (repeated.length > 0) {
-    out.push("", "## Repeats", "", "| scenario | build | today, ms | build, ms | Δ | " + nums.join(" | ") + " | all agree |",
-      "|---|---|--:|--:|--:|" + nums.map(() => "--:|").join("") + "---|", ...repeated);
-  }
-  if (judged.length > 0) out.push("", "## Work counters of ᶜ scenarios (judged)", ...judged);
-  if (counters.length > 0) out.push("", "## Work counters (information)", ...counters);
-  if (kindJudged.length > 0) out.push("", "## Counters (judged)", ...kindJudged);
-  if (kindInfo.length > 0) out.push("", "## Counters (information)", ...kindInfo);
+  if (table.lines.length > 0) out.push("", "## Counters", "", ...table.lines);
+  for (const r of repeats) out.push("", ...r);
+  if (info.length > 0) out.push("", "## Counters (information)", ...info);
   for (const f of m.failed) {
     out.push("", "## " + label(f.role) + ": " + f.reason);
     // The log is the file attached to the Discord post; a build log is also in the run's artifact buildlog-<role>.

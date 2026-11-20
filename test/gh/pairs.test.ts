@@ -85,6 +85,30 @@ describe("pairMatrix", () => {
     expect(info.up).toEqual({});
   });
 
+  test("a cell with jsonErrors (⚑) has no counter verdict, in a time row and in a counterOnly one", () => {
+    const rows = (n: number, jsonErrors: number, counterOnly = false): Extra => ({ counters: { rows: { value: n, kind: "work" } }, jsonErrors: jsonErrors, counterOnly: counterOnly });
+    for (const counterOnly of [false, true]) {
+      const m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [100, 100], [100, 100], { today: rows(120, 0, counterOnly), build: rows(100, 2) })] }], 2);
+      expect(m.rows[0].counterOnly === true).toBe(counterOnly);
+      const c = cellOf(m, "yesterday");
+      expect(c.flags).toEqual(["jsonErrors"]);
+      expect(c.counterVerdict).toBeUndefined();
+      expect(c.counterKind).toBeUndefined();
+      expect(c.counterDiffs).toEqual(["rows 100 → 120"]);
+      expect(c.counterChanges).toEqual([{ name: "rows", kind: "work", build: 100, today: 120 }]);
+      expect(c.counterChanges![0].verdict).toBeUndefined();
+      expect(verdictOf(m.rows[0], "yesterday", "core")).toBeUndefined();
+      expect(m.up).toEqual({});
+    }
+  });
+
+  test("each counter's change and verdict; today's counters as the medians of its runs", () => {
+    const leak = (n: number): Extra => ({ counters: { listenerGrowth: { value: n, kind: "leak" } } });
+    const m = pairMatrix("react", roles, {}, [{ id: "a", pairs: [pair("yesterday", [100, 100, 100, 100, 100], [100, 100, 100, 100, 100], { today: leak(341), build: leak(0) })] }], 5);
+    expect(cellOf(m, "yesterday").counterChanges).toEqual([{ name: "listenerGrowth", kind: "leak", build: 0, today: 341, verdict: "up" }]);
+    expect(cellOf(m, "today").counterValues).toEqual({ listenerGrowth: 341 });
+  });
+
   test("a leak in every repeat of a time row: slower, judged by the leak", () => {
     const leak = (n: number): Extra => ({ counters: { listenerGrowth: { value: n, kind: "leak" } } });
     const m = pairMatrix("react", roles, {}, [{ id: "a", pairs: [pair("yesterday", [100, 100, 100, 100, 100], [100, 100, 100, 100, 100], { today: leak(341), build: leak(0) })] }], 5);

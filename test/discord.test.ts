@@ -7,6 +7,9 @@ import { overviewText } from "../src/overview.ts";
 import { loadProject } from "../src/project.ts";
 import { matrix, hotRow } from "./helpers/matrix.ts";
 import type { SuiteMatrix } from "../src/report.ts";
+import { pairMatrix } from "../src/gh/pairs.ts";
+import type { LoadedPair } from "../src/gh/pairs.ts";
+import { result } from "./helpers/result.ts";
 import type { BuildSpec } from "../src/versions.ts";
 
 const project = loadProject(path.join(import.meta.dirname, "..", "projects"), "survey-library");
@@ -101,6 +104,14 @@ describe("reportMessage", () => {
     Object.assign(leak.cells.yesterday!, { counterVerdict: "up", counterKind: "leak", kindDiffs: [{ kind: "render", text: "layoutCount 1 → 4" }, { kind: "leak", text: "listenerGrowth 0 → 341" }] });
     const e = make({ matrices: [matrix("react", { rows: [leak], up: { yesterday: 1 } })] }).payload.embeds.find((x) => x.title!.startsWith("react"))!;
     expect(e.description).toBe("`records-10k/records/sort-header@orders` 240 ms · y 🔴 leak: listenerGrowth 0 → 341");
+  });
+  test("the counter that decided, not the first one that differs", () => {
+    const counters = (conditionRuns: number, expressionRuns: number) => ({ counters: { conditionRuns: { value: conditionRuns, kind: "work" }, expressionRuns: { value: expressionRuns, kind: "work" } } });
+    const p: LoadedPair = { role: "yesterday", today: [1, 2].map(() => result([["records/add-row", 100, counters(40080, 20555)]])),
+      build: [1, 2].map(() => result([["records/add-row", 100, counters(40040, 164)]])) };
+    const m = pairMatrix("core", ["today", "yesterday"], {}, [{ id: "records/add-row", pairs: [p] }], 2);
+    const e = make({ matrices: [m] }).payload.embeds.find((x) => x.title!.startsWith("core"))!;
+    expect(e.description).toBe("`records/add-row` 100 ms · y 🔴 work: expressionRuns 164 → 20555");
   });
   test("limits hold for a huge report", () => {
     const mats = ["core", "react", "survey-js-ui", "vue3", "angular"].map((s) => matrix(s, {
