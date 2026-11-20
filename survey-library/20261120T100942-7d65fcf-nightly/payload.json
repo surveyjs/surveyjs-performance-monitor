@@ -1,0 +1,61 @@
+{
+  "content": "📊 survey-library nightly\nrun: <https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/44716813729>",
+  "embeds": [
+    {
+      "title": "Builds",
+      "description": "**today** [c5faf6d2f](https://github.com/surveyjs/survey-library/commit/c5faf6d2f0d724afd20fd2fc2bf65503660f718e) · 19.11.2026\n**yesterday** [9e5b74b48](https://github.com/surveyjs/survey-library/commit/9e5b74b48124c0d084c1b5ab07b69729d86674ce) · 18.11.2026\n**week** [737e82ea1](https://github.com/surveyjs/survey-library/commit/737e82ea1834e2e9aa1d4ea70e85b1d689f2f7a8) · 12.11.2026\n**month** [105970ab6](https://github.com/surveyjs/survey-library/commit/105970ab6b3fa2cf3d6ac85b4c3e91d5c0c153e2) · 20.10.2026"
+    },
+    {
+      "title": "Commits since yesterday (9)",
+      "description": "[#12352](https://github.com/surveyjs/survey-library/pull/12352) fix(survey-core): ignore Scroll events that arrive after unmount\n[#12345](https://github.com/surveyjs/survey-library/pull/12345) fix(survey-core): a removed panel's questions are no longer found by name\n[#12350](https://github.com/surveyjs/survey-library/pull/12350) fix(ranking): refresh ranking choices when randomSeed changes\n[#12358](https://github.com/surveyjs/survey-library/pull/12358) fix(survey-core): rating descriptions and panel/page titles follow their rendered text\n[#12354](https://github.com/surveyjs/survey-library/pull/12354) fix(survey-js-ui): a vnode replaced by a component's own re-render does not keep its subt…\n[#12326](https://github.com/surveyjs/survey-library/pull/12326) Angular: reactivity system refactor angular \\[creator:8186\\]\n[#12346](https://github.com/surveyjs/survey-library/pull/12346) fix(survey-core): a localizable string re-renders when a name in its text changes\n[d1ee6930a](https://github.com/surveyjs/survey-library/commit/d1ee6930af6c96c813eadb6ee2022eeda358c3dc) fix(survey-angular-ui): do not render a page released from a page container\n[2feadf2df](https://github.com/surveyjs/survey-library/commit/2feadf2df735c31af5e39959db827f40f98582ea) fix(survey-angular-ui): render a page nested in a page container as a panel"
+    },
+    {
+      "title": "react · 3 faster vs yesterday",
+      "description": "`manyPages/pages/next10` 276 ms · y 🟢 render: layoutCount 26 → 16 · w 🟢 render: layoutCount 26 → 16 · m 🟢 render: layoutCount 26 → 17\n`manyPages/pages/locale` 68.7 ms · y 🟢 render: layoutCount 6 → 3 · w 🟢 render: layoutCount 6 → 3 · m 🟢 render: layoutCount 6 → 3\n`complexLogic/answer/type` 413 ms · y 🟢 render: layoutCount 6 → 2 · w 🟢 render: layoutCount 6 → 1 · m 🟢 −71%",
+      "color": 6266484
+    },
+    {
+      "title": "survey-js-ui · 2 faster vs yesterday",
+      "description": "`manyPages/pages/locale` 73.5 ms · y 🟢 render: layoutCount 6 → 3 · w 🟢 render: layoutCount 6 → 3 · m 🟢 render: layoutCount 6 → 3\n`records-10k/records/sort-header@orders` 453 ms · y 🟢 leak: listenerGrowth 341 → 0 · w 🟢 leak: listenerGrowth 341 → 0 · m n/a",
+      "color": 6266484
+    },
+    {
+      "title": "angular · 3 faster vs yesterday",
+      "description": "`records-plain/records/sort-header@orders30` 93 ms · y 🟢 −36% · w 🟢 −36% · m n/a\n`records-plain/records/sort-header@ordersPaged` 46.2 ms · y 🟢 −31% · w 🟢 −31% · m n/a\n`records-10k/records/edit-cell@orders` 567 ms · y 🟢 heap: jsHeapGrowth 120.44 → 69.29 · w 🟢 heap: jsHeapGrowth 119 → 71.8 · m 🔴 work: expressionRuns 278 → 20848",
+      "color": 6266484
+    }
+  ],
+  "allowed_mentions": {
+    "parse": []
+  },
+  "attachments": [
+    {
+      "id": 0,
+      "filename": "overview.png"
+    },
+    {
+      "id": 1,
+      "filename": "core.md"
+    },
+    {
+      "id": 2,
+      "filename": "react.md"
+    },
+    {
+      "id": 3,
+      "filename": "survey-js-ui.md"
+    },
+    {
+      "id": 4,
+      "filename": "vue3.md"
+    },
+    {
+      "id": 5,
+      "filename": "angular.md"
+    },
+    {
+      "id": 6,
+      "filename": "results.tar.gz"
+    }
+  ]
+}
