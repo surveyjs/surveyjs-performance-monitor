@@ -1,0 +1,38 @@
+{
+  "content": "📊 survey-creator nightly\nrun: <https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/44664888297>",
+  "embeds": [
+    {
+      "title": "Builds",
+      "description": "**today** [c86fd7ca2](https://github.com/surveyjs/survey-creator/commit/c86fd7ca2295294cdb0e06019c523fdb2393b370) · 19.11.2026 · library [c5faf6d2f](https://github.com/surveyjs/survey-library/commit/c5faf6d2f0d724afd20fd2fc2bf65503660f718e)\n**yesterday** [e05634046](https://github.com/surveyjs/survey-creator/commit/e056340464d9f56361cc2ea26fd38fc84c8d409a) · 18.11.2026 · library [9e5b74b48](https://github.com/surveyjs/survey-library/commit/9e5b74b48124c0d084c1b5ab07b69729d86674ce)\n**week** [f9280bb58](https://github.com/surveyjs/survey-creator/commit/f9280bb589e074205c365bad93706a4abb3e4c24) · 12.11.2026 · library [737e82ea1](https://github.com/surveyjs/survey-library/commit/737e82ea1834e2e9aa1d4ea70e85b1d689f2f7a8)\n**month** [5ee0aca8f](https://github.com/surveyjs/survey-creator/commit/5ee0aca8f218eb451e08a145137e76a79a741452) · 20.10.2026 · library [105970ab6](https://github.com/surveyjs/survey-library/commit/105970ab6b3fa2cf3d6ac85b4c3e91d5c0c153e2)"
+    },
+    {
+      "title": "Commits since yesterday (5)",
+      "description": "[#8195](https://github.com/surveyjs/survey-creator/pull/8195) fix(json-editor): keep the Ace and Monaco undo history across tab swi…\n[0c45a9961](https://github.com/surveyjs/survey-creator/commit/0c45a99619d73fb85b9a6413a2d08bef4bb4c4a3) updated survey-creator translation for master \\[azurepipelines skip\\]\n[#8186](https://github.com/surveyjs/survey-creator/pull/8186)  Angular: reactivity system refactor \\[library:12326\\]\n[b0ee50c5b](https://github.com/surveyjs/survey-creator/commit/b0ee50c5b84d1d4f1127530ba9cd3e8483e19fd3) feat(creator): show \"Powered by SurveyJS\" banner for the embedded license marker\n[#8197](https://github.com/surveyjs/survey-creator/pull/8197) feat(i18n): add Basque localization"
+    },
+    {
+      "title": "survey-library commits since yesterday (9)",
+      "description": "[#12352](https://github.com/surveyjs/survey-library/pull/12352) fix(survey-core): ignore Scroll events that arrive after unmount\n[#12345](https://github.com/surveyjs/survey-library/pull/12345) fix(survey-core): a removed panel's questions are no longer found by name\n[#12350](https://github.com/surveyjs/survey-library/pull/12350) fix(ranking): refresh ranking choices when randomSeed changes\n[#12358](https://github.com/surveyjs/survey-library/pull/12358) fix(survey-core): rating descriptions and panel/page titles follow their rendered text\n[#12354](https://github.com/surveyjs/survey-library/pull/12354) fix(survey-js-ui): a vnode replaced by a component's own re-render does not keep its subt…\n[#12326](https://github.com/surveyjs/survey-library/pull/12326) Angular: reactivity system refactor angular \\[creator:8186\\]\n[#12346](https://github.com/surveyjs/survey-library/pull/12346) fix(survey-core): a localizable string re-renders when a name in its text changes\n[d1ee6930a](https://github.com/surveyjs/survey-library/commit/d1ee6930af6c96c813eadb6ee2022eeda358c3dc) fix(survey-angular-ui): do not render a page released from a page container\n+1 more"
+    }
+  ],
+  "allowed_mentions": {
+    "parse": []
+  },
+  "attachments": [
+    {
+      "id": 0,
+      "filename": "overview.png"
+    },
+    {
+      "id": 1,
+      "filename": "core.md"
+    },
+    {
+      "id": 2,
+      "filename": "react.md"
+    },
+    {
+      "id": 3,
+      "filename": "results.tar.gz"
+    }
+  ]
+}
