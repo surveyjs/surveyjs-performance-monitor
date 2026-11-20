@@ -22,8 +22,9 @@ export interface KindDiff { kind: string, text: string }
 export interface CounterChange { name: string, kind: string, build: number, today: number, verdict?: Verdict }
 
 // `counterDiffs` ("name build → today") are the work counters' differences, `kindDiffs` the other kinds'; the counter
-// that decided comes first in its list. A counter that changed in every repeat is a verdict (`counterVerdict`, decided
-// by a counter of `counterKind`): in a counterOnly row the only one, in any other row next to the time's.
+// that decided comes first in its list. A leak or heap counter that changed in every repeat is a verdict
+// (`counterVerdict`, decided by a counter of `counterKind`): in a counterOnly row the only one, in any other row next
+// to the time's. Work and render counters are information, never a verdict.
 // `counterChanges` are the same differences per counter, with each one's verdict; `counterValues` (today's cell only)
 // are today's counters, the medians over all its runs.
 export interface Cell {
@@ -73,22 +74,20 @@ export interface SuiteMatrix {
 }
 
 const RATIO = 0.25;
-// A work counter changed: over 2% and over 1.
-const COUNTER_RATIO = 0.02;
-const COUNTER_MIN = 1;
 // A leak counter (growth per sample) changed by 1 or more; a heap counter (KB per sample) over 25% and over 16 KB.
 const LEAK_MIN = 1;
 const HEAP_RATIO = 0.25;
 const HEAP_MIN = 16;
 
-// The rule of each counter kind the monitor judges (what a kind counts: the runner's perf/CONTRACT.md). A change over
-// the ratio and over the minimum, or by the minimum or more (`atLeast`). Other kinds (dom, unknown) are neither listed
-// nor judged.
+// The counter kinds the monitor lists (what a kind counts: the runner's perf/CONTRACT.md); other kinds (dom, unknown)
+// are neither listed nor judged. Only leak and heap are judged: work (calls in survey-core) and render (layouts and
+// style recalcs) are the amount of work, whose cost the time shows, so they are information.
+const LISTED_KINDS = ["work", "render", "leak", "heap"];
+const listed = (kind: string): boolean => LISTED_KINDS.indexOf(kind) > -1;
+
+// The rule of each judged kind: a change over the ratio and over the minimum, or by the minimum or more (`atLeast`).
 interface CounterRule { ratio: number, min: number, atLeast?: boolean }
 const COUNTER_RULES: Record<string, CounterRule> = {
-  work: { ratio: COUNTER_RATIO, min: COUNTER_MIN },
-  // Layouts and style recalcs: a frame inside an action may add one.
-  render: { ratio: COUNTER_RATIO, min: COUNTER_MIN },
   leak: { ratio: 0, min: LEAK_MIN, atLeast: true },
   // Not 0 without a leak and a few percent apart between runs (JIT code, V8's caches).
   heap: { ratio: HEAP_RATIO, min: HEAP_MIN }
@@ -145,9 +144,9 @@ export function timeVerdict(buildMedian: number | undefined, delta: number | und
 
 export interface CounterJudgement { diffs: string[], kindDiffs: KindDiff[], verdict?: Verdict, kind?: string }
 
-// The counters that differ, "name build → today" (work ones in `diffs`, the other judged kinds in `kindDiffs`), and
-// what they say by their kind's rule: any counter that grew over its thresholds makes it slower, only ones that fell
-// make it faster. `kind` is the kind of the first counter that decided.
+// The listed counters that differ, "name build → today" (work ones in `diffs`, the other kinds in `kindDiffs`), and
+// what the judged ones (leak, heap) say by their kind's rule: any counter that grew over its thresholds makes it
+// slower, only ones that fell make it faster. `kind` is the kind of the first counter that decided.
 function judgeCounters(today: { counters: Counters }, build: { counters: Counters }): CounterJudgement {
   const diffs: string[] = [];
   const kindDiffs: KindDiff[] = [];
@@ -155,13 +154,13 @@ function judgeCounters(today: { counters: Counters }, build: { counters: Counter
   let downKind: string | undefined;
   for (const [name, c] of Object.entries(today.counters || {})) {
     const b = (build.counters || {})[name];
-    const rule = ruleOf(c.kind);
-    if (!rule || !b || b.kind !== c.kind || c.value === null || b.value === null) continue;
+    if (!listed(c.kind) || !b || b.kind !== c.kind || c.value === null || b.value === null) continue;
     if (c.value === b.value) continue;
     const text = name + " " + b.value + " → " + c.value;
     if (c.kind === "work") diffs.push(text);
     else kindDiffs.push({ kind: c.kind, text: text });
-    const d = directionOf(rule, c.value, b.value);
+    const rule = ruleOf(c.kind);
+    const d = rule ? directionOf(rule, c.value, b.value) : undefined;
     if (d === "up" && upKind === undefined) upKind = c.kind;
     if (d === "down" && downKind === undefined) downKind = c.kind;
   }
@@ -194,8 +193,9 @@ export function counterValuesOf(runs: ResultEntry[]): Record<string, number> {
   return values;
 }
 
-// The judged counters of an interleaved measurement whose medians over the repeats differ, in today's order. A counter
-// has a verdict when the medians' direction by its kind's rule is the direction of every repeat, as for the time.
+// The listed counters of an interleaved measurement whose medians over the repeats differ, in today's order. A counter
+// of a judged kind (leak, heap) has a verdict when the medians' direction by its kind's rule is the direction of every
+// repeat, as for the time; work and render never have one.
 export function counterChangesOfRepeats(today: ResultEntry[], build: ResultEntry[]): CounterChange[] {
   const n = Math.min(today.length, build.length);
   const t = pooledCounters(today.slice(0, n)).counters;
@@ -203,15 +203,16 @@ export function counterChangesOfRepeats(today: ResultEntry[], build: ResultEntry
   const changes: CounterChange[] = [];
   for (const [name, c] of Object.entries(t)) {
     const bc = b[name];
-    const rule = ruleOf(c.kind);
-    if (!rule || !bc || bc.kind !== c.kind || c.value === null || bc.value === null || c.value === bc.value) continue;
+    if (!listed(c.kind) || !bc || bc.kind !== c.kind || c.value === null || bc.value === null || c.value === bc.value) continue;
     const change: CounterChange = { name: name, kind: c.kind, build: bc.value, today: c.value };
-    const d = directionOf(rule, c.value, bc.value);
-    let agreed = d !== undefined;
+    const rule = ruleOf(c.kind);
+    const d = rule ? directionOf(rule, c.value, bc.value) : undefined;
+    let agreed = !!rule && d !== undefined;
     for (let i = 0; i < n && agreed; i++) {
       const ti = (today[i].counters || {})[name];
       const bi = (build[i].counters || {})[name];
-      agreed = !!ti && !!bi && ti.kind === c.kind && bi.kind === c.kind && ti.value !== null && bi.value !== null && directionOf(rule, ti.value, bi.value) === d;
+      agreed = !!ti && !!bi && ti.kind === c.kind && bi.kind === c.kind && ti.value !== null && bi.value !== null &&
+        directionOf(rule as CounterRule, ti.value, bi.value) === d;
     }
     if (agreed) change.verdict = d;
     changes.push(change);
@@ -220,8 +221,8 @@ export function counterChangesOfRepeats(today: ResultEntry[], build: ResultEntry
 }
 
 // The counters of an interleaved measurement: the differences of the medians over the repeats, and a verdict when one
-// and the same counter changed in every repeat (counterChangesOfRepeats): slower when one grew, faster when one fell
-// and none grew. The counter that decided comes first in its list.
+// and the same leak or heap counter changed in every repeat (counterChangesOfRepeats): slower when one grew, faster
+// when one fell and none grew. The counter that decided comes first in `kindDiffs`.
 export function counterVerdictOfRepeats(today: ResultEntry[], build: ResultEntry[]): CounterJudgement {
   const n = Math.min(today.length, build.length);
   const pooled = judgeCounters(pooledCounters(today.slice(0, n)), pooledCounters(build.slice(0, n)));
@@ -231,8 +232,8 @@ export function counterVerdictOfRepeats(today: ResultEntry[], build: ResultEntry
   const text = decided.name + " " + decided.build + " → " + decided.today;
   const first = <T>(list: T[], is: (x: T) => boolean): T[] => list.filter(is).concat(list.filter((x: T) => !is(x)));
   return {
-    diffs: decided.kind === "work" ? first(pooled.diffs, (d: string) => d === text) : pooled.diffs,
-    kindDiffs: decided.kind === "work" ? pooled.kindDiffs : first(pooled.kindDiffs, (d: KindDiff) => d.kind === decided.kind && d.text === text),
+    diffs: pooled.diffs,
+    kindDiffs: first(pooled.kindDiffs, (d: KindDiff) => d.kind === decided.kind && d.text === text),
     verdict: decided.verdict,
     kind: decided.kind
   };
@@ -258,8 +259,8 @@ function median(v: number | undefined): string {
   return fixedMs(v, v < 1 ? 2 : v < 10 ? 2 : v < 100 ? 1 : 0, "—");
 }
 
-// The Counters table: a row per scenario and counter with a verdict in some older build, the counters in today's order.
-// A build's cell is its value (bold with the verdict's colour when there is one), `=` when the counter did not change,
+// The Counters table: a row per scenario and counter with a verdict in some older build, the counters in today's order;
+// the scenario's name on its first row only. A build's cell is its value (bold with the verdict's colour when there is one), `=` when the counter did not change,
 // `—` when the build has no value. `shown` names each scenario's counters in the table.
 function countersTable(m: SuiteMatrix): { lines: string[], shown: Map<string, Set<string>> } {
   const ref = m.roles[0];
@@ -274,7 +275,7 @@ function countersTable(m: SuiteMatrix): { lines: string[], shown: Map<string, Se
     const values = (row.cells[ref] && row.cells[ref]!.counterValues) || {};
     const names = Object.keys(values).filter((n: string) => judged.has(n)).concat([...judged].filter((n: string) => !(n in values)));
     shown.set(row.id, judged);
-    for (const name of names) {
+    names.forEach((name: string, i: number) => {
       const first = older.map((role: Role) => changesOf(role).find((x: CounterChange) => x.name === name)).find((x?: CounterChange) => !!x) as CounterChange;
       const cells = older.map((role: Role): string => {
         const c = row.cells[role];
@@ -284,8 +285,9 @@ function countersTable(m: SuiteMatrix): { lines: string[], shown: Map<string, Se
         const v = String(x.build);
         return (x.verdict ? (x.verdict === "up" ? "🔴 **" : "🟢 **") + v + "**" : v) + (c.flags.length > 0 ? " ⚑" : "");
       });
-      lines.push("| " + [esc(row.id) + (row.counterOnly ? " ᶜ" : ""), esc(name), String(name in values ? values[name] : first.today), ...cells].join(" | ") + " |");
-    }
+      const scenario = i === 0 ? esc(row.id) + (row.counterOnly ? " ᶜ" : "") : "";
+      lines.push("| " + [scenario, esc(name), String(name in values ? values[name] : first.today), ...cells].join(" | ") + " |");
+    });
   }
   if (lines.length === 0) return { lines: lines, shown: shown };
   const head = ["| scenario | counter | " + label(ref) + " | " + older.map(label).join(" | ") + " |", "|---|---|--:|" + older.map(() => "--:").join("|") + "|"];
@@ -365,14 +367,14 @@ export function suiteMarkdown(project: Project, m: SuiteMatrix, date: Date, note
   const repeats = repeatsTables(m);
   out.push("", "🔴 slower · 🟢 faster (over " + RATIO * 100 + "% and over " + minDelta + " ms), in every repeat");
   if (m.rows.some((r: Row) => r.counterOnly)) {
-    out.push("ᶜ counter-only: the time is for reference; judged by work counters (over " + COUNTER_RATIO * 100 + "% and over " + COUNTER_MIN + ")");
+    out.push("ᶜ counter-only: the time is for reference; judged by leak and heap counters");
   }
   if (m.rows.some((r: Row) => Object.values(r.cells).some((c?: Cell) => !!c && c.flags.indexOf("jsonErrors") > -1))) {
     out.push("⚑ the build does not know part of the test's JSON (jsonErrors) and measured less work than today");
   }
   if (table.lines.length > 0) {
-    out.push("Counters: 🔴/🟢 the build's value, a counter changed in every repeat (work, render: over " + COUNTER_RATIO * 100 + "% and over " +
-      COUNTER_MIN + "; leak: by " + LEAK_MIN + " or more per sample; heap: over " + HEAP_RATIO * 100 + "% and over " + HEAP_MIN + " KB per sample) · = as today");
+    out.push("Counters: 🔴/🟢 the build's value, a leak or heap counter changed in every repeat (leak: by " + LEAK_MIN + " or more per sample; heap: over " +
+      HEAP_RATIO * 100 + "% and over " + HEAP_MIN + " KB per sample) · = as today");
   }
   if (repeats.length > 0) out.push("confirmed: 🟢 every repeat agrees · 🔴 not every repeat (its time is not judged)");
 

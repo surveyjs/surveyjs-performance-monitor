@@ -79,23 +79,23 @@ describe("reportMessage", () => {
     const e2 = make({ matrices: [matrix("core", { rows: [one], up: { yesterday: 1 } })] }).payload.embeds[1];
     expect(e2.description).toBe("`records-1k/records/next@orders` 240 ms · y 🔴 +31% · w −2% · m n/a");
   });
-  test("a counterOnly scenario: its work verdict, never its time", () => {
+  test("a counterOnly scenario: its leak verdict, never its time", () => {
     const timeOnly = hotRow("manyPages/pages/last");
     timeOnly.counterOnly = true;
     const quiet = matrix("core", { rows: [timeOnly] });
     expect(make({ matrices: [quiet] }).payload.embeds.map((e) => e.title)).toEqual(["Builds"]);
-    const work = hotRow("records-10k/output/dispose", "yesterday", -0.41);
-    work.counterOnly = true;
-    work.cells.yesterday!.counterVerdict = "up";
-    work.cells.yesterday!.counterDiffs = ["expressionRuns 0 → 12", "rowsCreated 0 → 5"];
-    work.cells.week = { median: 250, delta: -0.04, flags: [], counterDiffs: [] };
+    const leak = hotRow("records-10k/output/dispose", "yesterday", -0.41);
+    leak.counterOnly = true;
+    Object.assign(leak.cells.yesterday!, { counterVerdict: "up", counterKind: "leak", counterDiffs: ["expressionRuns 0 → 12"],
+      kindDiffs: [{ kind: "leak", text: "nodeGrowth 0 → 12" }, { kind: "heap", text: "jsHeapGrowth 100 → 110" }] });
+    leak.cells.week = { median: 250, delta: -0.04, flags: [], counterDiffs: [] };
     const plain = hotRow("manyPages/pages/validate", "yesterday", 0.27);
-    const r = make({ matrices: [matrix("core", { rows: [plain, work], up: { yesterday: 2 } })] });
+    const r = make({ matrices: [matrix("core", { rows: [plain, leak], up: { yesterday: 2 } })] });
     const e = r.payload.embeds.find((x) => x.title!.startsWith("core"))!;
     expect(e.title).toBe("core · 2 slower vs yesterday");
     expect(e.description!.split("\n")).toEqual([
       "`manyPages/pages/validate` 240 ms · y 🔴 +27%",
-      "`records-10k/output/dispose` 240 ms · y 🔴 work: expressionRuns 0 → 12 · w −4%"
+      "`records-10k/output/dispose` 240 ms · y 🔴 leak: nodeGrowth 0 → 12 · w −4%"
     ]);
     expect(r.payload.content).toBe("🔺 survey-library nightly");
   });
@@ -106,12 +106,20 @@ describe("reportMessage", () => {
     expect(e.description).toBe("`records-10k/records/sort-header@orders` 240 ms · y 🔴 leak: listenerGrowth 0 → 341");
   });
   test("the counter that decided, not the first one that differs", () => {
-    const counters = (conditionRuns: number, expressionRuns: number) => ({ counters: { conditionRuns: { value: conditionRuns, kind: "work" }, expressionRuns: { value: expressionRuns, kind: "work" } } });
-    const p: LoadedPair = { role: "yesterday", today: [1, 2].map(() => result([["records/add-row", 100, counters(40080, 20555)]])),
-      build: [1, 2].map(() => result([["records/add-row", 100, counters(40040, 164)]])) };
+    const counters = (nodeGrowth: number, listenerGrowth: number, expressionRuns: number) => ({ counters: { nodeGrowth: { value: nodeGrowth, kind: "leak" },
+      listenerGrowth: { value: listenerGrowth, kind: "leak" }, expressionRuns: { value: expressionRuns, kind: "work" } } });
+    const p: LoadedPair = { role: "yesterday", today: [1, 2].map(() => result([["records/add-row", 100, counters(0.5, 341, 20555)]])),
+      build: [1, 2].map(() => result([["records/add-row", 100, counters(0, 0, 164)]])) };
+    const m = pairMatrix("react", ["today", "yesterday"], {}, [{ id: "records/add-row", pairs: [p] }], 2);
+    const e = make({ matrices: [m] }).payload.embeds.find((x) => x.title!.startsWith("react"))!;
+    expect(e.description).toBe("`records/add-row` 100 ms · y 🔴 leak: listenerGrowth 0 → 341");
+  });
+  test("work counters alone: no line", () => {
+    const counters = (expressionRuns: number) => ({ counters: { expressionRuns: { value: expressionRuns, kind: "work" } } });
+    const p: LoadedPair = { role: "yesterday", today: [1, 2].map(() => result([["records/add-row", 100, counters(20555)]])),
+      build: [1, 2].map(() => result([["records/add-row", 100, counters(164)]])) };
     const m = pairMatrix("core", ["today", "yesterday"], {}, [{ id: "records/add-row", pairs: [p] }], 2);
-    const e = make({ matrices: [m] }).payload.embeds.find((x) => x.title!.startsWith("core"))!;
-    expect(e.description).toBe("`records/add-row` 100 ms · y 🔴 work: expressionRuns 164 → 20555");
+    expect(make({ matrices: [m] }).payload.embeds.map((x) => x.title)).toEqual(["Builds"]);
   });
   test("limits hold for a huge report", () => {
     const mats = ["core", "react", "survey-js-ui", "vue3", "angular"].map((s) => matrix(s, {

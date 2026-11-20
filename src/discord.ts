@@ -111,11 +111,11 @@ function scenarioLine(m: SuiteMatrix, row: Row): string {
     if (c.mark) return label + " " + c.mark;
     const v = verdictOf(row, role, m.suite);
     const badge = v === "up" ? "🔴 " : v === "down" ? "🟢 " : "";
-    // A row its counters decided (a counterOnly row, or a time row whose time did not): the counter that decided (the
-    // first of its kind, src/report.ts counterVerdictOfRepeats), not its time.
+    // A row its leak or heap counters decided (a counterOnly row, or a time row whose time did not): the counter that
+    // decided (the first of its kind, src/report.ts counterVerdictOfRepeats), not its time.
     if (v && (row.counterOnly || (c.counterVerdict === v && cellTimeVerdict(c, m.suite) !== v))) {
-      const kind = c.counterKind || "work";
-      const diff = kind === "work" ? c.counterDiffs[0] : (c.kindDiffs || []).find((d: KindDiff) => d.kind === kind)?.text;
+      const kind = c.counterKind || "counters";
+      const diff = (c.kindDiffs || []).find((d: KindDiff) => d.kind === kind)?.text;
       return label + " " + badge + kind + ": " + (diff || "changed");
     }
     return label + " " + badge + pct(c.delta);

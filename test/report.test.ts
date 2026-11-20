@@ -43,28 +43,16 @@ function withCounters(o: Record<string, number>, kind: "work" | "dom" = "work"):
 const judge = (today: Record<string, number>, build: Record<string, number>) => compareCounters(withCounters(today), withCounters(build));
 
 describe("compareCounters", () => {
-  test("a counter that grew over 2% and over 1 is slower, one that fell is faster", () => {
-    expect(judge({ expressionRuns: 12 }, { expressionRuns: 0 })).toEqual({ diffs: ["expressionRuns 0 → 12"], verdict: "up" });
-    expect(judge({ expressionRuns: 0 }, { expressionRuns: 12 })).toEqual({ diffs: ["expressionRuns 12 → 0"], verdict: "down" });
-  });
-  test("the edges: +0.1% and a step of one are below the thresholds, a step of two over", () => {
-    expect(judge({ conditionRuns: 40085 }, { conditionRuns: 40040 }).verdict).toBeUndefined();
-    expect(judge({ conditionRuns: 40040 }, { conditionRuns: 40085 }).verdict).toBeUndefined();
-    expect(judge({ rowsCreated: 1 }, { rowsCreated: 0 }).verdict).toBeUndefined();
-    expect(judge({ rowsCreated: 0 }, { rowsCreated: 1 }).verdict).toBeUndefined();
-    expect(judge({ rowsCreated: 2 }, { rowsCreated: 0 }).verdict).toBe("up");
-    expect(judge({ rowsCreated: 0 }, { rowsCreated: 2 }).verdict).toBe("down");
-    // Over 1 but not over 2%: 100 → 102 is exactly 2%.
-    expect(judge({ a: 102 }, { a: 100 }).verdict).toBeUndefined();
-    expect(judge({ a: 103 }, { a: 100 }).verdict).toBe("up");
-    expect(judge({ a: 99 }, { a: 100 }).verdict).toBeUndefined();
-    expect(judge({ a: 98 }, { a: 100 }).verdict).toBe("down");
-    // The difference is listed whether or not it is judged.
+  test("work counters are information: every difference is listed, none is a verdict", () => {
+    expect(judge({ expressionRuns: 20555 }, { expressionRuns: 164 })).toEqual({ diffs: ["expressionRuns 164 → 20555"], verdict: undefined });
+    expect(judge({ expressionRuns: 0 }, { expressionRuns: 12 })).toEqual({ diffs: ["expressionRuns 12 → 0"], verdict: undefined });
     expect(judge({ rowsCreated: 1 }, { rowsCreated: 0 }).diffs).toEqual(["rowsCreated 0 → 1"]);
     expect(judge({ same: 5 }, { same: 5 })).toEqual({ diffs: [], verdict: undefined });
   });
   test("when one counter grew and another fell, slower wins", () => {
-    expect(judge({ expressionRuns: 0, panelsCreated: 10 }, { expressionRuns: 50, panelsCreated: 0 }).verdict).toBe("up");
+    const today = kinded({ listenerGrowth: [0, "leak"], jsHeapGrowth: [500, "heap"] });
+    const build = kinded({ listenerGrowth: [341, "leak"], jsHeapGrowth: [100, "heap"] });
+    expect(compareCounters(today, build).verdict).toBe("up");
   });
   test("a dom counter is neither listed nor judged", () => {
     expect(compareCounters(withCounters({ nodes: 900 }, "dom"), withCounters({ nodes: 100 }, "dom"))).toEqual({ diffs: [], verdict: undefined });
@@ -78,10 +66,10 @@ function kinded(o: Record<string, [number | null, string]>): ResultEntry {
 const judgeKind = (kind: string, today: number, build: number) => compareCounters(kinded({ c: [today, kind] }), kinded({ c: [build, kind] }));
 
 describe("compareCounters of every kind", () => {
-  test("render: as work, over 2% and over 1, so a step of one is not judged", () => {
+  test("render: as work, listed and never judged", () => {
     expect(judgeKind("render", 27, 26)).toEqual({ diffs: ["c 26 → 27 (render)"], verdict: undefined });
-    expect(judgeKind("render", 18, 2).verdict).toBe("up");
-    expect(judgeKind("render", 2, 18).verdict).toBe("down");
+    expect(judgeKind("render", 18, 2)).toEqual({ diffs: ["c 2 → 18 (render)"], verdict: undefined });
+    expect(judgeKind("render", 2, 18).verdict).toBeUndefined();
   });
   test("leak: a growth of 1 or more per sample", () => {
     expect(judgeKind("leak", 1, 0).verdict).toBe("up");
@@ -107,21 +95,26 @@ describe("counterVerdictOfRepeats", () => {
     expect(r).toEqual({ diffs: [], kindDiffs: [{ kind: "leak", text: "listenerGrowth 0 → 341" }], verdict: "up", kind: "leak" });
   });
   test("one repeat under the threshold or the other way: no verdict; the difference is of the medians", () => {
-    const low = counterVerdictOfRepeats(runs("render", "layoutCount", [18, 18, 18, 18, 3]), runs("render", "layoutCount", [2, 2, 2, 2, 2]));
+    const low = counterVerdictOfRepeats(runs("leak", "listenerGrowth", [341, 341, 341, 341, 0]), runs("leak", "listenerGrowth", [0, 0, 0, 0, 0]));
     expect(low.verdict).toBeUndefined();
-    expect(low.kindDiffs).toEqual([{ kind: "render", text: "layoutCount 2 → 18" }]);
-    const mixed = counterVerdictOfRepeats(runs("work", "rows", [120, 120, 80, 120, 120]), runs("work", "rows", [100, 100, 100, 100, 100]));
+    expect(low.kindDiffs).toEqual([{ kind: "leak", text: "listenerGrowth 0 → 341" }]);
+    const mixed = counterVerdictOfRepeats(runs("heap", "jsHeapGrowth", [130, 130, 70, 130, 130]), runs("heap", "jsHeapGrowth", [100, 100, 100, 100, 100]));
     expect(mixed.verdict).toBeUndefined();
-    expect(mixed.diffs).toEqual(["rows 100 → 120"]);
+    expect(mixed.kindDiffs).toEqual([{ kind: "heap", text: "jsHeapGrowth 100 → 130" }]);
   });
   test("a step of one between repeats is noise: no verdict, and no difference when the medians are equal", () => {
     const r = counterVerdictOfRepeats(runs("render", "layoutCount", [27, 26, 27, 27, 26]), runs("render", "layoutCount", [26, 27, 27, 26, 27]));
     expect(r).toEqual({ diffs: [], kindDiffs: [], verdict: undefined, kind: undefined });
   });
+  test("work and render in every repeat: listed, no verdict", () => {
+    const r = counterVerdictOfRepeats(five({ conditionRuns: [40080, "work"], expressionRuns: [20555, "work"], layoutCount: [18, "render"] }),
+      five({ conditionRuns: [40040, "work"], expressionRuns: [164, "work"], layoutCount: [2, "render"] }));
+    expect(r).toEqual({ diffs: ["conditionRuns 40040 → 40080", "expressionRuns 164 → 20555"], kindDiffs: [{ kind: "render", text: "layoutCount 2 → 18" }],
+      verdict: undefined, kind: undefined });
+  });
   test("the counter that decided comes first in its list", () => {
-    const work = counterVerdictOfRepeats(five({ conditionRuns: [40080, "work"], expressionRuns: [20555, "work"] }),
-      five({ conditionRuns: [40040, "work"], expressionRuns: [164, "work"] }));
-    expect(work).toEqual({ diffs: ["expressionRuns 164 → 20555", "conditionRuns 40040 → 40080"], kindDiffs: [], verdict: "up", kind: "work" });
+    const leaks = counterVerdictOfRepeats(five({ nodeGrowth: [0.5, "leak"], listenerGrowth: [341, "leak"] }), five({ nodeGrowth: [0, "leak"], listenerGrowth: [0, "leak"] }));
+    expect(leaks).toEqual({ diffs: [], kindDiffs: [{ kind: "leak", text: "listenerGrowth 0 → 341" }, { kind: "leak", text: "nodeGrowth 0 → 0.5" }], verdict: "up", kind: "leak" });
     const kinds = counterVerdictOfRepeats(five({ layoutCount: [27, "render"], listenerGrowth: [341, "leak"] }),
       five({ layoutCount: [26, "render"], listenerGrowth: [0, "leak"] }));
     expect(kinds.kindDiffs).toEqual([{ kind: "leak", text: "listenerGrowth 0 → 341" }, { kind: "render", text: "layoutCount 26 → 27" }]);
@@ -129,10 +122,10 @@ describe("counterVerdictOfRepeats", () => {
   });
   test("one and the same counter must change in every repeat: different counters in different repeats are no verdict", () => {
     // a grew in repeats 1-3, b in repeats 4-5: each repeat is slower, but no counter is slower in all of them.
-    const today = [[120, 100], [120, 100], [120, 100], [100, 120], [100, 120]].map(([a, b]) => kinded({ a: [a, "work"], b: [b, "work"] }));
-    const r = counterVerdictOfRepeats(today, five({ a: [100, "work"], b: [100, "work"] }));
+    const today = [[2, 0], [2, 0], [2, 0], [0, 2], [0, 2]].map(([a, b]) => kinded({ a: [a, "leak"], b: [b, "leak"] }));
+    const r = counterVerdictOfRepeats(today, five({ a: [0, "leak"], b: [0, "leak"] }));
     expect(r.verdict).toBeUndefined();
-    expect(r.diffs).toEqual(["a 100 → 120"]);
+    expect(r.kindDiffs).toEqual([{ kind: "leak", text: "a 0 → 2" }]);
   });
 });
 
@@ -141,20 +134,23 @@ const five = (o: Record<string, [number | null, string]>): ResultEntry[] => [1, 
 
 describe("counterChangesOfRepeats", () => {
   const runs = (kind: string, name: string, values: number[]): ResultEntry[] => values.map((v: number) => kinded({ [name]: [v, kind] }));
-  test("every counter whose medians differ; a verdict when it changed the same way over its thresholds in every repeat", () => {
-    const r = counterChangesOfRepeats(five({ expressionRuns: [20555, "work"], conditionRuns: [40080, "work"], same: [5, "work"] }),
-      five({ expressionRuns: [164, "work"], conditionRuns: [40040, "work"], same: [5, "work"] }));
+  test("every listed counter whose medians differ; a verdict only for leak and heap, changed the same way over the thresholds in every repeat", () => {
+    const r = counterChangesOfRepeats(
+      five({ expressionRuns: [20555, "work"], layoutCount: [18, "render"], listenerGrowth: [341, "leak"], jsHeapGrowth: [120, "heap"], same: [5, "work"] }),
+      five({ expressionRuns: [164, "work"], layoutCount: [2, "render"], listenerGrowth: [0, "leak"], jsHeapGrowth: [100, "heap"], same: [5, "work"] }));
     expect(r).toEqual([
-      { name: "expressionRuns", kind: "work", build: 164, today: 20555, verdict: "up" },
-      { name: "conditionRuns", kind: "work", build: 40040, today: 40080 }
+      { name: "expressionRuns", kind: "work", build: 164, today: 20555 },
+      { name: "layoutCount", kind: "render", build: 2, today: 18 },
+      { name: "listenerGrowth", kind: "leak", build: 0, today: 341, verdict: "up" },
+      { name: "jsHeapGrowth", kind: "heap", build: 100, today: 120 }
     ]);
-    expect(r[1].verdict).toBeUndefined();
+    expect(r.filter((x: CounterChange) => x.verdict).map((x: CounterChange) => x.name)).toEqual(["listenerGrowth"]);
     expect(counterChangesOfRepeats(runs("leak", "listenerGrowth", [0, 0, 0, 0, 0]), runs("leak", "listenerGrowth", [341, 341, 341, 341, 341])))
       .toEqual([{ name: "listenerGrowth", kind: "leak", build: 341, today: 0, verdict: "down" }]);
   });
   test("one repeat under the threshold: no verdict; a step of one with equal medians: not listed", () => {
-    const low = counterChangesOfRepeats(runs("render", "layoutCount", [18, 18, 18, 18, 3]), runs("render", "layoutCount", [2, 2, 2, 2, 2]));
-    expect(low).toEqual([{ name: "layoutCount", kind: "render", build: 2, today: 18 }]);
+    const low = counterChangesOfRepeats(runs("leak", "listenerGrowth", [341, 341, 341, 341, 0]), runs("leak", "listenerGrowth", [0, 0, 0, 0, 0]));
+    expect(low).toEqual([{ name: "listenerGrowth", kind: "leak", build: 0, today: 341 }]);
     expect(low[0].verdict).toBeUndefined();
     expect(counterChangesOfRepeats(runs("render", "layoutCount", [27, 26, 27, 27, 26]), runs("render", "layoutCount", [26, 27, 27, 26, 27]))).toEqual([]);
   });
@@ -170,11 +166,11 @@ describe("verdictOf", () => {
     expect(verdictOf(row("a", { today: own(70), yesterday: vs(70, 100, { rerun: "confirmed", counterVerdict: "up" }) }), "yesterday", "core")).toBe("up");
     expect(verdictOf(row("a", { today: own(130), yesterday: vs(130, 100, { rerun: "unconfirmed", counterVerdict: "down" }) }), "yesterday", "core")).toBe("down");
   });
-  test("a counterOnly row: its time is not judged, its work verdict is", () => {
+  test("a counterOnly row: its time is not judged, its leak or heap verdict is", () => {
     // 13.11: manyPages/pages/last 10.95 → 14.1 ms (+29%).
     const last = row("last", { today: own(14.1), yesterday: vs(14.1, 10.95) }, true);
     expect(verdictOf(last, "yesterday", "core")).toBeUndefined();
-    const dispose = row("dispose", { today: own(10.3), yesterday: vs(10.3, 10.3, { counterVerdict: "up" }) }, true);
+    const dispose = row("dispose", { today: own(10.3), yesterday: vs(10.3, 10.3, { counterVerdict: "up", counterKind: "leak" }) }, true);
     expect(verdictOf(dispose, "yesterday", "core")).toBe("up");
   });
   test("a time row: over 25% and over the suite's ms; an unconfirmed cell has none", () => {
@@ -262,20 +258,20 @@ describe("suiteMarkdown", () => {
     expect(suiteMarkdown(surveyLibrary, matrix(), date)).not.toContain("⚑ the build");
   });
 
-  test("counterOnly rows: ᶜ, the time without a badge, the work verdict and its own section", () => {
+  test("counterOnly rows: ᶜ, the time without a badge, the leak verdict and its own section", () => {
     const m = mx([
       row("last", { today: own(14.1), yesterday: vs(14.1, 10.95) }, true),
-      row("dispose", { today: counted(10.3, { expressionRuns: 12 }), yesterday: vs(10.3, 10.3, { counterDiffs: ["expressionRuns 0 → 12"], counterVerdict: "up",
-        counterChanges: [ch("expressionRuns", "work", 0, 12, "up")] }) }, true),
+      row("dispose", { today: counted(10.3, { nodeGrowth: 12 }), yesterday: vs(10.3, 10.3, { kindDiffs: [{ kind: "leak", text: "nodeGrowth 0 → 12" }],
+        counterVerdict: "up", counterKind: "leak", counterChanges: [ch("nodeGrowth", "leak", 0, 12, "up")] }) }, true),
       row("plain", { today: own(5), yesterday: vs(5, 5, { counterDiffs: ["expressionRuns 9 → 7"] }) })
     ]);
     const md = suiteMarkdown(surveyLibrary, m, date);
     expect(md).toContain("| last ᶜ | 14.1 | +29% |");
     expect(md).toContain("| dispose ᶜ | 10.3 | 0% |");
     expect(md).toContain("| plain | 5 | 0% |");
-    expect(md).toContain("ᶜ counter-only: the time is for reference; judged by work counters (over 2% and over 1)");
+    expect(md).toContain("ᶜ counter-only: the time is for reference; judged by leak and heap counters");
     expect(md).toContain("## Counters\n\n| scenario | counter | today | 1D | 7D | 30D |\n|---|---|--:|--:|--:|--:|\n" +
-      "| dispose ᶜ | expressionRuns | 12 | 🔴 **0** | — | — |\n");
+      "| dispose ᶜ | nodeGrowth | 12 | 🔴 **0** | — | — |\n");
     expect(md).toContain("## Counters (information)\n- plain (1D): expressionRuns 9 → 7 (work)");
     expect(md).not.toContain("- dispose (");
   });
@@ -284,10 +280,10 @@ describe("suiteMarkdown", () => {
     const m = mx([
       row("sort", { today: counted(5.15, { listenerGrowth: 341 }), yesterday: vs(5.15, 5, { counterVerdict: "up", counterKind: "leak",
         kindDiffs: [{ kind: "leak", text: "listenerGrowth 0 → 341" }], counterChanges: [ch("listenerGrowth", "leak", 0, 341, "up")] }) }),
-      row("slow", { today: counted(130, { layoutCount: 18 }), yesterday: vs(130, 100, { counterVerdict: "up", counterKind: "render",
-        kindDiffs: [{ kind: "render", text: "layoutCount 2 → 18" }], counterChanges: [ch("layoutCount", "render", 2, 18, "up")] }) }),
-      row("work", { today: counted(5, { expressionRuns: 20 }), yesterday: vs(5, 5, { counterVerdict: "up", counterKind: "work",
-        counterDiffs: ["expressionRuns 9 → 20"], counterChanges: [ch("expressionRuns", "work", 9, 20, "up")] }) }),
+      row("slow", { today: counted(130, { jsHeapGrowth: 180 }), yesterday: vs(130, 100, { counterVerdict: "up", counterKind: "heap",
+        kindDiffs: [{ kind: "heap", text: "jsHeapGrowth 100 → 180" }], counterChanges: [ch("jsHeapGrowth", "heap", 100, 180, "up")] }) }),
+      row("work", { today: counted(5, { expressionRuns: 20 }), yesterday: vs(5, 5, { counterDiffs: ["expressionRuns 9 → 20"],
+        counterChanges: [ch("expressionRuns", "work", 9, 20)] }) }),
       row("noise", { today: counted(5, { layoutCount: 27 }), yesterday: vs(5, 5, { kindDiffs: [{ kind: "render", text: "layoutCount 26 → 27" }],
         counterChanges: [ch("layoutCount", "render", 26, 27)] }) })
     ]);
@@ -296,11 +292,11 @@ describe("suiteMarkdown", () => {
     expect(md).toContain("| slow | 130 | 🔴 **+30%** |");
     expect(md).toContain("| work | 5 | 0% |");
     expect(md).toContain("| noise | 5 | 0% |");
-    expect(md).toContain("Counters: 🔴/🟢 the build's value, a counter changed in every repeat (work, render: over 2% and over 1; " +
+    expect(md).toContain("Counters: 🔴/🟢 the build's value, a leak or heap counter changed in every repeat (" +
       "leak: by 1 or more per sample; heap: over 25% and over 16 KB per sample) · = as today");
     expect(md).toContain("## Counters\n\n| scenario | counter | today | 1D | 7D | 30D |\n|---|---|--:|--:|--:|--:|\n" +
-      "| sort | listenerGrowth | 341 | 🔴 **0** | — | — |\n| slow | layoutCount | 18 | 🔴 **2** | — | — |\n| work | expressionRuns | 20 | 🔴 **9** | — | — |\n");
-    expect(md).toContain("## Counters (information)\n- noise (1D): layoutCount 26 → 27 (render)");
+      "| sort | listenerGrowth | 341 | 🔴 **0** | — | — |\n| slow | jsHeapGrowth | 180 | 🔴 **100** | — | — |\n\n");
+    expect(md).toContain("## Counters (information)\n- work (1D): expressionRuns 9 → 20 (work)\n- noise (1D): layoutCount 26 → 27 (render)");
     expect(md).not.toContain("## Work counters");
     expect(md).not.toContain("## Counters (judged)");
     expect(md).not.toContain("🔴 **leak**");
@@ -310,9 +306,9 @@ describe("suiteMarkdown", () => {
     const m = mx([
       row("a", {
         today: counted(5, { x: 20, y: 7 }),
-        yesterday: vs(5, 5, { counterDiffs: ["y 3 → 7", "x 10 → 20"], counterValues: { x: 10, y: 3 }, counterVerdict: "up", counterKind: "work",
-          counterChanges: [ch("y", "work", 3, 7, "up"), ch("x", "work", 10, 20, "up")] }),
-        week: vs(5, 5, { counterDiffs: ["x 19 → 20"], counterValues: { x: 19, y: 7 }, flags: ["jsonErrors"], counterChanges: [ch("x", "work", 19, 20)] }),
+        yesterday: vs(5, 5, { kindDiffs: [{ kind: "leak", text: "y 3 → 7" }, { kind: "leak", text: "x 10 → 20" }], counterValues: { x: 10, y: 3 },
+          counterVerdict: "up", counterKind: "leak", counterChanges: [ch("y", "leak", 3, 7, "up"), ch("x", "leak", 10, 20, "up")] }),
+        week: vs(5, 5, { kindDiffs: [{ kind: "leak", text: "x 19 → 20" }], counterValues: { x: 19, y: 7 }, flags: ["jsonErrors"], counterChanges: [ch("x", "leak", 19, 20)] }),
         month: markCell("n/a", "not in this build")
       }, true),
       row("b", {
@@ -326,7 +322,7 @@ describe("suiteMarkdown", () => {
     const md = suiteMarkdown(surveyLibrary, m, date);
     expect(md).toContain("## Counters\n\n| scenario | counter | today | 1D | 7D | 30D |\n|---|---|--:|--:|--:|--:|\n" +
       "| a ᶜ | x | 20 | 🔴 **10** | 19 ⚑ | — |\n" +
-      "| a ᶜ | y | 7 | 🔴 **3** | = | — |\n" +
+      "|  | y | 7 | 🔴 **3** | = | — |\n" +
       "| b | z | 5 | = | 🟢 **9** | — |\n\n");
     expect(md).toContain("## Counters (information)\n- c (1D): w 1 → 2 (work)\n");
     expect(md).not.toContain("- a (1D)");

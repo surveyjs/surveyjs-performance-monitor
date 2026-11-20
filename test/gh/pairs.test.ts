@@ -70,32 +70,34 @@ describe("pairMatrix", () => {
     expect(same.flagged).toEqual({});
   });
 
-  test("a row that is not counterOnly is judged by its counters too; a change under the thresholds is information", () => {
-    const counters = (n: number): Extra => ({ counters: { rows: { value: n, kind: "work" } } });
-    const m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [100, 100], [100, 100], { today: counters(120), build: counters(100) })] }], 2);
-    expect(cellOf(m, "yesterday").counterDiffs).toEqual(["rows 100 → 120"]);
-    expect(cellOf(m, "yesterday").counterVerdict).toBe("up");
-    expect(cellOf(m, "yesterday").counterKind).toBe("work");
-    expect(verdictOf(m.rows[0], "yesterday", "core")).toBe("up");
-    expect(m.up.yesterday).toBe(1);
-    const info = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [100, 100], [100, 100], { today: counters(101), build: counters(100) })] }], 2);
-    expect(cellOf(info, "yesterday").counterDiffs).toEqual(["rows 100 → 101"]);
-    expect(cellOf(info, "yesterday").counterVerdict).toBeUndefined();
-    expect(verdictOf(info.rows[0], "yesterday", "core")).toBeUndefined();
-    expect(info.up).toEqual({});
+  test("work and render counters of any row are information: listed with their change, never a verdict", () => {
+    const counters = (n: number, counterOnly = false): Extra => ({ counters: { rows: { value: n, kind: "work" }, layoutCount: { value: n, kind: "render" } }, counterOnly: counterOnly });
+    for (const counterOnly of [false, true]) {
+      const m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [100, 100], [100, 100], { today: counters(120, counterOnly), build: counters(100) })] }], 2);
+      expect(m.rows[0].counterOnly === true).toBe(counterOnly);
+      const c = cellOf(m, "yesterday");
+      expect(c.counterDiffs).toEqual(["rows 100 → 120"]);
+      expect(c.kindDiffs).toEqual([{ kind: "render", text: "layoutCount 100 → 120" }]);
+      expect(c.counterChanges).toEqual([{ name: "rows", kind: "work", build: 100, today: 120 }, { name: "layoutCount", kind: "render", build: 100, today: 120 }]);
+      expect(c.counterVerdict).toBeUndefined();
+      expect(c.counterKind).toBeUndefined();
+      expect(verdictOf(m.rows[0], "yesterday", "core")).toBeUndefined();
+      expect(m.up).toEqual({});
+      expect(m.down).toEqual({});
+    }
   });
 
   test("a cell with jsonErrors (⚑) has no counter verdict, in a time row and in a counterOnly one", () => {
-    const rows = (n: number, jsonErrors: number, counterOnly = false): Extra => ({ counters: { rows: { value: n, kind: "work" } }, jsonErrors: jsonErrors, counterOnly: counterOnly });
+    const rows = (n: number, jsonErrors: number, counterOnly = false): Extra => ({ counters: { listenerGrowth: { value: n, kind: "leak" } }, jsonErrors: jsonErrors, counterOnly: counterOnly });
     for (const counterOnly of [false, true]) {
-      const m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [100, 100], [100, 100], { today: rows(120, 0, counterOnly), build: rows(100, 2) })] }], 2);
+      const m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [100, 100], [100, 100], { today: rows(341, 0, counterOnly), build: rows(0, 2) })] }], 2);
       expect(m.rows[0].counterOnly === true).toBe(counterOnly);
       const c = cellOf(m, "yesterday");
       expect(c.flags).toEqual(["jsonErrors"]);
       expect(c.counterVerdict).toBeUndefined();
       expect(c.counterKind).toBeUndefined();
-      expect(c.counterDiffs).toEqual(["rows 100 → 120"]);
-      expect(c.counterChanges).toEqual([{ name: "rows", kind: "work", build: 100, today: 120 }]);
+      expect(c.kindDiffs).toEqual([{ kind: "leak", text: "listenerGrowth 0 → 341" }]);
+      expect(c.counterChanges).toEqual([{ name: "listenerGrowth", kind: "leak", build: 0, today: 341 }]);
       expect(c.counterChanges![0].verdict).toBeUndefined();
       expect(verdictOf(m.rows[0], "yesterday", "core")).toBeUndefined();
       expect(m.up).toEqual({});
@@ -139,9 +141,9 @@ describe("pairMatrix", () => {
     expect(m.down).toEqual({});
   });
 
-  test("counterOnly rows are judged by the first repeat's work counters", () => {
-    const todayX: Extra = { counterOnly: true, counters: { rows: { value: 120, kind: "work" } } };
-    const buildX: Extra = { counters: { rows: { value: 100, kind: "work" } } };
+  test("counterOnly rows are judged by their leak and heap counters", () => {
+    const todayX: Extra = { counterOnly: true, counters: { nodeGrowth: { value: 489, kind: "leak" } } };
+    const buildX: Extra = { counters: { nodeGrowth: { value: 0, kind: "leak" } } };
     const m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [100, 100, 100, 100, 100], [100, 100, 100, 100, 100], { today: todayX, build: buildX })] }], 5);
     expect(m.rows[0].counterOnly).toBe(true);
     expect(cellOf(m, "yesterday").counterVerdict).toBe("up");
