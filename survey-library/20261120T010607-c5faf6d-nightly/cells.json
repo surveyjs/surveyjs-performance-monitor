@@ -1,0 +1,6236 @@
+{
+  "project": "survey-library",
+  "runId": "20261120T010607-c5faf6d-nightly",
+  "kind": "nightly",
+  "start": "2026-11-20T01:06:07.390Z",
+  "repeats": 5,
+  "specs": [
+    {
+      "role": "today",
+      "sha": "c5faf6d2f0d724afd20fd2fc2bf65503660f718e",
+      "date": "2026-11-19T17:14:31+03:00"
+    },
+    {
+      "role": "yesterday",
+      "sha": "9e5b74b48124c0d084c1b5ab07b69729d86674ce",
+      "date": "2026-11-18T21:07:59+02:00"
+    },
+    {
+      "role": "week",
+      "sha": "737e82ea1834e2e9aa1d4ea70e85b1d689f2f7a8",
+      "date": "2026-11-12T15:39:29+03:00"
+    },
+    {
+      "role": "month",
+      "sha": "105970ab6b3fa2cf3d6ac85b4c3e91d5c0c153e2",
+      "date": "2026-10-20T19:07:05+03:00"
+    }
+  ],
+  "cells": [
+    {
+      "suite": "core",
+      "id": "calculations/answer/first",
+      "role": "today",
+      "median": 68.3
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/first",
+      "role": "yesterday",
+      "median": 74.11,
+      "delta": -0.0734043988665497,
+      "repeats": [
+        -0.0445443400081732,
+        -0.07165024962892996,
+        -0.12073316509496612,
+        -0.11280367695338156,
+        -0.060087599233506706
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/first",
+      "role": "week",
+      "median": 71.74,
+      "delta": -0.05659325341511001,
+      "repeats": [
+        -0.031775172998164125,
+        -0.05910231391134646,
+        -0.04963260779148759,
+        -0.05551621583345134,
+        -0.049408489909533726
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/first",
+      "role": "month",
+      "median": 89.66,
+      "delta": -0.2400178451929511,
+      "verdict": "down",
+      "counterKind": "work",
+      "repeats": [
+        -0.24431687715269812,
+        -0.2361079865016874,
+        -0.27702917771883284,
+        -0.24172371226573908,
+        -0.21324342250718542
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/next3",
+      "role": "today",
+      "median": 135.9
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/next3",
+      "role": "yesterday",
+      "median": 167.3,
+      "delta": -0.18308427973699948,
+      "repeats": [
+        -0.18127749210086108,
+        -0.18174249182277724,
+        -0.16196136701337294,
+        -0.18756298535775673,
+        -0.20427913484521654
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/next3",
+      "role": "week",
+      "median": 166.03,
+      "delta": -0.17653436126001332,
+      "repeats": [
+        -0.15873887059397485,
+        -0.21621621621621623,
+        -0.16019066006998917,
+        -0.20513126491646771,
+        -0.18876296696048456
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/next3",
+      "role": "month",
+      "median": 202.5,
+      "delta": -0.335358024691358,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.3409259717751919,
+        -0.3418407567993693,
+        -0.335546049073118,
+        -0.33341653354632583,
+        -0.314448011854779
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/load/model",
+      "role": "today",
+      "median": 284.765
+    },
+    {
+      "suite": "core",
+      "id": "calculations/load/model",
+      "role": "yesterday",
+      "median": 269.755,
+      "delta": 0.05121313784730597,
+      "repeats": [
+        0.024215679003189106,
+        0.05642667844522964,
+        0.04835786268397002,
+        0.04914450781423607,
+        0.03357884796978272
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/load/model",
+      "role": "week",
+      "median": 279.87,
+      "delta": 0.014524600707471302,
+      "repeats": [
+        0.02065034237980856,
+        0.08403896590483328,
+        -0.015004413062665534,
+        0.003402553669145547,
+        -0.004880674681499886
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/load/model",
+      "role": "month",
+      "median": 691.93,
+      "delta": -0.5846472909109304,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5835705924009654,
+        -0.5916465655869515,
+        -0.5760732551905998,
+        -0.5824009764319549,
+        -0.5874928202182654
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/first",
+      "role": "today",
+      "median": 326.96
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/first",
+      "role": "yesterday",
+      "median": 320.44,
+      "delta": 0.016508550742728723,
+      "repeats": [
+        0.0327935475803427,
+        0.031248021275248616,
+        0.01566595930595427,
+        -0.015257998890327307,
+        0.032794122284236726
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/first",
+      "role": "week",
+      "median": 311.39,
+      "delta": 0.056488647676547155,
+      "repeats": [
+        0.059989081216480944,
+        0.05723514211886305,
+        0.04358583936048732,
+        0.030704548350108496,
+        0.047100629946696726
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/first",
+      "role": "month",
+      "median": 747.04,
+      "delta": -0.5588054187192119,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5658238533585239,
+        -0.5574606925628047,
+        -0.5738037468676664,
+        -0.5369817933728411,
+        -0.5652877745966339
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/next3",
+      "role": "today",
+      "median": 488.98
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/next3",
+      "role": "yesterday",
+      "median": 491.81,
+      "delta": -0.011671173827290993,
+      "repeats": [
+        -0.03102363356991278,
+        -0.06874221668742231,
+        -0.02511969033309569,
+        -0.0024019546941649317,
+        0.002382678959908846
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/next3",
+      "role": "week",
+      "median": 482.01,
+      "delta": 0.010476961058899281,
+      "repeats": [
+        0.01565967424527903,
+        0.014936708860759484,
+        -0.0026642803392381564,
+        0.006290698609213052,
+        0.011554643836476641
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/next3",
+      "role": "month",
+      "median": 1671.01,
+      "delta": -0.7037899234594647,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7055612708018154,
+        -0.6964887216298465,
+        -0.700554078957772,
+        -0.7073273283943599,
+        -0.7057228861586705
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/design",
+      "role": "today",
+      "median": 1238.58
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/design",
+      "role": "yesterday",
+      "median": 1239.9,
+      "delta": -0.0014275344785870114,
+      "repeats": [
+        0.00017771889717344003,
+        -0.002687025848544966,
+        0.00149198361237457,
+        -0.006089200741995482,
+        0.008855418731295694
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/design",
+      "role": "week",
+      "median": 1233.16,
+      "delta": 0.007801096370300575,
+      "repeats": [
+        -0.00010584336809893458,
+        -0.0009718331713611805,
+        -0.0013780357316559577,
+        0.005239136024685065,
+        0.013688225217363348
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/design",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "timeout 300 s"
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/model",
+      "role": "today",
+      "median": 2247.87
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/model",
+      "role": "yesterday",
+      "median": 2234.08,
+      "delta": 0.006172563202750059,
+      "repeats": [
+        0.016542412784476213,
+        0.011229045798465398,
+        0.009879238772979582,
+        0.011276189787226443,
+        0.023223485908546504
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/model",
+      "role": "week",
+      "median": 2208.49,
+      "delta": 0.018655280304642696,
+      "repeats": [
+        0.0061033500610334634,
+        0.027109891883169368,
+        0.025186322778806502,
+        0.02677951864431538,
+        0.016381536841436173
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/model",
+      "role": "month",
+      "median": 5829.34,
+      "delta": -0.6150764923644872,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.6176384108774167,
+        -0.613870741227738,
+        -0.6114608987768309,
+        -0.6154534575516823,
+        -0.6144720008127436
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/data",
+      "role": "today",
+      "median": 0.32
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/data",
+      "role": "yesterday",
+      "median": 0.35,
+      "delta": -0.05714285714285705,
+      "repeats": [
+        -0.23809523809523803,
+        0.030303030303030276,
+        -0.08571428571428563,
+        0.03125,
+        -0.08571428571428563
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/data",
+      "role": "week",
+      "median": 0.32,
+      "delta": 0,
+      "repeats": [
+        0.03125,
+        -0.03125,
+        0,
+        -0.03125,
+        -0.05882352941176472
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/data",
+      "role": "month",
+      "median": 0.36,
+      "delta": -0.13888888888888884,
+      "repeats": [
+        0,
+        -0.08823529411764708,
+        -0.09090909090909094,
+        -0.030303030303030276,
+        -0.1842105263157895
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/dispose",
+      "role": "today",
+      "median": 48.81
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/dispose",
+      "role": "yesterday",
+      "median": 47.33,
+      "delta": 0.023663638284386224,
+      "repeats": [
+        0.11489269455885531,
+        0.06647589698437173,
+        0.024026512013255896,
+        -0.05668016194331982,
+        -0.043283885389148624
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/dispose",
+      "role": "week",
+      "median": 46.24,
+      "delta": 0.051254325259515454,
+      "repeats": [
+        0.03552548107422293,
+        0.012984336356141712,
+        0.11150678833741368,
+        0.04511949966495421,
+        0.025827952509893892
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/dispose",
+      "role": "month",
+      "median": 48.04,
+      "delta": 0.025603663613655403,
+      "repeats": [
+        0.01661758519141765,
+        0.06341463414634152,
+        0.05058284762697762,
+        0.025603663613655403,
+        -0.04198940073379542
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/toJSON",
+      "role": "today",
+      "median": 74.38
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/toJSON",
+      "role": "yesterday",
+      "median": 74.97,
+      "delta": -0.0033346672002134703,
+      "repeats": [
+        0.03777777777777769,
+        -0.0432646376415996,
+        0.06095751854349296,
+        0.002899314707432765,
+        -0.05820105820105803
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/toJSON",
+      "role": "week",
+      "median": 77.34,
+      "delta": -0.02379105249547453,
+      "repeats": [
+        -0.014971605575632596,
+        -0.0067308961330340145,
+        -0.020697585281717057,
+        -0.03125814014066175,
+        -0.006068268015170575
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/toJSON",
+      "role": "month",
+      "median": 92.57,
+      "delta": -0.20406179107702271,
+      "repeats": [
+        -0.20189644150862995,
+        -0.21332479180012798,
+        -0.16261949236347661,
+        -0.20719616798485008,
+        -0.21041354188986505
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/first",
+      "role": "today",
+      "median": 1273.95
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/first",
+      "role": "yesterday",
+      "median": 1208.75,
+      "delta": 0.06455429162357795,
+      "repeats": [
+        0.054359562133519335,
+        0.09096650330925082,
+        0.07499713157075183,
+        0.057034126163391985,
+        0.03904098892879748
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/first",
+      "role": "week",
+      "median": 1146.5,
+      "delta": 0.10768425643262103,
+      "repeats": [
+        0.09483656048303146,
+        0.14591747771471275,
+        0.1232691922752236,
+        0.07686467858605162,
+        0.12067446723317188
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/first",
+      "role": "month",
+      "median": 2709.9,
+      "delta": -0.530071220340234,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5265300398218167,
+        -0.5292896833366807,
+        -0.5256071552443011,
+        -0.5252756272735752,
+        -0.5324327773220308
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/next3",
+      "role": "today",
+      "median": 2609.67
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/next3",
+      "role": "yesterday",
+      "median": 2551.1,
+      "delta": 0.04043353847359965,
+      "repeats": [
+        0.041422882524123184,
+        0.04724384595049913,
+        0.045623922505431125,
+        0.011595744680851006,
+        0.019575124558241175
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/next3",
+      "role": "week",
+      "median": 2387.59,
+      "delta": 0.09539745098614083,
+      "repeats": [
+        0.14046771622595378,
+        0.10070348395942319,
+        0.0935226777513325,
+        0.08970501214952087,
+        0.07668196890606471
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/next3",
+      "role": "month",
+      "median": 5523.81,
+      "delta": -0.5332533160988522,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5291700512096063,
+        -0.5263708233080666,
+        -0.5325881703561676,
+        -0.5311078701651717,
+        -0.5457548775720851
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/load/model",
+      "role": "today",
+      "median": 8024.34
+    },
+    {
+      "suite": "core",
+      "id": "expressions/load/model",
+      "role": "yesterday",
+      "median": 7928.16,
+      "delta": 0.016040291820548447,
+      "repeats": [
+        0.0036303722527857296,
+        0.03128088353659164,
+        0.018904992956644273,
+        0.014674543409727292,
+        -0.0035342091059042957
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/load/model",
+      "role": "week",
+      "median": 7852.8,
+      "delta": 0.018424001629991693,
+      "repeats": [
+        0.03322318215371789,
+        -0.0027030280757557312,
+        -0.009044194762185875,
+        0.023934138141809225,
+        0.037547056253568245
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/load/model",
+      "role": "month",
+      "median": 10482.71,
+      "delta": -0.2347293781856027,
+      "repeats": [
+        -0.2353574192761254,
+        -0.23950420631046476,
+        -0.23101831377272508,
+        -0.2344909151623107,
+        -0.2294654560141437
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/load/design",
+      "role": "today",
+      "median": 437.87
+    },
+    {
+      "suite": "core",
+      "id": "large/load/design",
+      "role": "yesterday",
+      "median": 434.56,
+      "delta": 0.006880522827687807,
+      "repeats": [
+        0.01308269641258697,
+        -0.007714318415932286,
+        0.008819126040984226,
+        -0.0176005022308916,
+        -0.015164764359351879
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/load/design",
+      "role": "week",
+      "median": 424.87,
+      "delta": 0.032362840398239445,
+      "repeats": [
+        0.03692894297079108,
+        0.045257329146391134,
+        0.02159806976035994,
+        0.013868984328047729,
+        0.0365816169689519
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/load/design",
+      "role": "month",
+      "median": 792.44,
+      "delta": -0.44810963606077436,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.4450735983380203,
+        -0.4473587278200454,
+        -0.4620802887688471,
+        -0.456629046260697,
+        -0.44136420050150704
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/load/model",
+      "role": "today",
+      "median": 703.87
+    },
+    {
+      "suite": "core",
+      "id": "large/load/model",
+      "role": "yesterday",
+      "median": 697.94,
+      "delta": 0.012450927013783364,
+      "repeats": [
+        0.0035206207788476274,
+        0.08421220605515489,
+        0.03271974885844764,
+        0.017608963521219545,
+        -0.006877461332115864
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/load/model",
+      "role": "week",
+      "median": 790.1,
+      "delta": -0.10963169219086188,
+      "repeats": [
+        -0.1361602413092523,
+        -0.11038780110945068,
+        -0.09988746515256142,
+        -0.1227746011136358,
+        -0.10802313248143858
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/load/model",
+      "role": "month",
+      "median": 944.25,
+      "delta": -0.2553878739740535,
+      "rerun": "unconfirmed",
+      "repeats": [
+        -0.2493951157614014,
+        -0.27298692506241273,
+        -0.24432800461016368,
+        -0.24647572877463808,
+        -0.25567574366392043
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/data",
+      "role": "today",
+      "median": 0.07
+    },
+    {
+      "suite": "core",
+      "id": "large/output/data",
+      "role": "yesterday",
+      "median": 0.065,
+      "delta": 0.0769230769230771,
+      "repeats": [
+        0.3333333333333335,
+        0,
+        0,
+        0.16666666666666674,
+        0
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/data",
+      "role": "week",
+      "median": 0.07,
+      "delta": 0,
+      "repeats": [
+        0,
+        0,
+        0.16666666666666674,
+        0,
+        0
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/data",
+      "role": "month",
+      "median": 0.07,
+      "delta": 0,
+      "repeats": [
+        -0.12499999999999989,
+        0,
+        -0.12499999999999989,
+        0,
+        -0.14285714285714302
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/dispose",
+      "role": "today",
+      "median": 49.32
+    },
+    {
+      "suite": "core",
+      "id": "large/output/dispose",
+      "role": "yesterday",
+      "median": 48.2,
+      "delta": 0.02655601659751028,
+      "repeats": [
+        0.017879417879417936,
+        0.013886052685317507,
+        -0.013155147212361662,
+        0.035936850851682633,
+        0.030709782387634776
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/dispose",
+      "role": "week",
+      "median": 48.94,
+      "delta": 0.0006129955046996205,
+      "repeats": [
+        -0.03466239230615098,
+        -0.04177493503897667,
+        0.05162089613875698,
+        0.05581395348837215,
+        -0.022107438016528924
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/dispose",
+      "role": "month",
+      "median": 50.07,
+      "delta": -0.011384062312762122,
+      "repeats": [
+        -0.018846153846153735,
+        -0.0023561751423522015,
+        -0.03634911124425799,
+        0.00789692435577738,
+        0.0050761421319796
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/toJSON",
+      "role": "today",
+      "median": 90.58
+    },
+    {
+      "suite": "core",
+      "id": "large/output/toJSON",
+      "role": "yesterday",
+      "median": 90.435,
+      "delta": -0.004423066290706101,
+      "repeats": [
+        0.05528846153846145,
+        -0.0464116888697893,
+        0.014504160107938091,
+        0.02562655226913524,
+        -0.02981501632208927
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/toJSON",
+      "role": "week",
+      "median": 102.58000000000001,
+      "delta": -0.11912653538701512,
+      "repeats": [
+        -0.13438467492260064,
+        -0.12972491589154955,
+        -0.08174702869842487,
+        -0.09727290186287685,
+        -0.11495280675608555
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/toJSON",
+      "role": "month",
+      "median": 160.43,
+      "delta": -0.43018762076918293,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.4014220669868397,
+        -0.4217997465145755,
+        -0.44921851057309226,
+        -0.43010819549807233,
+        -0.4335611237661352
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/load/model",
+      "role": "today",
+      "median": 620.71
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/load/model",
+      "role": "yesterday",
+      "median": 603,
+      "delta": 0.02281923714759526,
+      "repeats": [
+        0.025774797612233113,
+        -0.00024361722861032664,
+        0.06067534877555758,
+        0.04555881658401639,
+        0.011366295590545805
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/load/model",
+      "role": "week",
+      "median": 669.42,
+      "delta": -0.0942756416001912,
+      "repeats": [
+        -0.10725822202857616,
+        -0.06578662292240556,
+        -0.10469840148370568,
+        -0.08663837699239774,
+        -0.10417642924086223
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/load/model",
+      "role": "month",
+      "median": 712.3,
+      "delta": -0.08078056998455707,
+      "repeats": [
+        -0.08128195277638228,
+        -0.009335497223173395,
+        -0.07749521159841732,
+        -0.08335433291334171,
+        -0.11435417120453062
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/last",
+      "role": "today",
+      "median": 9.625
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/last",
+      "role": "yesterday",
+      "median": 11.825,
+      "delta": -0.1272727272727272,
+      "repeats": [
+        -0.14442567567567555,
+        -0.19790104947526244,
+        -0.5461409395973154,
+        -0.011579818031430933,
+        0.7043314500941622
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/last",
+      "role": "week",
+      "median": 8.76,
+      "delta": 0.07933789954337911,
+      "repeats": [
+        -0.028153153153153143,
+        -0.07607607607607603,
+        0.0160160160160161,
+        0.2778561354019746,
+        0.2650862068965518
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/last",
+      "role": "month",
+      "median": 13.1,
+      "delta": -0.17938931297709926,
+      "repeats": [
+        -0.0050000000000000044,
+        -0.22429210134128164,
+        -0.08307692307692305,
+        -0.3087409783480354,
+        -0.27887788778877887
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/locale",
+      "role": "today",
+      "median": 35.64
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/locale",
+      "role": "yesterday",
+      "median": 34.185,
+      "delta": 0.0587977182974988,
+      "repeats": [
+        0.07996510613550445,
+        -0.008415147265077083,
+        0.07491856677524411,
+        0.10067706800117748,
+        0.04048338368580051
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/locale",
+      "role": "week",
+      "median": 35.905,
+      "delta": -0.007519844032864431,
+      "repeats": [
+        -0.05215231788079466,
+        -0.003619153674833009,
+        0.002211166390270858,
+        -0.0028409090909091717,
+        0.0022390148334734405
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/locale",
+      "role": "month",
+      "median": 41.894999999999996,
+      "delta": -0.15980427258622731,
+      "repeats": [
+        -0.14441482917373394,
+        -0.162067352666043,
+        -0.123988576868158,
+        -0.20464337003350896,
+        -0.14838709677419348
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/next10",
+      "role": "today",
+      "median": 63.72
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/next10",
+      "role": "yesterday",
+      "median": 62.725,
+      "delta": 0.019051414906337216,
+      "repeats": [
+        0.01570512820512837,
+        0.014162077104642012,
+        0.014239482200647302,
+        0.028502802241793468,
+        0.00841908325537899
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/next10",
+      "role": "week",
+      "median": 63.86,
+      "delta": 0.0021922956467272936,
+      "repeats": [
+        -0.015506280043417475,
+        -0.007064364207221341,
+        0.011211116374546082,
+        -0.0069135043785528705,
+        0.007064364207221452
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/next10",
+      "role": "month",
+      "median": 76.10499999999999,
+      "delta": -0.16845148150581424,
+      "repeats": [
+        -0.15695835529783864,
+        -0.18844548774126246,
+        -0.1732880292733926,
+        -0.17562254259501964,
+        -0.14195879047364202
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/prev",
+      "role": "today",
+      "median": 31.305
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/prev",
+      "role": "yesterday",
+      "median": 30.689999999999998,
+      "delta": 0.02264581296839352,
+      "repeats": [
+        -0.004205758654157177,
+        0.018254231662794496,
+        0.045604758757435526,
+        0.011993517017828026,
+        0.04489264801561488
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/prev",
+      "role": "week",
+      "median": 30.72,
+      "delta": 0.01936848958333326,
+      "repeats": [
+        0.009942270686337462,
+        0.0159142578759337,
+        0.027035938015166572,
+        0.016103059581320522,
+        0.038754554488241055
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/prev",
+      "role": "month",
+      "median": 36.735,
+      "delta": -0.1517626242003539,
+      "repeats": [
+        -0.1630434782608695,
+        -0.1471718835804504,
+        -0.1275130817956487,
+        -0.139109046187483,
+        -0.17732013907461885
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/preview",
+      "role": "today",
+      "median": 1191.99
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/preview",
+      "role": "yesterday",
+      "median": 1145.28,
+      "delta": 0.04938530315730638,
+      "repeats": [
+        0.07529390808692549,
+        0.035877042504895096,
+        0.06709835491774596,
+        0.05194362950544851,
+        0.003672340793225537
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/preview",
+      "role": "week",
+      "median": 1132.55,
+      "delta": 0.045958235839477224,
+      "repeats": [
+        0.06894476569245667,
+        0.055154140482685854,
+        0.03955922274610679,
+        0.062326119834942295,
+        0.011616432664508514
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/preview",
+      "role": "month",
+      "median": 1439.27,
+      "delta": -0.177749831511808,
+      "repeats": [
+        -0.19066408217042508,
+        -0.18286819488143413,
+        -0.18577940215956312,
+        -0.16593232903920663,
+        -0.19535201735842211
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/validate",
+      "role": "today",
+      "median": 71.58500000000001
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/validate",
+      "role": "yesterday",
+      "median": 72.29,
+      "delta": 0.010789874118135145,
+      "repeats": [
+        -0.026606010476978303,
+        -0.058483374950716316,
+        -0.050951177331382214,
+        0.09467975963652342,
+        0.08124667021843379
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/validate",
+      "role": "week",
+      "median": 71.26,
+      "delta": -0.00982318271119842,
+      "repeats": [
+        -0.017294543504491333,
+        0.02319095846176422,
+        -0.005355884425652047,
+        -0.014107656485413012,
+        -0.02170520641225704
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/validate",
+      "role": "month",
+      "median": 85.16,
+      "delta": -0.15969938938468764,
+      "repeats": [
+        -0.1558514840311478,
+        -0.22975809124047275,
+        -0.14373979948705995,
+        -0.14373919486292908,
+        -0.06453232893910865
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/data",
+      "role": "today",
+      "median": 690.52
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/data",
+      "role": "yesterday",
+      "median": 680.68,
+      "delta": 0.010827407886231377,
+      "repeats": [
+        0.056267262149615194,
+        0.0024713514467704645,
+        0.022639797456498467,
+        -0.00537926777289488,
+        0.013683772620568746
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/data",
+      "role": "week",
+      "median": 1256,
+      "delta": -0.4510907643312102,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.4580228118698241,
+        -0.4479911548771467,
+        -0.4513375796178344,
+        -0.4511254375821704,
+        -0.44586577234798574
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/data",
+      "role": "month",
+      "median": 815.53,
+      "delta": -0.15282086495898373,
+      "verdict": "up",
+      "counterKind": "work",
+      "repeats": [
+        -0.16154500931397353,
+        -0.16549420702986406,
+        -0.1561340105489354,
+        -0.15456436612824287,
+        -0.14288525154641707
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/model",
+      "role": "today",
+      "median": 62.11
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/model",
+      "role": "yesterday",
+      "median": 59.769999999999996,
+      "delta": 0.043416429646980115,
+      "repeats": [
+        0.03480278422273764,
+        0.052552048354600256,
+        0.02398121750796589,
+        0.07281890858533191,
+        0.06885082321636449
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/model",
+      "role": "week",
+      "median": 95.01,
+      "delta": -0.34170087359225343,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.363359260037839,
+        -0.3406305645752592,
+        -0.313573883161512,
+        -0.3677018633540372,
+        -0.32824107983676876
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/model",
+      "role": "month",
+      "median": 60.06,
+      "delta": 0.01823176823176831,
+      "repeats": [
+        0.013384641124309704,
+        0.056980056980056926,
+        0.0352077423660937,
+        0.011676396997497784,
+        -0.027800357665420217
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/data",
+      "role": "today",
+      "median": 0.12
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/data",
+      "role": "yesterday",
+      "median": 0.12,
+      "delta": 0,
+      "repeats": [
+        0,
+        0.08333333333333348,
+        0.08333333333333348,
+        -0.07692307692307698,
+        0.08333333333333348
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/data",
+      "role": "week",
+      "median": 0.12,
+      "delta": 0,
+      "repeats": [
+        0,
+        0.08333333333333348,
+        0,
+        0,
+        0.08333333333333348
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/data",
+      "role": "month",
+      "median": 0.14,
+      "delta": -0.14285714285714302,
+      "repeats": [
+        -0.07142857142857151,
+        -0.19999999999999996,
+        -0.1333333333333333,
+        -0.14285714285714302,
+        -0.14285714285714302
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/dispose",
+      "role": "today",
+      "median": 8.78
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/dispose",
+      "role": "yesterday",
+      "median": 8.63,
+      "delta": 0.17149478563151788,
+      "repeats": [
+        0.13008130081300817,
+        0.17149478563151788,
+        0.6042402826855124,
+        -0.5220649458784345,
+        0.10775427995971798
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/dispose",
+      "role": "week",
+      "median": 9.61,
+      "delta": -0.10822060353798124,
+      "repeats": [
+        -0.31149425287356314,
+        -0.12857142857142867,
+        0.548500881834215,
+        -0.33529411764705874,
+        -0.057421451787649125
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/dispose",
+      "role": "month",
+      "median": 8.44,
+      "delta": 0.021327014218009532,
+      "repeats": [
+        0.7892857142857144,
+        -0.028768699654775576,
+        -0.36396181384248216,
+        -0.021097046413502185,
+        0.08284714119019831
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/toJSON",
+      "role": "today",
+      "median": 33.8
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/toJSON",
+      "role": "yesterday",
+      "median": 33.925,
+      "delta": -0.0020633750921147387,
+      "repeats": [
+        -0.06885531667635114,
+        0.002361972246826216,
+        -0.0020582181711261693,
+        0.0902864259028644,
+        -0.007128007128007208
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/toJSON",
+      "role": "week",
+      "median": 34.195,
+      "delta": -0.025149875712823677,
+      "repeats": [
+        0.05864004990642524,
+        0.006668599594085167,
+        0.026822341432628516,
+        -0.08939350388042544,
+        -0.04274498400697879
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/toJSON",
+      "role": "month",
+      "median": 53.879999999999995,
+      "delta": -0.36154417223459534,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.39231193672981424,
+        -0.3399126969064338,
+        -0.38472998137802616,
+        -0.3485507246376812,
+        -0.3296662315867984
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/add-row@orders",
+      "role": "today",
+      "median": 479.33
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/add-row@orders",
+      "role": "yesterday",
+      "median": 481.2,
+      "delta": -0.01172069825436406,
+      "repeats": [
+        -0.015457837558199738,
+        -0.004241380758409186,
+        -0.022210318114389338,
+        -0.039841464173808516,
+        -0.005990037621639854
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/add-row@orders",
+      "role": "week",
+      "median": 479.35,
+      "delta": -0.00004172316678840993,
+      "repeats": [
+        0.001279657639136511,
+        0.009498336211616998,
+        -0.016330770829004804,
+        -0.012351006987258661,
+        0.022153095968725056
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/add-row@orders",
+      "role": "month",
+      "median": 291.1,
+      "delta": 0.6542425283407762,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        0.6422165936473165,
+        0.6804019399183558,
+        0.7015423092955397,
+        0.6081764824934224,
+        0.6341119890072138
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "today",
+      "median": 339.19
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "yesterday",
+      "median": 342.82,
+      "delta": -0.016510121929875665,
+      "repeats": [
+        -0.012761359654245963,
+        -0.04662356113543442,
+        0.03892224512351783,
+        -0.04058946653843987,
+        -0.014152509128217527
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "week",
+      "median": 330.92,
+      "delta": 0.027529312220476054,
+      "repeats": [
+        0.008977838756822898,
+        0.03264698736637506,
+        -0.04063552922040181,
+        0.029984738306849668,
+        0.026546487220644677
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "month",
+      "median": 225.72,
+      "delta": 0.5054935318093212,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        0.543356579188842,
+        0.5104684173172462,
+        0.4605472958414134,
+        0.48932813253276075,
+        0.5438137227886468
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-change@orders",
+      "role": "today",
+      "median": 383.18
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-change@orders",
+      "role": "yesterday",
+      "median": 385.08,
+      "delta": -0.0031162355874103653,
+      "repeats": [
+        0.01856757037498702,
+        -0.007650357964384624,
+        -0.0024360535931789995,
+        0.008394295037103205,
+        -0.019609864199757854
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-change@orders",
+      "role": "week",
+      "median": 387.1,
+      "delta": -0.01152157065357795,
+      "repeats": [
+        -0.02612674796124459,
+        -0.009987063389392037,
+        -0.020299748498691206,
+        0.0008056133056133508,
+        -0.013020360523926966
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-change@orders",
+      "role": "month",
+      "median": 370.71,
+      "delta": 0.032586118529308816,
+      "verdict": "up",
+      "counterKind": "work",
+      "repeats": [
+        0.03316084636016359,
+        0.035365624075518465,
+        0.027485569401737076,
+        0.04594089443887639,
+        0.032165698841285506
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-clear@orders",
+      "role": "today",
+      "median": 390.36
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-clear@orders",
+      "role": "yesterday",
+      "median": 385.08,
+      "delta": 0.0019476472421315894,
+      "repeats": [
+        0.0011724551210234857,
+        -0.006053299817888047,
+        0.0009541246550968108,
+        0.0016619923132856762,
+        0.004359402735720996
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-clear@orders",
+      "role": "week",
+      "median": 397.41,
+      "delta": -0.015349387282655225,
+      "repeats": [
+        -0.011449133137062528,
+        -0.014929492648165898,
+        -0.003049555273189286,
+        -0.019890140209185114,
+        -0.018335222264198592
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-clear@orders",
+      "role": "month",
+      "median": 371.01,
+      "delta": 0.05697959623729809,
+      "verdict": "up",
+      "counterKind": "work",
+      "repeats": [
+        0.07007738607050729,
+        0.03322311863510108,
+        0.04977657413676373,
+        0.044360598302115584,
+        0.07204257060990593
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "today",
+      "median": 497.68
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "yesterday",
+      "median": 494.7,
+      "delta": 0.014129775621588792,
+      "repeats": [
+        0.018738490802760133,
+        0.002840165172726339,
+        -0.0038915913829047355,
+        0.005391767889478816,
+        0.012478485370051473
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "week",
+      "median": 504.25,
+      "delta": -0.014119980168567192,
+      "repeats": [
+        -0.006160616061606117,
+        -0.01644516307134125,
+        -0.006945543770777274,
+        -0.019690604654866828,
+        -0.010946950917203768
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "month",
+      "median": 452.27,
+      "delta": 0.09558449598691054,
+      "verdict": "up",
+      "counterKind": "work",
+      "repeats": [
+        0.10249939120232021,
+        0.09665755357615313,
+        0.09788918792677781,
+        0.1072103940020912,
+        0.08466098146801526
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/first-visit@orders",
+      "role": "today",
+      "median": 402.04
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/first-visit@orders",
+      "role": "yesterday",
+      "median": 399.79,
+      "delta": 0.007929162810475399,
+      "repeats": [
+        0.04766900363338622,
+        0.01113322082567203,
+        0.001940719830628046,
+        0.004887780548628484,
+        0.002056491575817665
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/first-visit@orders",
+      "role": "week",
+      "median": 414.59,
+      "delta": -0.033502978846571274,
+      "repeats": [
+        -0.03618025131192537,
+        -0.05093959417029836,
+        -0.016341876981299075,
+        -0.034548758328285856,
+        -0.04825737265415542
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/first-visit@orders",
+      "role": "month",
+      "median": 369.73,
+      "delta": 0.08449409028209787,
+      "verdict": "up",
+      "counterKind": "work",
+      "repeats": [
+        0.07603823513528107,
+        0.09738517816014092,
+        0.08478903520558978,
+        0.0955719254046059,
+        0.09028209774700446
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/last@orders",
+      "role": "today",
+      "median": 169.14
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/last@orders",
+      "role": "yesterday",
+      "median": 169.06,
+      "delta": 0.008458535431207892,
+      "repeats": [
+        0.014640318110615835,
+        0.005516014234875577,
+        0.118542969654853,
+        -0.04988216810683421,
+        0.015563270681192343
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/last@orders",
+      "role": "week",
+      "median": 166.43,
+      "delta": 0.01087544312924349,
+      "repeats": [
+        -0.006253006253006177,
+        0.019075040489472617,
+        0.004333694474539795,
+        0.0022517184166863657,
+        -0.0064535054268113345
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/last@orders",
+      "role": "month",
+      "median": 344.18,
+      "delta": -0.5108373525480853,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5043781298503529,
+        -0.5166097217835712,
+        -0.5184273073508777,
+        -0.5055265537052698,
+        -0.5119414259980244
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/next@orders",
+      "role": "today",
+      "median": 273.65
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/next@orders",
+      "role": "yesterday",
+      "median": 273.97,
+      "delta": -0.006752564149359541,
+      "repeats": [
+        -0.013463357834218703,
+        -0.0023233863355840434,
+        0.031357988383207136,
+        0.0018487705675724886,
+        0.0030964317310528955
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/next@orders",
+      "role": "week",
+      "median": 270.38,
+      "delta": 0.01331459427472459,
+      "repeats": [
+        0.03804103639359013,
+        0.01339385370935342,
+        0.01875138693690359,
+        -0.013199883957064062,
+        -0.006995312042191726
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/next@orders",
+      "role": "month",
+      "median": 480.61,
+      "delta": -0.428060173529473,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.423717690891001,
+        -0.43979547296875976,
+        -0.428060173529473,
+        -0.42009940190379913,
+        -0.4316505254481764
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/prev@orders",
+      "role": "today",
+      "median": 231.72
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/prev@orders",
+      "role": "yesterday",
+      "median": 230.99,
+      "delta": 0.01177540153253398,
+      "repeats": [
+        0.0032793959007551,
+        0.012388997184318962,
+        0.006977645690657619,
+        0.02692950805245098,
+        0.014955396186811187
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/prev@orders",
+      "role": "week",
+      "median": 231.37,
+      "delta": 0.0015127285300600146,
+      "repeats": [
+        0.022423271719838933,
+        -0.009814380200554695,
+        0.008309405725223984,
+        -0.0025438709955589722,
+        0.010964529093133057
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/prev@orders",
+      "role": "month",
+      "median": 433.34,
+      "delta": -0.47440808602944573,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.48170272920039214,
+        -0.4700085789144195,
+        -0.47682623132263424,
+        -0.4534439677525812,
+        -0.4796103151862464
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/remove-row@orders",
+      "role": "today",
+      "median": 596.52
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/remove-row@orders",
+      "role": "yesterday",
+      "median": 594.98,
+      "delta": -0.0027395878853070377,
+      "repeats": [
+        -0.004049949375632744,
+        -0.013627623108435682,
+        0.004393181239928712,
+        -0.0004490495118665283,
+        0.015257738941949484
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/remove-row@orders",
+      "role": "week",
+      "median": 1126.72,
+      "delta": -0.4706581936949731,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.47154031714498557,
+        -0.4768466549404704,
+        -0.4697542700898406,
+        -0.45970695970695963,
+        -0.4629771673207278
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/remove-row@orders",
+      "role": "month",
+      "median": 904.83,
+      "delta": -0.3404175369958998,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.34138442114508427,
+        -0.34566764244756554,
+        -0.3381618051733627,
+        -0.34048977598188324,
+        -0.3382718239886444
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-1@orders",
+      "role": "today",
+      "median": 248.1
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-1@orders",
+      "role": "yesterday",
+      "median": 246.78,
+      "delta": 0.00482210876083955,
+      "repeats": [
+        0.00032272378877729047,
+        -0.002148358329955413,
+        0.01844897959183678,
+        -0.002274111675126922,
+        0.0009223982354120697
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-1@orders",
+      "role": "week",
+      "median": 247.53,
+      "delta": 0.0023431503252131503,
+      "repeats": [
+        -0.004414125200641994,
+        -0.01665934241540501,
+        0.013511873457664247,
+        0.008007117437722311,
+        0.016719255829201307
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-1@orders",
+      "role": "month",
+      "median": 418.7,
+      "delta": -0.40752328636255075,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.41217731545545644,
+        -0.40952222802106564,
+        -0.40075164720154133,
+        -0.40682910499509817,
+        -0.4037541584711396
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-3@orders",
+      "role": "today",
+      "median": 201.57
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-3@orders",
+      "role": "yesterday",
+      "median": 203.38,
+      "delta": -0.011603894188219055,
+      "repeats": [
+        -0.03056384175265292,
+        0.0398293760920958,
+        0.01092512779392596,
+        -0.017594307437372114,
+        -0.030937833381825208
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-3@orders",
+      "role": "week",
+      "median": 203.92,
+      "delta": -0.020596312279325124,
+      "repeats": [
+        0.016325499115491526,
+        -0.007378602054043393,
+        -0.07588932806324122,
+        -0.008685525741180977,
+        -0.015124642821952916
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-3@orders",
+      "role": "month",
+      "median": 329.37,
+      "delta": -0.3755654734796734,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.3566276892858239,
+        -0.35291200446331705,
+        -0.3917868698781336,
+        -0.3761384884492429,
+        -0.379278082935957
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-reverse@orders",
+      "role": "today",
+      "median": 179.46
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-reverse@orders",
+      "role": "yesterday",
+      "median": 179.45,
+      "delta": 0.00802451936472548,
+      "repeats": [
+        -0.043039855649312786,
+        0.032572555649478696,
+        -0.026712180320762946,
+        -0.016302830662721313,
+        0.07543268946777726
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-reverse@orders",
+      "role": "week",
+      "median": 176.7,
+      "delta": 0.01013016411997758,
+      "repeats": [
+        -0.002436950977613983,
+        0.013825404886857351,
+        0.009319196428571486,
+        0.012449548064351168,
+        0.014601018675721722
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-reverse@orders",
+      "role": "month",
+      "median": 350.99,
+      "delta": -0.4887033818627311,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.48056689472776404,
+        -0.4738536946795475,
+        -0.5031001879751984,
+        -0.4930137453140975,
+        -0.4970898716119828
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/data",
+      "role": "today",
+      "median": 352.24
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/data",
+      "role": "yesterday",
+      "median": 360.16,
+      "delta": -0.021990226565970716,
+      "repeats": [
+        -0.0420619687414312,
+        -0.007468902709906744,
+        -0.007471944961371602,
+        -0.026466499860995252,
+        -0.023454394233434983
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/data",
+      "role": "week",
+      "median": 373.14,
+      "delta": -0.056091547408479436,
+      "repeats": [
+        -0.06311352966282535,
+        -0.009790820083453888,
+        -0.04797698841279752,
+        -0.04973723723723711,
+        -0.0737166000420788
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/data",
+      "role": "month",
+      "median": 280.71,
+      "delta": 0.25802429553631856,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "unconfirmed",
+      "repeats": [
+        0.25802429553631856,
+        0.20478787255204578,
+        0.2728345611901868,
+        0.2684477000969514,
+        0.2335493519441676
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/model",
+      "role": "today",
+      "median": 63.42
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/model",
+      "role": "yesterday",
+      "median": 60.51,
+      "delta": 0.04420756899686018,
+      "repeats": [
+        0.06065740426973898,
+        0.06974034620505987,
+        0.03461348277567167,
+        -0.0159558604235015,
+        0.06512497874511136
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/model",
+      "role": "week",
+      "median": 95.965,
+      "delta": -0.33777939873912366,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.34033172370354814,
+        -0.34476289734236587,
+        -0.34174192878646326,
+        -0.328983662210906,
+        -0.33024156558964435
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/model",
+      "role": "month",
+      "median": 61.620000000000005,
+      "delta": 0.03164556962025311,
+      "repeats": [
+        0.04554422887208154,
+        0.05709084891610128,
+        0.013502652306703,
+        0.04054927302100153,
+        0.0418313570487483
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/filter-set@orders",
+      "role": "today",
+      "median": 248.48
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/filter-set@orders",
+      "role": "yesterday",
+      "median": 244.43,
+      "delta": 0.016200957329296717,
+      "repeats": [
+        0.036658703352829836,
+        -0.008839103869653697,
+        -0.01041458041257759,
+        0.0269540676510287,
+        -0.017273136588760174
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/filter-set@orders",
+      "role": "week",
+      "median": 257.21,
+      "delta": -0.03584619571556302,
+      "repeats": [
+        -0.03604245880861845,
+        -0.03166329547222646,
+        -0.028200399569694112,
+        -0.03169259345251929,
+        -0.017554334845951702
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/filter-set@orders",
+      "role": "month",
+      "median": 357.06,
+      "delta": -0.30384249145801834,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.3115727838301945,
+        -0.32780434485585463,
+        -0.2982717437122383,
+        -0.3118234688482623,
+        -0.2942702458831491
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@orders",
+      "role": "today",
+      "median": 71.29
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@orders",
+      "role": "yesterday",
+      "median": 72.095,
+      "delta": 0.0011096469935503173,
+      "repeats": [
+        -0.050985988583289954,
+        0.02111697693803838,
+        -0.012758285952017778,
+        -0.03280511537392272,
+        -0.016697067489827355
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@orders",
+      "role": "week",
+      "median": 70.125,
+      "delta": 0.01789661319073077,
+      "repeats": [
+        0.031338226990400786,
+        0.007268063274903813,
+        0.009403048867359987,
+        0.016872252942010446,
+        0.0407687827606289
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@orders",
+      "role": "month",
+      "median": 391.27,
+      "delta": -0.8200730953050324,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.8220737315480576,
+        -0.8170446063164397,
+        -0.8214258694171941,
+        -0.8225798263871262,
+        -0.8196848159706998
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "today",
+      "median": 35.35
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "yesterday",
+      "median": 34.285,
+      "delta": 0.0336882018375384,
+      "repeats": [
+        0.01612438813705741,
+        0.02419825072886317,
+        0.038248175182481914,
+        0.02899824253075578,
+        0.06334708308780224
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "week",
+      "median": 34.584999999999994,
+      "delta": 0.02226398727772194,
+      "repeats": [
+        0.018000000000000016,
+        0.006282124500285535,
+        0.04301075268817223,
+        0.029394644935972103,
+        0.02943773918163095
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "month",
+      "median": 160.95,
+      "delta": -0.7803665734700217,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7829139484311898,
+        -0.7788282124642368,
+        -0.7911851009042458,
+        -0.7766434262948207,
+        -0.7725975261655567
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@orders",
+      "role": "today",
+      "median": 104.445
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@orders",
+      "role": "yesterday",
+      "median": 103.39,
+      "delta": 0.025050778605280932,
+      "repeats": [
+        0.04436284239777688,
+        0.02192940271232091,
+        0.035055853237671464,
+        0.01943802925327165,
+        0.10552357871352114
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@orders",
+      "role": "week",
+      "median": 105.13,
+      "delta": -0.014648530390944492,
+      "repeats": [
+        -0.03909906396255858,
+        -0.03752362948960297,
+        -0.03519199924521177,
+        -0.005444646098003547,
+        0.001042357623424639
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@orders",
+      "role": "month",
+      "median": 546.56,
+      "delta": -0.8089139344262295,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.8137770529054958,
+        -0.812858335652658,
+        -0.8092872925150193,
+        -0.8059974860836775,
+        -0.8030648243422019
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@ordersPanel",
+      "role": "today",
+      "median": 22.91
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@ordersPanel",
+      "role": "yesterday",
+      "median": 22.775,
+      "delta": 0.01756311745334793,
+      "repeats": [
+        -0.023923444976076458,
+        0.03985507246376829,
+        0.05613577023498695,
+        -0.000843170320404707,
+        0.08576904647819839
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@ordersPanel",
+      "role": "week",
+      "median": 22.735,
+      "delta": -0.00021992522542346737,
+      "repeats": [
+        0.02689376961004042,
+        -0.04445385266723123,
+        -0.02580645161290329,
+        0.031682284694332985,
+        0.022999080036798514
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@ordersPanel",
+      "role": "month",
+      "median": 78.43,
+      "delta": -0.707509881422925,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.696528409829671,
+        -0.7045598080080839,
+        -0.7194715238583889,
+        -0.7237757813488549,
+        -0.7089370432106681
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "today",
+      "median": 19.745
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "yesterday",
+      "median": 19.675,
+      "delta": 0,
+      "repeats": [
+        -0.012127337038908448,
+        0.11753278290432267,
+        -0.0072727272727273196,
+        -0.045454545454545525,
+        -0.0050968399592253855
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "week",
+      "median": 20.04,
+      "delta": -0.0004990019960078307,
+      "repeats": [
+        0.02608695652173898,
+        -0.04113614103819796,
+        0.028203859475507187,
+        0.00732421875,
+        -0.013817809621289645
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "month",
+      "median": 60.11,
+      "delta": -0.675677923806355,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.6744032921810699,
+        -0.65741208144035,
+        -0.6915514080986502,
+        -0.6919478783828934,
+        -0.6768601798855274
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@orders30",
+      "role": "today",
+      "median": 36.235
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@orders30",
+      "role": "yesterday",
+      "median": 36.41,
+      "delta": -0.003295797857731375,
+      "repeats": [
+        0.010667396061269097,
+        -0.017476788640087393,
+        -0.06808615994057932,
+        -0.02484129174717087,
+        0.01770657672849918
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@orders30",
+      "role": "week",
+      "median": 37.065,
+      "delta": -0.029003102657493618,
+      "repeats": [
+        -0.08537181996086107,
+        -0.061521856449001655,
+        -0.008296460176991038,
+        0.0058856502242152775,
+        0.0036252091466815184
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@orders30",
+      "role": "month",
+      "median": 306.93,
+      "delta": -0.8822044114293162,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.8842479741748468,
+        -0.8786840978693977,
+        -0.8843994061834377,
+        -0.8870201691607027,
+        -0.8823813977488955
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@ordersPaged",
+      "role": "today",
+      "median": 21.345
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@ordersPaged",
+      "role": "yesterday",
+      "median": 21.134999999999998,
+      "delta": 0.007570380884788452,
+      "repeats": [
+        -0.028050490883590573,
+        -0.02021129995406523,
+        0.0037505860290671933,
+        0.02309142318567403,
+        0.02587890625
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@ordersPaged",
+      "role": "week",
+      "median": 21.785,
+      "delta": -0.03075510672481052,
+      "repeats": [
+        -0.07507507507507505,
+        -0.031381733021077385,
+        -0.019662921348314488,
+        -0.04659832246039142,
+        -0.006772009029345272
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@ordersPaged",
+      "role": "month",
+      "median": 111.17,
+      "delta": -0.8053431681208959,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.8037541144026332,
+        -0.8051651761270304,
+        -0.803718820861678,
+        -0.8056174765938475,
+        -0.8093910227579383
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "today",
+      "median": 33.595
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "yesterday",
+      "median": 32.83,
+      "delta": 0.008528784648187626,
+      "repeats": [
+        0.028282226853229897,
+        0.03883193538365948,
+        -0.026698309107089813,
+        0.03173615432482868,
+        -0.005190839694656502
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "week",
+      "median": 34.625,
+      "delta": -0.03942238267148024,
+      "repeats": [
+        -0.08458961474036852,
+        -0.0744252873563217,
+        -0.01934349355216869,
+        0.01454437518551499,
+        -0.017652250661959412
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "month",
+      "median": 117.275,
+      "delta": -0.7059049243231721,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7005067272409575,
+        -0.703413879095365,
+        -0.7130684214966676,
+        -0.7240999576450656,
+        -0.692542372881356
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "today",
+      "median": 21.055
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "yesterday",
+      "median": 21.32,
+      "delta": -0.034943714821763616,
+      "repeats": [
+        -0.03831775700934581,
+        0.052956298200514285,
+        -0.07042910447761197,
+        -0.23664688427299707,
+        0.0401785714285714
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "week",
+      "median": 21.32,
+      "delta": -0.00046904315196993895,
+      "repeats": [
+        0.0009380863039398779,
+        0.009505703422053147,
+        -0.04526748971193428,
+        0.023383768913342484,
+        0.038315988647114496
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "month",
+      "median": 45.105000000000004,
+      "delta": -0.5345305398514578,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5346162353461623,
+        -0.5223550243470563,
+        -0.5269709543568465,
+        -0.536563071297989,
+        -0.5453131941359397
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "calculations/load/paint",
+      "role": "today",
+      "median": 387.8
+    },
+    {
+      "suite": "react",
+      "id": "calculations/load/paint",
+      "role": "yesterday",
+      "median": 382.6,
+      "delta": 0.016466283324620967,
+      "repeats": [
+        0.019347998939835742,
+        0.008720930232558155,
+        0.020243965740980974,
+        0.024742268041237248,
+        0.030922431865827882
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "calculations/load/paint",
+      "role": "week",
+      "median": 386.5,
+      "delta": 0.005692108667529006,
+      "repeats": [
+        0,
+        0.020252498684902642,
+        0.015991746195511913,
+        0.013913939706261313,
+        0.005692108667529006
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "calculations/load/paint",
+      "role": "month",
+      "median": 804.9,
+      "delta": -0.5226736240526774,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5151440227469403,
+        -0.5295429208472686,
+        -0.5249595418897048,
+        -0.5176396735718769,
+        -0.5206467661691543
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/first",
+      "role": "today",
+      "median": 365.1
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/first",
+      "role": "yesterday",
+      "median": 372.9,
+      "delta": -0.023866988468758343,
+      "repeats": [
+        -0.022794314829713058,
+        -0.029317697228145034,
+        0.013542795232936111,
+        -0.04781090518399145,
+        -0.03413333333333335
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/first",
+      "role": "week",
+      "median": 366.4,
+      "delta": -0.01883187772925754,
+      "repeats": [
+        -0.013717421124828544,
+        -0.01996171725458029,
+        -0.028384279475982432,
+        -0.004390779363336872,
+        -0.02768166089965396
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/first",
+      "role": "month",
+      "median": 815.1,
+      "delta": -0.5439823334560177,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5437924644842496,
+        -0.5434221840068788,
+        -0.5408912830558277,
+        -0.5411260709914321,
+        -0.5452865064695009
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/type",
+      "role": "today",
+      "median": 401.5
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/type",
+      "role": "yesterday",
+      "median": 398.7,
+      "delta": -0.009029345372460362,
+      "repeats": [
+        -0.07859209257473487,
+        0.010834769761142615,
+        0.00757180156657955,
+        0.00790816326530619,
+        0.06510279388508189
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/type",
+      "role": "week",
+      "median": 395.7,
+      "delta": 0.013141268637856918,
+      "repeats": [
+        -0.051065939514129854,
+        0.05207226354941552,
+        0.0024931438544004703,
+        0.07065647244924866,
+        0.006661732050333047
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/type",
+      "role": "month",
+      "median": 1421.5,
+      "delta": -0.7150896939852269,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7261863163044238,
+        -0.7075253762688134,
+        -0.7161767845704932,
+        -0.7165548888104483,
+        -0.7149643705463182
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/load/paint",
+      "role": "today",
+      "median": 1581
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/load/paint",
+      "role": "yesterday",
+      "median": 1551.1,
+      "delta": 0.0097350267552061,
+      "repeats": [
+        0.08479551236057659,
+        0.012808009882322446,
+        -0.00876134848581045,
+        0.017108916004906716,
+        0.009902900135039694
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/load/paint",
+      "role": "week",
+      "median": 1584.3,
+      "delta": -0.004418355109512051,
+      "repeats": [
+        0.00458569517865115,
+        -0.00006432522835453369,
+        -0.00395480225988698,
+        0.007069368175219415,
+        -0.019500000000000073
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/load/paint",
+      "role": "month",
+      "median": 4408.1,
+      "delta": -0.6385063859712802,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.6386963808488473,
+        -0.636991138346584,
+        -0.6396553283879138,
+        -0.6408302620571145,
+        -0.6348412154443683
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "expressions/load/paint",
+      "role": "today",
+      "median": 4709.8
+    },
+    {
+      "suite": "react",
+      "id": "expressions/load/paint",
+      "role": "yesterday",
+      "median": 4795.6,
+      "delta": 0.018516973892734878,
+      "repeats": [
+        0.0044036033137617725,
+        0.0029813464405141765,
+        0.03192509800650578,
+        0.02229654403567438,
+        0.0135007986696134
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "expressions/load/paint",
+      "role": "week",
+      "median": 4542.3,
+      "delta": 0.02582392180173043,
+      "repeats": [
+        0.02070028628055498,
+        0.01667255542796564,
+        0.041040526962152546,
+        0.02600922343890022,
+        0.040031414297868606
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "expressions/load/paint",
+      "role": "month",
+      "median": 6383.8,
+      "delta": -0.2612393871988471,
+      "rerun": "unconfirmed",
+      "repeats": [
+        -0.27584124378648744,
+        -0.2722619625275877,
+        -0.25018705127592844,
+        -0.22620614035087727,
+        -0.24822206209467723
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "large/load/paint",
+      "role": "today",
+      "median": 541.3
+    },
+    {
+      "suite": "react",
+      "id": "large/load/paint",
+      "role": "yesterday",
+      "median": 530.2,
+      "delta": 0.01772915880799686,
+      "repeats": [
+        0.027708771259315812,
+        0.032581928395529536,
+        0.0009473285335355186,
+        0.018709073900841977,
+        0.002227998514667595
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "large/load/paint",
+      "role": "week",
+      "median": 583.6,
+      "delta": -0.07659355723098016,
+      "repeats": [
+        -0.07250129466597621,
+        -0.06989430617115577,
+        -0.08152080835759556,
+        -0.08409321175278628,
+        -0.06516072980017373
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "large/load/paint",
+      "role": "month",
+      "median": 690.1,
+      "delta": -0.20779597159831908,
+      "repeats": [
+        -0.2110078419982574,
+        -0.2116316639741519,
+        -0.2178217821782178,
+        -0.21368375946293394,
+        -0.19478438228438222
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/load/paint",
+      "role": "today",
+      "median": 533.9
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/load/paint",
+      "role": "yesterday",
+      "median": 513.8,
+      "delta": 0.03561697158427424,
+      "repeats": [
+        0.05676424050632889,
+        0.06315366049879323,
+        0.027131782945736482,
+        0.03485670023237808,
+        0.05110359912507456
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/load/paint",
+      "role": "week",
+      "median": 548.6,
+      "delta": -0.026795479402114575,
+      "repeats": [
+        -0.03071481757259864,
+        -0.02399999999999991,
+        -0.03376293338173897,
+        -0.006651087542692724,
+        -0.01393412956930884
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/load/paint",
+      "role": "month",
+      "median": 577.5,
+      "delta": -0.06268398268398279,
+      "repeats": [
+        -0.04874186169276784,
+        -0.05559404225839981,
+        -0.059965034965034913,
+        -0.05956709956709949,
+        -0.11018641810918761
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/locale",
+      "role": "today",
+      "median": 74.9
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/locale",
+      "role": "yesterday",
+      "median": 76.8,
+      "delta": -0.0013020833333332593,
+      "repeats": [
+        -0.005095541401273995,
+        -0.029962546816479252,
+        0.019011406844106515,
+        -0.031047865459249535,
+        0.044137931034482714
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/locale",
+      "role": "week",
+      "median": 71.6,
+      "delta": 0.016759776536312998,
+      "repeats": [
+        -0.008219178082191747,
+        0.011173184357541999,
+        0.06456241032998555,
+        0.018005540166204925,
+        -0.006821282401091366
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/locale",
+      "role": "month",
+      "median": 87.7,
+      "delta": -0.1391106043329533,
+      "repeats": [
+        -0.1391106043329533,
+        -0.14369158878504673,
+        -0.17704918032786887,
+        -0.13097949886104787,
+        -0.13812785388127846
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/next10",
+      "role": "today",
+      "median": 251.4
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/next10",
+      "role": "yesterday",
+      "median": 255.55,
+      "delta": -0.02250048914106828,
+      "repeats": [
+        -0.014896119168953281,
+        -0.025112811457720263,
+        -0.017804734885541018,
+        -0.02396385778825383,
+        -0.007442224833529187
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/next10",
+      "role": "week",
+      "median": 255.5,
+      "delta": -0.010567514677103707,
+      "repeats": [
+        -0.025531085558370692,
+        -0.018511301636788935,
+        -0.014461598592925506,
+        -0.01318378591105862,
+        -0.004874244492103719
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/next10",
+      "role": "month",
+      "median": 273,
+      "delta": -0.06868131868131866,
+      "repeats": [
+        -0.07966533284830835,
+        -0.07135036496350367,
+        -0.08221937374107313,
+        -0.07179581344105768,
+        -0.09284156976744184
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/preview",
+      "role": "today",
+      "median": 6881.2
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/preview",
+      "role": "yesterday",
+      "median": 7053.8,
+      "delta": -0.026468003062179224,
+      "repeats": [
+        -0.03407822018685769,
+        -0.012493350777060486,
+        -0.009929444899484219,
+        -0.022389651005757294,
+        -0.02834247986117977
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/preview",
+      "role": "week",
+      "median": 6972.8,
+      "delta": -0.011874713171179496,
+      "repeats": [
+        -0.00477199659760974,
+        -0.014856095010243098,
+        0.0010173523048044864,
+        -0.005354016235692427,
+        -0.1014312712278801
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/preview",
+      "role": "month",
+      "median": 8861.2,
+      "delta": -0.2230736243398186,
+      "repeats": [
+        -0.20653579676674372,
+        -0.22388615537399004,
+        -0.24268021733870082,
+        -0.23893046717879396,
+        -0.20979762067550944
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/load/paint",
+      "role": "today",
+      "median": 2075.9
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/load/paint",
+      "role": "yesterday",
+      "median": 2051.5,
+      "delta": 0.0069217645625152535,
+      "repeats": [
+        0.014902616565020566,
+        0.01316755592540031,
+        0.010520135049175483,
+        0.0018948595860461825,
+        -0.006285385279723554
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/load/paint",
+      "role": "week",
+      "median": 2776.6,
+      "delta": -0.2476409997839083,
+      "repeats": [
+        -0.25404996760025933,
+        -0.2454453805717578,
+        -0.2487521097425216,
+        -0.2533592708671062,
+        -0.2435600578871201
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/load/paint",
+      "role": "month",
+      "median": 2076.7,
+      "delta": 0.0011075263639428456,
+      "verdict": "up",
+      "counterKind": "work",
+      "repeats": [
+        -0.0027363064663241676,
+        0.0026081916537867844,
+        -0.009573500550476233,
+        0.002024291497975561,
+        0.014709416911022455
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/add-row@orders",
+      "role": "today",
+      "median": 280.2
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/add-row@orders",
+      "role": "yesterday",
+      "median": 282.2,
+      "delta": 0.007441530829199294,
+      "repeats": [
+        0.007069635913750538,
+        0.01243339253996445,
+        -0.009611961552153714,
+        -0.030736989172197027,
+        0.026804860614724868
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/add-row@orders",
+      "role": "week",
+      "median": 282.6,
+      "delta": -0.005307855626326963,
+      "repeats": [
+        -0.00974251913709101,
+        -0.004246284501061681,
+        0.014705882352941124,
+        0.007183908045977017,
+        -0.020014044943820197
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/add-row@orders",
+      "role": "month",
+      "median": 196.1,
+      "delta": 0.4079551249362572,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        0.3197896749521991,
+        0.41531440162271815,
+        0.43350785340314135,
+        0.43849716932578486,
+        0.4098109351047521
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "today",
+      "median": 292.1
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "yesterday",
+      "median": 289.9,
+      "delta": 0.00793377026560882,
+      "repeats": [
+        0.035862068965517135,
+        -0.08196192320103257,
+        0.017265193370165743,
+        -0.007609823590453257,
+        0.03007258900795029
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "week",
+      "median": 288.3,
+      "delta": 0.00624349635796051,
+      "repeats": [
+        0.002081165452653355,
+        -0.027843803056027072,
+        -0.004074702886247894,
+        0.005505849965588228,
+        0.032025908600215924
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "month",
+      "median": 229.5,
+      "delta": 0.2727668845315905,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "unconfirmed",
+      "repeats": [
+        0.3089265536723165,
+        0.21670573194118892,
+        0.336620349619005,
+        0.2883195831524097,
+        0.21337849280270982
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "today",
+      "median": 484.3
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "yesterday",
+      "median": 478.4,
+      "delta": 0.013168896321070322,
+      "repeats": [
+        0.0542056074766355,
+        0.011477462437395669,
+        0.022540551927533237,
+        0.0016722408026756952,
+        0.008233058898036827
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "week",
+      "median": 488.2,
+      "delta": -0.01392871773863169,
+      "repeats": [
+        -0.0010421008753647154,
+        -0.015225334957369108,
+        -0.03209527654420663,
+        -0.023780237802378035,
+        -0.02046605876393115
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "month",
+      "median": 493.5,
+      "delta": -0.01762917933130692,
+      "verdict": "up",
+      "counterKind": "work",
+      "repeats": [
+        -0.013990267639902632,
+        -0.029817444219066958,
+        -0.0488992791739723,
+        -0.020263424518743633,
+        -0.010410287813839458
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/last@orders",
+      "role": "today",
+      "median": 236
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/last@orders",
+      "role": "yesterday",
+      "median": 235,
+      "delta": 0.001276595744680975,
+      "repeats": [
+        0.009749894022891059,
+        -0.020253164556962022,
+        0.02962644911979395,
+        -0.005949851253718719,
+        0.016557734204793118
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/last@orders",
+      "role": "week",
+      "median": 235.2,
+      "delta": 0.0029761904761904656,
+      "repeats": [
+        0.005527210884353817,
+        0.01288106483469309,
+        0.005982905982905962,
+        -0.013900589721988266,
+        0.005485232067510504
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/last@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: No element for [data-name=\"orders\"] .sd-pager button[title=\"Last\"]"
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/next@orders",
+      "role": "today",
+      "median": 239.5
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/next@orders",
+      "role": "yesterday",
+      "median": 238.2,
+      "delta": -0.0037783375314860423,
+      "repeats": [
+        0.015113350125944613,
+        -0.05003971405877694,
+        -0.02031316123571736,
+        -0.015578947368421026,
+        0.011416490486257924
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/next@orders",
+      "role": "week",
+      "median": 235,
+      "delta": 0.0310638297872341,
+      "repeats": [
+        0.05591397849462365,
+        0.06916050456720324,
+        0.03506548373468532,
+        0.011138613861386037,
+        -0.002981260647359485
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/next@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: No element for [data-name=\"orders\"] .sd-pager button[title=\"Next\"]"
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "today",
+      "median": 429.4
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "yesterday",
+      "median": 429,
+      "delta": 0.0009324009324009896,
+      "repeats": [
+        -0.0060606060606061,
+        -0.0007038948850305315,
+        0.005856172405715565,
+        0.005599626691553894,
+        -0.0004587155963302614
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "week",
+      "median": 428,
+      "delta": 0.0053738317757010545,
+      "repeats": [
+        -0.0059756377844174535,
+        0.011693171188026152,
+        0.0053738317757010545,
+        0.009169997648718509,
+        -0.010204081632652962
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: check failed: the sort button of total"
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/load/paint",
+      "role": "today",
+      "median": 1243.5
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/load/paint",
+      "role": "yesterday",
+      "median": 1233.1,
+      "delta": 0.003000567674965593,
+      "repeats": [
+        -0.008458873761379215,
+        0.003977595584057081,
+        0.007167874888001968,
+        0.005256773150020155,
+        0.011485826001955246
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/load/paint",
+      "role": "week",
+      "median": 1308.7,
+      "delta": -0.051959960265912764,
+      "repeats": [
+        -0.055272173582032624,
+        -0.05286580219442938,
+        -0.040473081944551015,
+        -0.06493310151938925,
+        -0.05089660434948495
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/load/paint",
+      "role": "month",
+      "median": 1337.5,
+      "delta": -0.06527102803738316,
+      "verdict": "up",
+      "counterKind": "work",
+      "repeats": [
+        -0.07020153194020973,
+        -0.05291045341003697,
+        -0.07090555887627026,
+        -0.05980091310530644,
+        -0.06847988077496281
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "today",
+      "median": 50.4
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "yesterday",
+      "median": 48.3,
+      "delta": 0.022774327122153215,
+      "repeats": [
+        0.04907975460122693,
+        0.0435684647302903,
+        0.010351966873705987,
+        0.008281573498964967,
+        0.002057613168724215
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "week",
+      "median": 49.8,
+      "delta": 0.02008032128514059,
+      "repeats": [
+        0.014403292181069949,
+        0.026694045174537884,
+        0.035573122529644285,
+        -0.027079303675048516,
+        -0.04419889502762431
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: No element for [data-name=\"ordersPanel\"] .sd-pager button[title=\"Next\"]"
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "today",
+      "median": 58.9
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "yesterday",
+      "median": 59.1,
+      "delta": -0.005076142131979822,
+      "repeats": [
+        0.012152777777777679,
+        0.013605442176870763,
+        -0.023489932885906062,
+        -0.020547945205479423,
+        0.006677796327211993
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "week",
+      "median": 58.7,
+      "delta": 0.017035775127768327,
+      "repeats": [
+        0.09026548672566381,
+        -0.027257240204429323,
+        -0.02188552188552184,
+        0.0068846815834766595,
+        -0.003289473684210509
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: No element for [data-name=\"panelsPaged\"] .sd-pager button[title=\"Next\"]"
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "today",
+      "median": 139.6
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "yesterday",
+      "median": 134.7,
+      "delta": 0.0037119524870081744,
+      "repeats": [
+        0.009230769230769154,
+        0.006772009029345494,
+        0.0007347538574578039,
+        0.020958083832335328,
+        0.010997067448680342
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "week",
+      "median": 142.4,
+      "delta": -0.0070224719101124045,
+      "repeats": [
+        0.04163568773234205,
+        0.05973451327433632,
+        -0.016016713091921875,
+        -0.002093510118632347,
+        -0.03854239663629988
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "month",
+      "median": 543.9,
+      "delta": -0.7409450266593123,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7414179104477612,
+        -0.7367339312406578,
+        -0.730719912071808,
+        -0.7480571118742092,
+        -0.7518431936702032
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "today",
+      "median": 61.3
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "yesterday",
+      "median": 60.2,
+      "delta": 0.019933554817275656,
+      "repeats": [
+        0.041876046901172526,
+        0.027210884353741527,
+        0.0016949152542373724,
+        -0.014634146341463428,
+        0.05144694533762073
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "week",
+      "median": 61.9,
+      "delta": -0.011308562197091976,
+      "repeats": [
+        -0.029733959311424085,
+        0,
+        -0.02893890675241162,
+        0.04013377926421424,
+        -0.02400000000000002
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "month",
+      "median": 193.6,
+      "delta": -0.6833677685950413,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.6732570239334027,
+        -0.6749209694415175,
+        -0.6912209889001009,
+        -0.688128772635815,
+        -0.6833677685950413
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "today",
+      "median": 125.6
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "yesterday",
+      "median": 123.6,
+      "delta": 0.011326860841424091,
+      "repeats": [
+        0.04404567699836881,
+        -0.0023790642347343294,
+        0.015359741309620034,
+        0,
+        0.015434606011372809
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "week",
+      "median": 123,
+      "delta": 0.024390243902439046,
+      "repeats": [
+        0.014469453376205754,
+        0.03428571428571425,
+        0.027846027846027965,
+        0.021069692058346856,
+        0.0153721682847896
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: check failed: the sort button of id"
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "today",
+      "median": 45.3
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "yesterday",
+      "median": 45.9,
+      "delta": 0.008714596949890963,
+      "repeats": [
+        -0.03218884120171672,
+        -0.015283842794759694,
+        0.01541850220264318,
+        0,
+        0.04185022026431717
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "week",
+      "median": 44.2,
+      "delta": 0.013574660633484115,
+      "repeats": [
+        0.020454545454545503,
+        -0.002272727272727315,
+        0.006772009029345494,
+        0.018099547511312153,
+        0.006741573033707704
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: check failed: the sort button of id"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "calculations/load/paint",
+      "role": "today",
+      "median": 398.1
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "calculations/load/paint",
+      "role": "yesterday",
+      "median": 398.7,
+      "delta": 0.02056684223727112,
+      "repeats": [
+        0.05092824887104852,
+        -0.001747815230961236,
+        0.030387439858192034,
+        0.03831610789009332,
+        -0.004262788365095305
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "calculations/load/paint",
+      "role": "week",
+      "median": 392.6,
+      "delta": 0.014009169638308672,
+      "repeats": [
+        0.026706979087931515,
+        0.007896077432501203,
+        0.019587891121851886,
+        0.02576655501159486,
+        0.00992871690427699
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "calculations/load/paint",
+      "role": "month",
+      "median": 806.6,
+      "delta": -0.5117778328787503,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5138786538933924,
+        -0.50863890615289,
+        -0.511656746031746,
+        -0.5137797730390323,
+        -0.5154601226993865
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/first",
+      "role": "today",
+      "median": 290.9
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/first",
+      "role": "yesterday",
+      "median": 295.2,
+      "delta": -0.017276422764227473,
+      "repeats": [
+        -0.04799735187024168,
+        -0.034287616511318064,
+        -0.005758807588075787,
+        -0.007159904534606243,
+        -0.017247326664367013
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/first",
+      "role": "week",
+      "median": 293.3,
+      "delta": -0.013637913399249912,
+      "repeats": [
+        -0.010601915184678457,
+        0.018112156043190497,
+        -0.00895008605851988,
+        -0.021479713603818618,
+        -0.03148823334438189
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/first",
+      "role": "month",
+      "median": 670.2,
+      "delta": -0.5656520441659206,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5651329548849715,
+        -0.5631872269920168,
+        -0.5726950354609929,
+        -0.5784628872004676,
+        -0.5588014981273408
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/type",
+      "role": "today",
+      "median": 376.5
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/type",
+      "role": "yesterday",
+      "median": 360.9,
+      "delta": -0.004156275976724855,
+      "repeats": [
+        0.02669085255247472,
+        -0.009421265141319024,
+        -0.015542603386067277,
+        0.013964092333998313,
+        -0.008491367110104675
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/type",
+      "role": "week",
+      "median": 374.2,
+      "delta": 0.024318546231961502,
+      "repeats": [
+        0.03985507246376807,
+        0.018533660397928697,
+        -0.025648097076668486,
+        0.04072996561756148,
+        0.03193717277486918
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/type",
+      "role": "month",
+      "median": 1390.1,
+      "delta": -0.7215308251204948,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.722878701594533,
+        -0.7190452152592486,
+        -0.7208542166049248,
+        -0.734441633538128,
+        -0.7311388410786002
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/load/paint",
+      "role": "today",
+      "median": 1518
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/load/paint",
+      "role": "yesterday",
+      "median": 1496.4,
+      "delta": 0.019179363806468785,
+      "repeats": [
+        0.024519682923552333,
+        0.020390191031025573,
+        -0.002201502201502281,
+        0.01286004855324463,
+        0.019565069193537177
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/load/paint",
+      "role": "week",
+      "median": 1511.6,
+      "delta": -0.008401693569727309,
+      "repeats": [
+        0.01544453397797474,
+        0.0018202656239465487,
+        -0.02910467240929271,
+        -0.02284710017574687,
+        -0.010192819580601253
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/load/paint",
+      "role": "month",
+      "median": 4277,
+      "delta": -0.6428805237315875,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.6412592627114695,
+        -0.6410526315789473,
+        -0.6461304652794014,
+        -0.6452562933875605,
+        -0.6413575597815855
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "expressions/load/paint",
+      "role": "today",
+      "median": 6034.1
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "expressions/load/paint",
+      "role": "yesterday",
+      "median": 5988.5,
+      "delta": 0.010219587542790398,
+      "repeats": [
+        0.01063226064895173,
+        0.014131491601569124,
+        0.01489521583034148,
+        0.007743381332262933,
+        0.00580939185015783
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "expressions/load/paint",
+      "role": "week",
+      "median": 5934.1,
+      "delta": 0.013868994455772388,
+      "repeats": [
+        0.01591588531050414,
+        0.0099460835203109,
+        0.01386756642766751,
+        0.016369324427158327,
+        0.01528893061306591
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "expressions/load/paint",
+      "role": "month",
+      "median": 8181.2,
+      "delta": -0.26118417836014285,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.2585915699809077,
+        -0.2676515475245711,
+        -0.2599817017383348,
+        -0.2591237739832808,
+        -0.26406715143233617
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "large/load/paint",
+      "role": "today",
+      "median": 864.3
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "large/load/paint",
+      "role": "yesterday",
+      "median": 833.8,
+      "delta": 0.009954425521707888,
+      "repeats": [
+        0.019288367077991975,
+        -0.0121212121212122,
+        -0.004502311998052955,
+        0.055426687828104004,
+        0.03001579778830976
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "large/load/paint",
+      "role": "week",
+      "median": 928.8,
+      "delta": -0.06373815676141248,
+      "repeats": [
+        -0.06232107465316017,
+        -0.03709411117226202,
+        -0.05994870698867272,
+        -0.07209627162350918,
+        -0.07425162458719514
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "large/load/paint",
+      "role": "month",
+      "median": 1133.8,
+      "delta": -0.2354030693243958,
+      "repeats": [
+        -0.2298638559508125,
+        -0.229031123615263,
+        -0.23769624272358436,
+        -0.23514119229045272,
+        -0.23286700903134416
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/load/paint",
+      "role": "today",
+      "median": 438.7
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/load/paint",
+      "role": "yesterday",
+      "median": 425.2,
+      "delta": 0.025634995296331287,
+      "repeats": [
+        0.022748592870544204,
+        0.030829856281872958,
+        0.03150165798199911,
+        0.017527238275698798,
+        0.038954980172614784
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/load/paint",
+      "role": "week",
+      "median": 446.1,
+      "delta": -0.01322573414032735,
+      "repeats": [
+        -0.012834947083990245,
+        -0.00022542831379623873,
+        0.012117055326931858,
+        -0.011153245594467953,
+        -0.05293088363954501
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/load/paint",
+      "role": "month",
+      "median": 484.5,
+      "delta": -0.09164086687306494,
+      "repeats": [
+        -0.08637394351680072,
+        -0.09597205096588579,
+        -0.087400917813934,
+        -0.08580858085808585,
+        -0.09218106995884778
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/locale",
+      "role": "today",
+      "median": 55.1
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/locale",
+      "role": "yesterday",
+      "median": 56.9,
+      "delta": -0.04393673110720564,
+      "repeats": [
+        -0.12254901960784315,
+        -0.045060658578856216,
+        0.036832412523020164,
+        -0.011090573012939031,
+        -0.04728546409807355
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/locale",
+      "role": "week",
+      "median": 56,
+      "delta": -0.0017857142857142794,
+      "repeats": [
+        -0.020979020979021046,
+        0.050000000000000044,
+        -0.03703703703703709,
+        0.02376599634369292,
+        -0.017857142857142905
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/locale",
+      "role": "month",
+      "median": 71.8,
+      "delta": -0.2325905292479108,
+      "repeats": [
+        -0.19914040114613174,
+        -0.22128851540616246,
+        -0.226123595505618,
+        -0.2700135685210313,
+        -0.25101763907734054
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/next10",
+      "role": "today",
+      "median": 210.8
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/next10",
+      "role": "yesterday",
+      "median": 213.1,
+      "delta": 0.005161895823557083,
+      "repeats": [
+        0.05049088359046272,
+        0.018060836501901045,
+        -0.02250351617440227,
+        -0.020939972080037172,
+        -0.016090866067203002
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/next10",
+      "role": "week",
+      "median": 207.8,
+      "delta": -0.009624639076034613,
+      "repeats": [
+        0.02800579430226957,
+        -0.029908345393150126,
+        -0.0323809523809524,
+        0.011068334937439861,
+        -0.02789598108747049
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/next10",
+      "role": "month",
+      "median": 236.75,
+      "delta": -0.10876451953537492,
+      "repeats": [
+        -0.10365335598980463,
+        -0.12107623318385652,
+        -0.11223415455885444,
+        -0.10916844349680166,
+        -0.10095159288374012
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/load/paint",
+      "role": "today",
+      "median": 2406.6
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/load/paint",
+      "role": "yesterday",
+      "median": 2390.9,
+      "delta": 0.0076958467522689755,
+      "repeats": [
+        0.010255336961071615,
+        0.00589725486938808,
+        0.01035856573705174,
+        0.00719033485222198,
+        0.003553214614162803
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/load/paint",
+      "role": "week",
+      "median": 3140.5,
+      "delta": -0.2329246935201401,
+      "repeats": [
+        -0.23467928964005458,
+        -0.22916733105845588,
+        -0.23754179270816744,
+        -0.23437302290269513,
+        -0.2138672191111256
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/load/paint",
+      "role": "month",
+      "median": 2264.4,
+      "delta": 0.05193428722840476,
+      "verdict": "up",
+      "counterKind": "work",
+      "repeats": [
+        0.04582987461225918,
+        0.03994218893706458,
+        0.07118883589471814,
+        0.04885747310393884,
+        0.04566027689030894
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/add-row@orders",
+      "role": "today",
+      "median": 368.5
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/add-row@orders",
+      "role": "yesterday",
+      "median": 373.8,
+      "delta": -0.017121455323702572,
+      "repeats": [
+        -0.058403805496828665,
+        -0.0008212428141254335,
+        0.01299404439631835,
+        -0.017006802721088454,
+        0.02270861833105342
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/add-row@orders",
+      "role": "week",
+      "median": 371.1,
+      "delta": -0.0021557531662624863,
+      "repeats": [
+        0.008892481810832464,
+        -0.01008224993366924,
+        -0.01246950393060442,
+        -0.011789924973204635,
+        0.01655359565807335
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/add-row@orders",
+      "role": "month",
+      "median": 254.2,
+      "delta": 0.4335169158143195,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        0.4018547140649149,
+        0.42318164138467496,
+        0.45987411487018104,
+        0.399529964747356,
+        0.4559462662979059
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "today",
+      "median": 294.3
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "yesterday",
+      "median": 300.4,
+      "delta": -0.029627163781624444,
+      "repeats": [
+        -0.013157894736842035,
+        -0.0936716791979949,
+        -0.015202702702702742,
+        -0.02190765082574997,
+        -0.0069467416473701915
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "week",
+      "median": 299.4,
+      "delta": -0.009018036072144242,
+      "repeats": [
+        -0.024139040875442497,
+        -0.05064548162859983,
+        -0.008463100880162444,
+        0.039918809201623606,
+        -0.0054072321730312956
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "month",
+      "median": 239.7,
+      "delta": 0.23279098873591986,
+      "verdict": "up",
+      "counterKind": "work",
+      "repeats": [
+        0.2803876132294081,
+        0.23524487233151947,
+        0.22352448723315188,
+        0.22245322245322252,
+        0.22301280748119545
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "today",
+      "median": 472.6
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "yesterday",
+      "median": 470.8,
+      "delta": 0.003186066270178367,
+      "repeats": [
+        -0.007211028632025385,
+        0.015044057597249028,
+        0.00021105951878430673,
+        0,
+        0.020647083865474647
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "week",
+      "median": 482.8,
+      "delta": -0.017812758906379456,
+      "repeats": [
+        -0.03552361396303905,
+        -0.0004164931278634043,
+        -0.022816842978635177,
+        -0.0012565445026178068,
+        -0.032864820173625575
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "month",
+      "median": 497.1,
+      "delta": -0.04928585797626228,
+      "verdict": "up",
+      "counterKind": "work",
+      "repeats": [
+        -0.03730272596843609,
+        -0.03247687564234325,
+        -0.05897640943622551,
+        -0.022843157250662882,
+        -0.04365863295140249
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/last@orders",
+      "role": "today",
+      "median": 479.6
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/last@orders",
+      "role": "yesterday",
+      "median": 468.7,
+      "delta": 0.02730957968850012,
+      "repeats": [
+        0.012304483837330515,
+        -0.001711596063328935,
+        0.019479144611475707,
+        0.03547624166845842,
+        -0.005508474576271238
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/last@orders",
+      "role": "week",
+      "median": 484.3,
+      "delta": -0.009704728474086322,
+      "repeats": [
+        -0.016275236918005698,
+        0.014454928729170868,
+        -0.0254272613588995,
+        -0.014968218166905856,
+        0.08196721311475419
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/last@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: No element for [data-name=\"orders\"] .sd-pager button[title=\"Last\"]"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/next@orders",
+      "role": "today",
+      "median": 243.2
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/next@orders",
+      "role": "yesterday",
+      "median": 237.1,
+      "delta": 0.02741459299873461,
+      "repeats": [
+        0.037791932059447975,
+        -0.04823026059898883,
+        -0.008054260279779624,
+        0.02910164487557987,
+        0.012886597938144284
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/next@orders",
+      "role": "week",
+      "median": 238.7,
+      "delta": 0.011311269375785526,
+      "repeats": [
+        0.02304147465437789,
+        -0.013541239228559654,
+        0.03313508920985542,
+        0.04040404040404044,
+        0.003762541806020092
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/next@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: No element for [data-name=\"orders\"] .sd-pager button[title=\"Next\"]"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "today",
+      "median": 259.3
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "yesterday",
+      "median": 257,
+      "delta": -0.015953307392996052,
+      "repeats": [
+        -0.00992745322642219,
+        -0.05415713196033556,
+        -0.00559776089564179,
+        0.00746561886051067,
+        -0.013217522658610315
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "week",
+      "median": 259.1,
+      "delta": 0.013122346584330202,
+      "repeats": [
+        0.026438569206842955,
+        -0.020903322135124913,
+        0.025370804059328567,
+        -0.008387342737323666,
+        0.018359374999999956
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: check failed: the sort button of total"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/load/paint",
+      "role": "today",
+      "median": 734.1
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/load/paint",
+      "role": "yesterday",
+      "median": 717.4,
+      "delta": 0.009896849735154811,
+      "repeats": [
+        0.025503733972100706,
+        0.0057334638512096525,
+        0.00947471088198415,
+        0.01062045835662384,
+        0.0006931928462499126
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/load/paint",
+      "role": "week",
+      "median": 765.5,
+      "delta": -0.042586544741998744,
+      "repeats": [
+        -0.04670077397350114,
+        -0.036905700026267474,
+        -0.04462421711899778,
+        -0.027287107830213597,
+        -0.06992385786802036
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/load/paint",
+      "role": "month",
+      "median": 832.7,
+      "delta": -0.0963131980305032,
+      "verdict": "up",
+      "counterKind": "work",
+      "repeats": [
+        -0.10295886456579262,
+        -0.10099795599374772,
+        -0.10919952210274786,
+        -0.09140942809284514,
+        -0.0900383141762453
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "today",
+      "median": 64.5
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "yesterday",
+      "median": 61.6,
+      "delta": 0.04870129870129869,
+      "repeats": [
+        0.036977491961414755,
+        0.06020066889632103,
+        0.12214983713355054,
+        0.11525974025974017,
+        0.05071315372424712
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "week",
+      "median": 63,
+      "delta": 0.022222222222222365,
+      "repeats": [
+        -0.018897637795275646,
+        -0.015847860538827252,
+        0.030158730158730274,
+        0.02384737678855342,
+        0.09836065573770503
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: No element for [data-name=\"ordersPanel\"] .sd-pager button[title=\"Next\"]"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "today",
+      "median": 63.8
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "yesterday",
+      "median": 63.6,
+      "delta": 0.0062893081761006275,
+      "repeats": [
+        -0.004731861198738141,
+        -0.015220700152207,
+        0.03571428571428559,
+        -0.04538341158059467,
+        0.04065040650406515
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "week",
+      "median": 62.1,
+      "delta": 0.017713365539452575,
+      "repeats": [
+        -0.004739336492890933,
+        0.014331210191082855,
+        0.012882447665056418,
+        0.037337662337662225,
+        0.02265372168284796
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: No element for [data-name=\"panelsPaged\"] .sd-pager button[title=\"Next\"]"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "today",
+      "median": 98.05000000000001
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "yesterday",
+      "median": 96.1,
+      "delta": 0.02237252861602501,
+      "repeats": [
+        0.07592975206611574,
+        0.011446409989594342,
+        0.03259726603575186,
+        0.00520291363163361,
+        0.028242677824267703
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "week",
+      "median": 96.4,
+      "delta": 0.008298755186721962,
+      "repeats": [
+        0.009307135470527417,
+        0.001029866117404854,
+        -0.0010277492291880241,
+        0.009365244536940764,
+        0.02739726027397249
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "month",
+      "median": 492.9,
+      "delta": -0.8005680665449382,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.802573381584238,
+        -0.8032852564102564,
+        -0.7873118279569893,
+        -0.8004065040650407,
+        -0.8012872083668544
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "today",
+      "median": 48.6
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "yesterday",
+      "median": 48.6,
+      "delta": -0.006172839506172978,
+      "repeats": [
+        0.019108280254777066,
+        -0.008230452674897082,
+        0.05073995771670203,
+        -0.026422764227642337,
+        -0.02851323828920571
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "week",
+      "median": 49,
+      "delta": -0.008163265306122436,
+      "repeats": [
+        -0.02448979591836742,
+        0.012448132780082943,
+        0.008163265306122325,
+        -0.014373716632443578,
+        -0.05823293172690758
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "month",
+      "median": 178.6,
+      "delta": -0.7273236282194848,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7220357941834452,
+        -0.719248291571754,
+        -0.72686230248307,
+        -0.7368711995577667,
+        -0.7273236282194848
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "today",
+      "median": 88.4
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "yesterday",
+      "median": 88.5,
+      "delta": 0.005649717514124353,
+      "repeats": [
+        -0.0011428571428571122,
+        -0.01905829596412556,
+        0.01927437641723362,
+        0.022471910112359605,
+        -0.0011223344556676729
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "week",
+      "median": 88.2,
+      "delta": 0.0022675736961450532,
+      "repeats": [
+        0,
+        -0.005694760820045608,
+        0.005773672055427337,
+        0.01480637813211838,
+        -0.01573033707865179
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: check failed: the sort button of id"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "today",
+      "median": 43.5
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "yesterday",
+      "median": 43.4,
+      "delta": 0.0023041474654377225,
+      "repeats": [
+        -0.006912442396313279,
+        0.009280742459396807,
+        0.0254629629629628,
+        -0.00454545454545463,
+        0.011682242990654235
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "week",
+      "median": 43.3,
+      "delta": 0.004618937644341958,
+      "repeats": [
+        0.03196347031963476,
+        0.03935185185185186,
+        0.016241299303944245,
+        0.009280742459396807,
+        -0.004587155963302836
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: check failed: the sort button of id"
+    },
+    {
+      "suite": "vue3",
+      "id": "calculations/load/paint",
+      "role": "today",
+      "median": 430.4
+    },
+    {
+      "suite": "vue3",
+      "id": "calculations/load/paint",
+      "role": "yesterday",
+      "median": 423.9,
+      "delta": 0.017456947393253097,
+      "repeats": [
+        0.026197781449138535,
+        0.006583588055490308,
+        0.018917001655237575,
+        0.003999059044930586,
+        0.015247478301665396
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "calculations/load/paint",
+      "role": "week",
+      "median": 426.5,
+      "delta": 0.009847596717467821,
+      "repeats": [
+        0.004887130556202157,
+        0.020244821092278542,
+        0.004191895668374412,
+        -0.012880562060889944,
+        0.007326873079650076
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "calculations/load/paint",
+      "role": "month",
+      "median": 834,
+      "delta": -0.4854916067146283,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.4771438909661079,
+        -0.483186262818984,
+        -0.48836930455635497,
+        -0.4910308538627123,
+        -0.49051425844171337
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/answer/type",
+      "role": "today",
+      "median": 577.3
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/answer/type",
+      "role": "yesterday",
+      "median": 585.2,
+      "delta": 0.03861927546138055,
+      "repeats": [
+        0.02793672164254435,
+        0.1123292595255212,
+        0.026125816431763482,
+        -0.02284595300261094,
+        0.03832148430726523
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/answer/type",
+      "role": "week",
+      "median": 565.4,
+      "delta": 0.05093738945879034,
+      "repeats": [
+        0.09843081312410851,
+        0.0032078338679724094,
+        0.1273850626930766,
+        -0.1557259223766172,
+        0.017000377786173138
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/answer/type",
+      "role": "month",
+      "median": 1777.8,
+      "delta": -0.7054224322195972,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7153458786111848,
+        -0.7136504148815012,
+        -0.7057893250494212,
+        -0.7152187376836889,
+        -0.7116987640126473
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/load/paint",
+      "role": "today",
+      "median": 2846.5
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/load/paint",
+      "role": "yesterday",
+      "median": 2813.6,
+      "delta": 0.004762581745806127,
+      "repeats": [
+        0.0052703699799725445,
+        -0.002665624111458653,
+        0.017394122731201334,
+        -0.005100775742977626,
+        0.023262421422736823
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/load/paint",
+      "role": "week",
+      "median": 2829.4,
+      "delta": 0.002968827313211353,
+      "repeats": [
+        0.007743988684582703,
+        -0.0071479374110953176,
+        -0.00858882748424794,
+        0.028634127349307814,
+        -0.01749494667874829
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/load/paint",
+      "role": "month",
+      "median": 7026.9,
+      "delta": -0.5928361012679845,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5930797420527826,
+        -0.6161639051440302,
+        -0.5916340274451238,
+        -0.5979406197915196,
+        -0.5902765798401473
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "expressions/load/paint",
+      "role": "today",
+      "median": 3926.1
+    },
+    {
+      "suite": "vue3",
+      "id": "expressions/load/paint",
+      "role": "yesterday",
+      "median": 3940.6,
+      "delta": -0.006572603156879686,
+      "repeats": [
+        -0.0008760628703942119,
+        -0.018831103000810923,
+        0.007398401324469228,
+        -0.00040189897264575336,
+        -0.00020414412575286978
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "expressions/load/paint",
+      "role": "week",
+      "median": 3821.2,
+      "delta": 0.028158693604103613,
+      "repeats": [
+        0.028694855347558557,
+        0.013560023807675403,
+        0.03251989807980249,
+        0.0336218200891687,
+        0.02829521339306762
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "expressions/load/paint",
+      "role": "month",
+      "median": 5364.5,
+      "delta": -0.2592226675365831,
+      "rerun": "unconfirmed",
+      "repeats": [
+        -0.2565282717434717,
+        -0.2506458486545605,
+        -0.27230038199944107,
+        -0.2475971351170816,
+        -0.26833751956608787
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "large/load/paint",
+      "role": "today",
+      "median": 576.4
+    },
+    {
+      "suite": "vue3",
+      "id": "large/load/paint",
+      "role": "yesterday",
+      "median": 565.7,
+      "delta": 0.010959872724058517,
+      "repeats": [
+        0.014217167229429561,
+        0.011666961286900923,
+        0.003909026297086005,
+        0.04137931034482745,
+        0.0014015416958654825
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "large/load/paint",
+      "role": "week",
+      "median": 616.1,
+      "delta": -0.061029053725044635,
+      "repeats": [
+        -0.0671412392816696,
+        -0.05631288542680957,
+        -0.057458204836877136,
+        -0.06613584660383476,
+        -0.05730519480519469
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "large/load/paint",
+      "role": "month",
+      "median": 728.8,
+      "delta": -0.20883644346871566,
+      "repeats": [
+        -0.20287650394136358,
+        -0.2051563357103675,
+        -0.21338969184619583,
+        -0.20847084708470853,
+        -0.20363987315593535
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/load/paint",
+      "role": "today",
+      "median": 464.8
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/load/paint",
+      "role": "yesterday",
+      "median": 456.5,
+      "delta": 0.01664841182913479,
+      "repeats": [
+        0.03125,
+        -0.017699115044247815,
+        0.044866071428571574,
+        0.017086527929901507,
+        -0.011904761904761862
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/load/paint",
+      "role": "week",
+      "median": 480.6,
+      "delta": -0.030378693300041615,
+      "repeats": [
+        -0.019393939393939408,
+        -0.0337963922869583,
+        0.004649196956889146,
+        -0.035262393694254324,
+        -0.00790091821481953
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/load/paint",
+      "role": "month",
+      "median": 499.8,
+      "delta": -0.07442977190876343,
+      "repeats": [
+        -0.09453616352201266,
+        -0.04998008761449613,
+        -0.0708977706366739,
+        -0.07317558162656579,
+        -0.07781862745098045
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/pages/next10",
+      "role": "today",
+      "median": 304.05
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/pages/next10",
+      "role": "yesterday",
+      "median": 312.8,
+      "delta": -0.015984654731457826,
+      "repeats": [
+        -0.06128311522502394,
+        -0.07271616254201041,
+        -0.023786249592701036,
+        0.027447089947089998,
+        -0.012148337595907943
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/pages/next10",
+      "role": "week",
+      "median": 317.9,
+      "delta": -0.0622837370242213,
+      "repeats": [
+        0,
+        -0.03365838313935199,
+        -0.0756302521008404,
+        -0.0888436226888123,
+        -0.06520346042934966
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/pages/next10",
+      "role": "month",
+      "median": 334.9,
+      "delta": -0.1024186324275902,
+      "repeats": [
+        -0.04977238239757198,
+        -0.11231771641327948,
+        -0.15699361578641913,
+        -0.14509331727874775,
+        -0.07601497264612733
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/load/paint",
+      "role": "today",
+      "median": 1342.3
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/load/paint",
+      "role": "yesterday",
+      "median": 1352,
+      "delta": -0.009245562130177465,
+      "repeats": [
+        -0.009904649271934463,
+        -0.01727192205491579,
+        -0.0076415164329699525,
+        -0.009645118539243214,
+        0.008150751514245158
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/load/paint",
+      "role": "week",
+      "median": 1833.9,
+      "delta": -0.2644091826162823,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.2679491395374328,
+        -0.2634119880661784,
+        -0.2629989567891067,
+        -0.264355951540175,
+        -0.2580016246953697
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/load/paint",
+      "role": "month",
+      "median": 1381.9,
+      "delta": -0.02966929589695344,
+      "verdict": "up",
+      "counterKind": "work",
+      "repeats": [
+        -0.013959481709499566,
+        -0.0233128834355828,
+        -0.02428613482484543,
+        -0.022925364388779013,
+        -0.03191258412330855
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "today",
+      "median": 496.5
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "yesterday",
+      "median": 496,
+      "delta": -0.001612903225806428,
+      "repeats": [
+        0.0030309153364316277,
+        -0.020024028834601526,
+        0,
+        0.0028688524590163578,
+        -0.0008064516129031585
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "week",
+      "median": 507.4,
+      "delta": -0.016752069373275558,
+      "repeats": [
+        -0.03651468315301398,
+        0.018581418581418596,
+        -0.032940706727889846,
+        0.001209921355111998,
+        -0.020227808326787167
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "month",
+      "median": 329.3,
+      "delta": 0.5074400242939567,
+      "verdict": "up",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        0.4847385917195528,
+        0.4938949938949937,
+        0.5588865096359745,
+        0.462202380952381,
+        0.5275516593613025
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "today",
+      "median": 284.1
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "yesterday",
+      "median": 284.4,
+      "delta": -0.0035161744022503827,
+      "repeats": [
+        -0.011950790861159799,
+        -0.04048996257230342,
+        -0.02177670238506746,
+        0.02800425381070526,
+        0.03423160961398386
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "week",
+      "median": 283.6,
+      "delta": 0.006346967559943462,
+      "repeats": [
+        -0.0021208907741250282,
+        0.01134751773049647,
+        0.010327022375215211,
+        -0.0048661800486616835,
+        -0.003552397868561319
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: check failed: the sort button of total"
+    },
+    {
+      "suite": "vue3",
+      "id": "records-1k/load/paint",
+      "role": "today",
+      "median": 1012.3
+    },
+    {
+      "suite": "vue3",
+      "id": "records-1k/load/paint",
+      "role": "yesterday",
+      "median": 1092.1,
+      "delta": -0.017214540792967692,
+      "repeats": [
+        0.01760044231478064,
+        -0.017214540792967692,
+        0.010819886204645135,
+        -0.03250844671719466,
+        -0.033707865168539186
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-1k/load/paint",
+      "role": "week",
+      "median": 1040.6,
+      "delta": -0.029694407072842433,
+      "repeats": [
+        -0.03329575999306322,
+        -0.06659747448538311,
+        -0.03438789546079779,
+        -0.04189890447818556,
+        -0.038144432303566234
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-1k/load/paint",
+      "role": "month",
+      "median": 1000.1,
+      "delta": -0.07059294070592947,
+      "verdict": "up",
+      "counterKind": "work",
+      "repeats": [
+        -0.034512761020881744,
+        -0.09455529930813189,
+        -0.05239476052394754,
+        -0.09520101236250356,
+        -0.050118838483000916
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "today",
+      "median": 88.4
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "yesterday",
+      "median": 87,
+      "delta": 0.008045977011494232,
+      "repeats": [
+        0.0011415525114155667,
+        0.024137931034482696,
+        0.008111239860950192,
+        0.025229357798165264,
+        -0.029312288613303372
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "week",
+      "median": 87.7,
+      "delta": 0.014823261117445696,
+      "repeats": [
+        0.007927519818799578,
+        0.04576659038901609,
+        0.015963511972633793,
+        0.036951501154734556,
+        -0.0011467889908257645
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: check failed: the sort button of id"
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "today",
+      "median": 45
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "yesterday",
+      "median": 46.1,
+      "delta": -0.045553145336225676,
+      "repeats": [
+        -0.11673151750972766,
+        -0.05591397849462365,
+        -0.0023148148148148806,
+        -0.05856832971800441,
+        -0.01333333333333342
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "week",
+      "median": 44.5,
+      "delta": 0.017977528089887507,
+      "repeats": [
+        0.0044345898004434225,
+        0.051224944320712895,
+        0.057077625570776336,
+        -0.008988764044943753,
+        0.015765765765765938
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: check failed: the sort button of id"
+    },
+    {
+      "suite": "angular",
+      "id": "calculations/load/paint",
+      "role": "today",
+      "median": 480.35
+    },
+    {
+      "suite": "angular",
+      "id": "calculations/load/paint",
+      "role": "yesterday",
+      "median": 483.4,
+      "delta": -0.006619776582540204,
+      "repeats": [
+        -0.010242474916387967,
+        0.010519671786240359,
+        -0.01384869780901199,
+        -0.01273885350318471,
+        0.11328125
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "calculations/load/paint",
+      "role": "week",
+      "median": 493.9,
+      "delta": -0.02267665519335893,
+      "repeats": [
+        -0.026928528042113653,
+        -0.021097046413502074,
+        -0.01642335766423353,
+        -0.03079119086460025,
+        -0.02346752984017808
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "calculations/load/paint",
+      "role": "month",
+      "median": 907.9,
+      "delta": -0.47604361713845134,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.46998568124242757,
+        -0.4779812513625463,
+        -0.4788779243818605,
+        -0.47360265633646925,
+        -0.47770700636942676
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/answer/type",
+      "role": "today",
+      "median": 434.6
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/answer/type",
+      "role": "yesterday",
+      "median": 441.6,
+      "delta": -0.012454710144927494,
+      "repeats": [
+        -0.038065382892969124,
+        0.005703855806525215,
+        -0.009988649262201998,
+        -0.006353528477422321,
+        -0.00927811722109062
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/answer/type",
+      "role": "week",
+      "median": 443.3,
+      "delta": -0.01488833746898266,
+      "repeats": [
+        -0.008439781021897796,
+        -0.001146000458400187,
+        0.0013330371028659194,
+        -0.02278203723986849,
+        -0.005057471264367841
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/answer/type",
+      "role": "month",
+      "median": 1440.5,
+      "delta": -0.7070461645262062,
+      "verdict": "down",
+      "counterKind": "work",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7097811647906034,
+        -0.7024644220756682,
+        -0.7042726493283795,
+        -0.7142276698042933,
+        -0.702425691834643
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/load/paint",
+      "role": "today",
+      "median": 2753.6
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/load/paint",
+      "role": "yesterday",
+      "median": 2740.8,
+      "delta": 0.004451255107997598,
+      "repeats": [
+        0.004820861181111136,
+        0.009135423518234376,
+        -0.004540501271340314,
+        0.016247072599531398,
+        -0.005361930294906059
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/load/paint",
+      "role": "week",
+      "median": 2754.2,
+      "delta": -0.0009440127804807297,
+      "repeats": [
+        0.0015287180607119755,
+        -0.0007225433526011349,
+        -0.00010916236081792707,
+        0.002979326381571612,
+        -0.005219282348677079
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/load/paint",
+      "role": "month",
+      "median": 6933.4,
+      "delta": -0.6025182450168748,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.601339524656801,
+        -0.6026212849492631,
+        -0.6020567109931636,
+        -0.5997280997353311,
+        -0.6085071295545983
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "expressions/load/paint",
+      "role": "today",
+      "median": 5021.6
+    },
+    {
+      "suite": "angular",
+      "id": "expressions/load/paint",
+      "role": "yesterday",
+      "median": 5073.2,
+      "delta": -0.010289363715209277,
+      "repeats": [
+        -0.023621255105531147,
+        0.018627296380982372,
+        0.00580929095354521,
+        -0.002710351149906365,
+        -0.04757223539389721
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "expressions/load/paint",
+      "role": "week",
+      "median": 5160.2,
+      "delta": 0.0023836285415295144,
+      "repeats": [
+        0.015320681004270531,
+        -0.03436292722601153,
+        0.0508022973533071,
+        -0.013991705747839145,
+        0.04712928541924821
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "expressions/load/paint",
+      "role": "month",
+      "median": 6710.9,
+      "delta": -0.27184133275715616,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.2835810138806809,
+        -0.26712359584264433,
+        -0.26184846456985655,
+        -0.302375585740554,
+        -0.2747466633712309
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "large/load/paint",
+      "role": "today",
+      "median": 587.3
+    },
+    {
+      "suite": "angular",
+      "id": "large/load/paint",
+      "role": "yesterday",
+      "median": 579.6,
+      "delta": 0.002760524499654915,
+      "repeats": [
+        -0.030277684844429387,
+        0.03060321952945344,
+        -0.018016472203157163,
+        0.013490141819439527,
+        -0.003261242705114964
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "large/load/paint",
+      "role": "week",
+      "median": 633.4,
+      "delta": -0.06725607830754665,
+      "repeats": [
+        -0.06525881232137176,
+        -0.05353218210361066,
+        -0.0732128829536528,
+        -0.06385350318471339,
+        -0.06279733587059944
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "large/load/paint",
+      "role": "month",
+      "median": 736,
+      "delta": -0.20380434782608692,
+      "repeats": [
+        -0.20811099252934895,
+        -0.21668928086838546,
+        -0.2072855783607449,
+        -0.19561343385880747,
+        -0.19203296703296702
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/load/paint",
+      "role": "today",
+      "median": 510
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/load/paint",
+      "role": "yesterday",
+      "median": 503,
+      "delta": 0.037375745526838866,
+      "repeats": [
+        0.028135526055082183,
+        0.05630990415335457,
+        -0.0050692142717878586,
+        0.012256379344987023,
+        0.03659256344678341
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/load/paint",
+      "role": "week",
+      "median": 524.5,
+      "delta": -0.02535748331744525,
+      "repeats": [
+        -0.03273137697516926,
+        -0.06769173073317081,
+        -0.039200614911606424,
+        -0.054847645429362823,
+        -0.010995370370370239
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/load/paint",
+      "role": "month",
+      "median": 541.1,
+      "delta": -0.07189059323600078,
+      "repeats": [
+        -0.08822991030569272,
+        -0.0746268656716419,
+        -0.08942642477551777,
+        -0.0669988925802879,
+        -0.05791940018744135
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/pages/next10",
+      "role": "today",
+      "median": 376.2
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/pages/next10",
+      "role": "yesterday",
+      "median": 409.9,
+      "delta": -0.07392046840692845,
+      "repeats": [
+        -0.10105017502917157,
+        -0.05660377358490576,
+        -0.06732186732186729,
+        -0.07879970724566954,
+        -0.05808713069604399
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/pages/next10",
+      "role": "week",
+      "median": 386.7,
+      "delta": -0.03025601241272302,
+      "repeats": [
+        -0.008565310492505529,
+        0.0047256497768444206,
+        -0.031508264462809854,
+        0.022409702082784033,
+        -0.040962621607782856
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/pages/next10",
+      "role": "month",
+      "median": 434.2,
+      "delta": -0.16812528788576697,
+      "repeats": [
+        -0.14114994363021427,
+        -0.18472063854047893,
+        -0.1707988980716254,
+        -0.16037284894837467,
+        -0.15556601553306648
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/load/paint",
+      "role": "today",
+      "median": 2056.8
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/load/paint",
+      "role": "yesterday",
+      "median": 2189.9,
+      "delta": -0.03858623681446638,
+      "repeats": [
+        -0.03637608397991776,
+        -0.03436300493511257,
+        -0.04708004509582864,
+        -0.046120827435042644,
+        -0.04523328434974283
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/load/paint",
+      "role": "week",
+      "median": 2728.2,
+      "delta": -0.2582288688512572,
+      "rerun": "unconfirmed",
+      "repeats": [
+        -0.23744827333650698,
+        -0.27610310179117525,
+        -0.24906939888696422,
+        -0.25342490909758686,
+        -0.262326910396366
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/load/paint",
+      "role": "month",
+      "median": 2093.5,
+      "delta": -0.029042273704322885,
+      "verdict": "up",
+      "counterKind": "work",
+      "repeats": [
+        -0.020959681723351498,
+        -0.026421098307699675,
+        -0.03306099182975486,
+        -0.03273137697516926,
+        -0.030331979937903042
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "today",
+      "median": 302.3
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "yesterday",
+      "median": 375.7,
+      "delta": -0.1993611924407772,
+      "repeats": [
+        -0.19067574646411733,
+        -0.23190661478599217,
+        -0.19327282434596915,
+        -0.1783049040511726,
+        -0.21021345582275064
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "week",
+      "median": 377.3,
+      "delta": -0.18976941425921023,
+      "repeats": [
+        -0.212523215707084,
+        -0.20768833849329205,
+        -0.17131258457374832,
+        -0.16162943495400783,
+        -0.2014312218393851
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "month",
+      "median": 287.9,
+      "delta": 0.045849253212921326,
+      "verdict": "up",
+      "counterKind": "work",
+      "repeats": [
+        0.03194444444444433,
+        0.06474068917507814,
+        0.08142403947832233,
+        0.046875,
+        0.026745397707537588
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "today",
+      "median": 260.9
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "yesterday",
+      "median": 283.7,
+      "delta": -0.07225942897426862,
+      "repeats": [
+        -0.07092198581560283,
+        -0.0978223297614933,
+        -0.06930693069306937,
+        -0.05694842406876788,
+        -0.053577722946774764
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "week",
+      "median": 273.4,
+      "delta": -0.053401609363569746,
+      "repeats": [
+        -0.037831938886867866,
+        -0.05680173661360344,
+        -0.06869948567229978,
+        -0.05643673921062342,
+        -0.037009063444108814
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: check failed: the sort button of total"
+    },
+    {
+      "suite": "angular",
+      "id": "records-1k/load/paint",
+      "role": "today",
+      "median": 903.1
+    },
+    {
+      "suite": "angular",
+      "id": "records-1k/load/paint",
+      "role": "yesterday",
+      "median": 938,
+      "delta": -0.05330490405117272,
+      "repeats": [
+        -0.056609808102345394,
+        -0.04812948869117806,
+        -0.03683929524826479,
+        -0.06289041821069341,
+        0.054533720555017595
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-1k/load/paint",
+      "role": "week",
+      "median": 984.3,
+      "delta": -0.07751701716956205,
+      "repeats": [
+        -0.08526422764227637,
+        -0.076523334012635,
+        -0.08547525451063409,
+        -0.07687614399023801,
+        -0.07244318181818177
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-1k/load/paint",
+      "role": "month",
+      "median": 1035.3,
+      "delta": -0.12653337196947745,
+      "verdict": "up",
+      "counterKind": "work",
+      "repeats": [
+        -0.13134499569830793,
+        -0.12980538778640582,
+        -0.13618490457466192,
+        -0.11857323355039373,
+        -0.11053831664518687
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "today",
+      "median": 102
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "yesterday",
+      "median": 155.6,
+      "delta": -0.3444730077120822,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.34159517000317763,
+        -0.33247256294383476,
+        -0.35844155844155845,
+        -0.3359375,
+        -0.3544504276211593
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "week",
+      "median": 157.45,
+      "delta": -0.3458240711336932,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.3424483306836248,
+        -0.33140283140283144,
+        -0.3763109191856878,
+        -0.35606304277902867,
+        -0.36476584899649567
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: check failed: the sort button of id"
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "today",
+      "median": 46.3
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "yesterday",
+      "median": 62.6,
+      "delta": -0.26517571884984026,
+      "rerun": "unconfirmed",
+      "repeats": [
+        -0.2721417069243156,
+        -0.22413793103448276,
+        -0.2451923076923076,
+        -0.28659476117103244,
+        -0.27662957074721783
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "week",
+      "median": 66.3,
+      "delta": -0.2986425339366515,
+      "rerun": "unconfirmed",
+      "repeats": [
+        -0.31498470948012247,
+        -0.29777070063694266,
+        -0.24814264487369975,
+        -0.2559618441971383,
+        -0.3131462333825702
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: check failed: the sort button of id"
+    }
+  ]
+}
