@@ -1,0 +1,38 @@
+{
+  "content": "📊 survey-creator nightly\nrun: <https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/44859002648>",
+  "embeds": [
+    {
+      "title": "Builds",
+      "description": "**today** [b59784acb](https://github.com/surveyjs/survey-creator/commit/b59784acbee739c000e61ced47d18f4cc35ea6c0) · 20.11.2026 · library [12123f42f](https://github.com/surveyjs/survey-library/commit/12123f42f38d113258d785cb42c7da49f0ee8abe)\n**yesterday** [c86fd7ca2](https://github.com/surveyjs/survey-creator/commit/c86fd7ca2295294cdb0e06019c523fdb2393b370) · 19.11.2026 · library [c5faf6d2f](https://github.com/surveyjs/survey-library/commit/c5faf6d2f0d724afd20fd2fc2bf65503660f718e)\n**week** [2cba69fdb](https://github.com/surveyjs/survey-creator/commit/2cba69fdb90e88b1a4cee3066d2093ea97c8c32f) · 13.11.2026 · library [5f275a7d8](https://github.com/surveyjs/survey-library/commit/5f275a7d8daa4ae5a499c5d5302964474fd78e62)\n**month** [cb9a3bff6](https://github.com/surveyjs/survey-creator/commit/cb9a3bff608f884eba31de45824c47e415c2f3b1) · 21.10.2026 · library [4334c548a](https://github.com/surveyjs/survey-library/commit/4334c548acc77d899704e2dabeb27d34c071f0d9)"
+    },
+    {
+      "title": "Commits since yesterday (2)",
+      "description": "[#8198](https://github.com/surveyjs/survey-creator/pull/8198) test(e2e): wait for the new row focus in \"Delete matrix rows on backspace\"\n[#8196](https://github.com/surveyjs/survey-creator/pull/8196)  test(e2e): serve the test pages' CDN files from a local cache"
+    },
+    {
+      "title": "survey-library commits since yesterday (8)",
+      "description": "[#12366](https://github.com/surveyjs/survey-library/pull/12366) fix: use an empty alt for the survey logo\n[#12349](https://github.com/surveyjs/survey-library/pull/12349) Refactor/linter core support\n[#12360](https://github.com/surveyjs/survey-library/pull/12360) fix(survey-core): focus the collapse button when a page opens on a collapsed pane\n[#12370](https://github.com/surveyjs/survey-library/pull/12370) fix(survey-core): replace lookalike letters from another alphabet in ru, sr and mk string…\n[#12365](https://github.com/surveyjs/survey-library/pull/12365) perf(survey-core): fit an adaptive action bar by reads alone while it…\n[#12364](https://github.com/surveyjs/survey-library/pull/12364) feat(perf): enhance CDP metrics integration and add new counter types\n[#12362](https://github.com/surveyjs/survey-library/pull/12362) Use getters instead of callbacks for locStrings\n[#12340](https://github.com/surveyjs/survey-library/pull/12340) \\#12320 adapters  - Validate the appearance of the Expand Detail and Remove Row buttons \\[a…"
+    }
+  ],
+  "allowed_mentions": {
+    "parse": []
+  },
+  "attachments": [
+    {
+      "id": 0,
+      "filename": "overview.png"
+    },
+    {
+      "id": 1,
+      "filename": "core.md"
+    },
+    {
+      "id": 2,
+      "filename": "react.md"
+    },
+    {
+      "id": 3,
+      "filename": "results.tar.gz"
+    }
+  ]
+}
