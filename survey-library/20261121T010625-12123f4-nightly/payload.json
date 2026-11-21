@@ -1,0 +1,51 @@
+{
+  "content": "📊 survey-library nightly\nrun: <https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/44848104594>",
+  "embeds": [
+    {
+      "title": "Builds",
+      "description": "**today** [12123f42f](https://github.com/surveyjs/survey-library/commit/12123f42f38d113258d785cb42c7da49f0ee8abe) · 20.11.2026\n**yesterday** [c5faf6d2f](https://github.com/surveyjs/survey-library/commit/c5faf6d2f0d724afd20fd2fc2bf65503660f718e) · 19.11.2026\n**week** [5f275a7d8](https://github.com/surveyjs/survey-library/commit/5f275a7d8daa4ae5a499c5d5302964474fd78e62) · 13.11.2026\n**month** [4334c548a](https://github.com/surveyjs/survey-library/commit/4334c548acc77d899704e2dabeb27d34c071f0d9) · 21.10.2026"
+    },
+    {
+      "title": "Commits since yesterday (8)",
+      "description": "[#12366](https://github.com/surveyjs/survey-library/pull/12366) fix: use an empty alt for the survey logo\n[#12349](https://github.com/surveyjs/survey-library/pull/12349) Refactor/linter core support\n[#12360](https://github.com/surveyjs/survey-library/pull/12360) fix(survey-core): focus the collapse button when a page opens on a collapsed pane\n[#12370](https://github.com/surveyjs/survey-library/pull/12370) fix(survey-core): replace lookalike letters from another alphabet in ru, sr and mk string…\n[#12365](https://github.com/surveyjs/survey-library/pull/12365) perf(survey-core): fit an adaptive action bar by reads alone while it…\n[#12364](https://github.com/surveyjs/survey-library/pull/12364) feat(perf): enhance CDP metrics integration and add new counter types\n[#12362](https://github.com/surveyjs/survey-library/pull/12362) Use getters instead of callbacks for locStrings\n[#12340](https://github.com/surveyjs/survey-library/pull/12340) \\#12320 adapters  - Validate the appearance of the Expand Detail and Remove Row buttons \\[a…"
+    },
+    {
+      "title": "react · 1 faster vs yesterday",
+      "description": "`manyPages/pages/preview` 6116 ms · y 🟢 heap: blinkHeapGrowth 79.98 → 6.33 · w 🟢 heap: blinkHeapGrowth 79.98 → 6.27 · m 🟢 −41%",
+      "color": 6266484
+    }
+  ],
+  "allowed_mentions": {
+    "parse": []
+  },
+  "attachments": [
+    {
+      "id": 0,
+      "filename": "overview.png"
+    },
+    {
+      "id": 1,
+      "filename": "core.md"
+    },
+    {
+      "id": 2,
+      "filename": "react.md"
+    },
+    {
+      "id": 3,
+      "filename": "survey-js-ui.md"
+    },
+    {
+      "id": 4,
+      "filename": "vue3.md"
+    },
+    {
+      "id": 5,
+      "filename": "angular.md"
+    },
+    {
+      "id": 6,
+      "filename": "results.tar.gz"
+    }
+  ]
+}
