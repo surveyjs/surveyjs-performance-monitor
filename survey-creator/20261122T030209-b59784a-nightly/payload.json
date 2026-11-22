@@ -1,0 +1,30 @@
+{
+  "content": "📊 survey-creator nightly\nrun: <https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/44978740425>",
+  "embeds": [
+    {
+      "title": "Builds",
+      "description": "**today** [b59784acb](https://github.com/surveyjs/survey-creator/commit/b59784acbee739c000e61ced47d18f4cc35ea6c0) · 20.11.2026 · library [12123f42f](https://github.com/surveyjs/survey-library/commit/12123f42f38d113258d785cb42c7da49f0ee8abe)\n**yesterday** [b59784acb](https://github.com/surveyjs/survey-creator/commit/b59784acbee739c000e61ced47d18f4cc35ea6c0) · 20.11.2026 · = today · library [12123f42f](https://github.com/surveyjs/survey-library/commit/12123f42f38d113258d785cb42c7da49f0ee8abe)\n**week** [2cba69fdb](https://github.com/surveyjs/survey-creator/commit/2cba69fdb90e88b1a4cee3066d2093ea97c8c32f) · 13.11.2026 · library [5f275a7d8](https://github.com/surveyjs/survey-library/commit/5f275a7d8daa4ae5a499c5d5302964474fd78e62)\n**month** [faa307505](https://github.com/surveyjs/survey-creator/commit/faa30750523fcabadb811e6a9d18c493bbb0344f) · 22.10.2026 · library [3e652b7c0](https://github.com/surveyjs/survey-library/commit/3e652b7c0071d07b30ae28e378c57f372bb1f8cf)"
+    }
+  ],
+  "allowed_mentions": {
+    "parse": []
+  },
+  "attachments": [
+    {
+      "id": 0,
+      "filename": "overview.png"
+    },
+    {
+      "id": 1,
+      "filename": "core.md"
+    },
+    {
+      "id": 2,
+      "filename": "react.md"
+    },
+    {
+      "id": 3,
+      "filename": "results.tar.gz"
+    }
+  ]
+}
