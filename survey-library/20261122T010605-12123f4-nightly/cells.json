@@ -5149,8 +5149,7 @@
       "suite": "angular",
       "id": "records-10k/records/edit-cell@orders",
       "role": "today",
-      "mark": "not run",
-      "reason": "not run (worker failed)"
+      "median": 545.8
     },
     {
       "suite": "angular",
@@ -5163,15 +5162,31 @@
       "suite": "angular",
       "id": "records-10k/records/edit-cell@orders",
       "role": "week",
-      "mark": "not run",
-      "reason": "not run (worker failed)"
+      "median": 681.2,
+      "delta": -0.189812096300646,
+      "verdict": "down",
+      "counterKind": "heap",
+      "repeats": [
+        -0.17351937063975076,
+        -0.20150441197743374,
+        -0.18761009982384036,
+        -0.1844244125905129,
+        -0.20848108747044902
+      ]
     },
     {
       "suite": "angular",
       "id": "records-10k/records/edit-cell@orders",
       "role": "month",
-      "mark": "not run",
-      "reason": "not run (worker failed)"
+      "median": 514,
+      "delta": 0.06089494163424125,
+      "repeats": [
+        0.07001372818199658,
+        0.050674373795760896,
+        0.07449970279373885,
+        0.03883680887698482,
+        0.06439688715953307
+      ]
     },
     {
       "suite": "angular",

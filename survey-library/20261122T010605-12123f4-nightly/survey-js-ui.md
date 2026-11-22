@@ -1,6 +1,6 @@
 # survey-library · survey-js-ui · 22.11.2026 01:06 UTC
 
-> not run (worker failed): angular records-10k/records/edit-cell@orders https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/44969814335/job/137047904859 · run: https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/44969814335
+> run: https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/44969814335
 
 | scenario | today, ms | 1D | 7D | 30D |
 |---|--:|--:|--:|--:|

@@ -1,10 +1,6 @@
 # survey-library · angular · 22.11.2026 01:06 UTC
 
-> not run (worker failed): angular records-10k/records/edit-cell@orders https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/44969814335/job/137047904859 · run: https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/44969814335
-
-- today — incomplete: 1 unrun (worker failed)
-- 7D — incomplete: 1 unrun (worker failed)
-- 30D — incomplete: 1 unrun (worker failed)
+> run: https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/44969814335
 
 | scenario | today, ms | 1D | 7D | 30D |
 |---|--:|--:|--:|--:|
@@ -16,7 +12,7 @@
 | manyPages/load/paint | 966 | = today | −5% | −10% |
 | manyPages/pages/next10 | 363 | = today | −8% | −14% |
 | records-10k/load/paint | 2484 | = today | −24% | −5% |
-| records-10k/records/edit-cell@orders | n/a | = today | not run | not run |
+| records-10k/records/edit-cell@orders | 546 | = today | −19% | +6% |
 | records-10k/records/sort-header@orders | 473 | = today | −3% | 🟢 **−54%** |
 | records-1k/load/paint | 880 | = today | −8% | −18% |
 | records-plain/records/sort-header@orders30 | 97.9 | = today | 🟢 **−35%** | 🟢 **−85%** |
@@ -31,6 +27,7 @@ confirmed: 🟢 every repeat agrees · 🔴 not every repeat (its time is not ju
 | scenario | counter | today | 1D | 7D | 30D |
 |---|---|--:|--:|--:|--:|
 | manyPages/pages/next10 | blinkHeapGrowth | -78.645 | — | 🟢 **59.61** | 2.13 |
+| records-10k/records/edit-cell@orders | jsHeapGrowth | 73.06 | — | 🟢 **119.32** | 🟢 **119.15** |
 | records-10k/records/sort-header@orders | listenerGrowth | 0 | — | = | 🟢 **1260** |
 |  | nodeGrowth | 0 | — | = | 🟢 **41348** |
 |  | jsHeapGrowth | 331.74 | — | 293.84 | 🟢 **31823.18** |
@@ -70,6 +67,8 @@ confirmed: 🟢 every repeat agrees · 🔴 not every repeat (its time is not ju
 - manyPages/pages/next10 (7D): jsHeapGrowth 190.19 → 198.99 (heap)
 - manyPages/pages/next10 (30D): jsHeapGrowth 187.94 → 200.75 (heap)
 - records-10k/load/paint (30D): conditionRuns 40125 → 40080 (work), expressionRuns 490 → 80940 (work), layoutCount 7 → 3 (render), recalcStyleCount 7 → 3 (render)
+- records-10k/records/edit-cell@orders (7D): blinkHeapGrowth -3.4 → -3.54 (heap)
+- records-10k/records/edit-cell@orders (30D): expressionRuns 278 → 20848 (work), blinkHeapGrowth -38.12 → -3.54 (heap)
 - records-10k/records/sort-header@orders (30D): conditionRuns 40 → 20 (work), expressionRuns 80 → 20010 (work), rowsCreated 20 → 0 (work), layoutCount 2 → 1 (render), recalcStyleCount 2 → 1 (render)
 - records-1k/load/paint (30D): conditionRuns 4125 → 4080 (work), expressionRuns 490 → 8940 (work), layoutCount 7 → 3 (render), recalcStyleCount 7 → 3 (render)
 - records-plain/records/sort-header@orders30 (30D): expressionRuns 60 → 30 (work), rowsCreated 30 → 0 (work), layoutCount 2 → 1 (render), recalcStyleCount 3 → 1 (render)
