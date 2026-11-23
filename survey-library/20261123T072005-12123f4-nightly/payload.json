@@ -1,0 +1,42 @@
+{
+  "content": "📊 survey-library nightly\nrun: <https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/45130286152>",
+  "embeds": [
+    {
+      "title": "Builds",
+      "description": "**today** [12123f42f](https://github.com/surveyjs/survey-library/commit/12123f42f38d113258d785cb42c7da49f0ee8abe) · 20.11.2026\n**yesterday** [12123f42f](https://github.com/surveyjs/survey-library/commit/12123f42f38d113258d785cb42c7da49f0ee8abe) · 20.11.2026 · = today\n**week** [5f275a7d8](https://github.com/surveyjs/survey-library/commit/5f275a7d8daa4ae5a499c5d5302964474fd78e62) · 13.11.2026\n**month** [247b8c5f2](https://github.com/surveyjs/survey-library/commit/247b8c5f2700734d019f04c244916754d390a94e) · 23.10.2026"
+    }
+  ],
+  "allowed_mentions": {
+    "parse": []
+  },
+  "attachments": [
+    {
+      "id": 0,
+      "filename": "overview.png"
+    },
+    {
+      "id": 1,
+      "filename": "core.md"
+    },
+    {
+      "id": 2,
+      "filename": "react.md"
+    },
+    {
+      "id": 3,
+      "filename": "survey-js-ui.md"
+    },
+    {
+      "id": 4,
+      "filename": "vue3.md"
+    },
+    {
+      "id": 5,
+      "filename": "angular.md"
+    },
+    {
+      "id": 6,
+      "filename": "results.tar.gz"
+    }
+  ]
+}
