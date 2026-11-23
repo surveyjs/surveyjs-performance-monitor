@@ -1,0 +1,5469 @@
+{
+  "project": "survey-library",
+  "runId": "20261123T130214-d4a8f9d-nightly",
+  "kind": "nightly",
+  "start": "2026-11-23T13:02:14.883Z",
+  "repeats": 5,
+  "specs": [
+    {
+      "role": "today",
+      "sha": "12123f42f38d113258d785cb42c7da49f0ee8abe",
+      "date": "2026-11-20T17:45:47+03:00"
+    },
+    {
+      "role": "yesterday",
+      "sha": "12123f42f38d113258d785cb42c7da49f0ee8abe",
+      "date": "2026-11-20T17:45:47+03:00",
+      "sameAs": "today"
+    },
+    {
+      "role": "week",
+      "sha": "5f275a7d8daa4ae5a499c5d5302964474fd78e62",
+      "date": "2026-11-13T17:36:08+03:00"
+    },
+    {
+      "role": "month",
+      "sha": "247b8c5f2700734d019f04c244916754d390a94e",
+      "date": "2026-10-23T17:34:27+03:00"
+    }
+  ],
+  "cells": [
+    {
+      "suite": "core",
+      "id": "calculations/answer/first",
+      "role": "today",
+      "median": 48.88
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/first",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/first",
+      "role": "week",
+      "median": 56.595,
+      "delta": -0.13737962717554553,
+      "rerun": "unconfirmed",
+      "repeats": [
+        -0.0012442232492001493,
+        -0.14674868189806678,
+        -0.16078709448679296,
+        -0.14021625392396242,
+        -0.1462940031841501
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/first",
+      "role": "month",
+      "median": 67.18,
+      "delta": -0.2706162548377494,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.2861082885759907,
+        -0.25300120048019203,
+        -0.277016969336112,
+        -0.25560469727009294,
+        -0.26878180185573175
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/next3",
+      "role": "today",
+      "median": 137.625
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/next3",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/next3",
+      "role": "week",
+      "median": 173.63,
+      "delta": -0.20105972470195244,
+      "rerun": "unconfirmed",
+      "repeats": [
+        -0.030072506834660673,
+        -0.1958721165520032,
+        -0.2144008288246806,
+        -0.221084608460846,
+        -0.2148774795799301
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/answer/next3",
+      "role": "month",
+      "median": 207.2,
+      "delta": -0.3384169884169883,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.32509925011027796,
+        -0.3710961135676053,
+        -0.3302974805721922,
+        -0.3198841698841699,
+        -0.3391824141920554
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/load/model",
+      "role": "today",
+      "median": 563.44
+    },
+    {
+      "suite": "core",
+      "id": "calculations/load/model",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "calculations/load/model",
+      "role": "week",
+      "median": 550.36,
+      "delta": 0.023330183879642474,
+      "repeats": [
+        0.02282244176561221,
+        0.021110969317995387,
+        0.025399931155678734,
+        0.04361370716510904,
+        0.03997784138122085
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "calculations/load/model",
+      "role": "month",
+      "median": 749.35,
+      "delta": -0.24777473810635897,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.2506663148172582,
+        -0.23336912751677852,
+        -0.24777473810635897,
+        -0.25051521558761347,
+        -0.25039136087452574
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/first",
+      "role": "today",
+      "median": 410.97
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/first",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/first",
+      "role": "week",
+      "median": 394.45,
+      "delta": 0.029027760172391837,
+      "repeats": [
+        0.048531810766721195,
+        0.06383201824520923,
+        0.045589152119700715,
+        0.03789505983430508,
+        -0.029361887688356902
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/first",
+      "role": "month",
+      "median": 508.17,
+      "delta": -0.17708640809178033,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.1564827172672586,
+        -0.17338449190533056,
+        -0.17937625358870501,
+        -0.1631584227952242,
+        -0.1692486123767707
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/next3",
+      "role": "today",
+      "median": 545.7950000000001
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/next3",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/next3",
+      "role": "week",
+      "median": 541.26,
+      "delta": 0.007057606325980181,
+      "repeats": [
+        0.04175239898759986,
+        -0.07247895297966989,
+        0.03823208297590264,
+        0.06700206700206679,
+        -0.012238173687926568
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/answer/next3",
+      "role": "month",
+      "median": 605.89,
+      "delta": -0.09810361616795116,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.10843802766718824,
+        -0.15214111639781835,
+        -0.11823928435854691,
+        -0.09006459346074436,
+        -0.05975054778358324
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/design",
+      "role": "today",
+      "median": 1232.955
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/design",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/design",
+      "role": "week",
+      "median": 1222.43,
+      "delta": 0.007959555966394749,
+      "repeats": [
+        0.04845621181262727,
+        -0.028585701598578983,
+        0.02887154220098198,
+        0.017003223048082772,
+        0.0067294972186389135
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/design",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "timeout 300 s"
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/model",
+      "role": "today",
+      "median": 2240.8500000000004
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/model",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/model",
+      "role": "week",
+      "median": 2200.78,
+      "delta": 0.02116976708257967,
+      "repeats": [
+        0.0132165787916525,
+        0.02468827590589484,
+        0.01989072129391789,
+        0.02284771842619815,
+        0.005163934426229533
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/load/model",
+      "role": "month",
+      "median": 2910.63,
+      "delta": -0.23216623205285458,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.23323811872371314,
+        -0.24080162992128695,
+        -0.230088830478969,
+        -0.22625486354479984,
+        -0.24295068914392404
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/data",
+      "role": "today",
+      "median": 0.33
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/data",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/data",
+      "role": "week",
+      "median": 0.32,
+      "delta": 0.03125,
+      "repeats": [
+        -0.03125,
+        0.06451612903225823,
+        0.06451612903225823,
+        0.030303030303030276,
+        0.06060606060606055
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/data",
+      "role": "month",
+      "median": 0.33,
+      "delta": 0,
+      "repeats": [
+        0,
+        0.03125,
+        0.02941176470588225,
+        -0.05882352941176472,
+        -0.02941176470588236
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/dispose",
+      "role": "today",
+      "median": 49.635000000000005
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/dispose",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/dispose",
+      "role": "week",
+      "median": 46.46,
+      "delta": 0.06736978045630648,
+      "repeats": [
+        0.02037351443123936,
+        0.030627543371171573,
+        0.12576617480136232,
+        0.07485936823885764,
+        0.051948051948051965
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/dispose",
+      "role": "month",
+      "median": 52.92,
+      "delta": -0.05933484504913078,
+      "repeats": [
+        -0.06953271028037378,
+        -0.08881824981301423,
+        -0.057196969696969635,
+        -0.055566274358479606,
+        -0.05139833711262276
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/toJSON",
+      "role": "today",
+      "median": 68.925
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/toJSON",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/toJSON",
+      "role": "week",
+      "median": 72.74,
+      "delta": -0.04371734946384376,
+      "repeats": [
+        0.015267175572518887,
+        -0.11548767416934624,
+        -0.10888094583447905,
+        -0.0021132713440406015,
+        0.05090645395213911
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "complexLogic/output/toJSON",
+      "role": "month",
+      "median": 80.81,
+      "delta": -0.16606855587179803,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.11972772578096502,
+        -0.19070551408620273,
+        -0.15519917227108126,
+        -0.2013293051359516,
+        -0.19415913872045532
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/first",
+      "role": "today",
+      "median": 1318.655
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/first",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/first",
+      "role": "week",
+      "median": 1214.27,
+      "delta": 0.10412017096691839,
+      "verdict": "up",
+      "rerun": "confirmed",
+      "repeats": [
+        0.09747637448196866,
+        0.12410762419747434,
+        0.09377208698367845,
+        0.09414131830561967,
+        0.16670872747208754
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/first",
+      "role": "month",
+      "median": 1386.07,
+      "delta": -0.06437625805334513,
+      "repeats": [
+        -0.10160041076968696,
+        -0.05074256527827137,
+        -0.06906246994147369,
+        -0.09729486760379202,
+        -0.05280002296277153
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/next3",
+      "role": "today",
+      "median": 2602.1949999999997
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/next3",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/next3",
+      "role": "week",
+      "median": 2362.91,
+      "delta": 0.08938131371910063,
+      "repeats": [
+        0.08469533164864806,
+        0.09842101476569143,
+        0.08738575136413074,
+        0.12508169262797075,
+        0.09226479621844175
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/answer/next3",
+      "role": "month",
+      "median": 2699.66,
+      "delta": -0.024380847958631713,
+      "repeats": [
+        -0.027555877089441516,
+        -0.05047314061508279,
+        -0.0011150948217782952,
+        -0.00823356359506211,
+        -0.04183999748939082
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/load/model",
+      "role": "today",
+      "median": 7987.4349999999995
+    },
+    {
+      "suite": "core",
+      "id": "expressions/load/model",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "expressions/load/model",
+      "role": "week",
+      "median": 7911.78,
+      "delta": 0.022281964362002027,
+      "repeats": [
+        0.03282695868702312,
+        0.014702560217468186,
+        0.004253887290611491,
+        0.0030647697301684484,
+        0.021199250532848435
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "expressions/load/model",
+      "role": "month",
+      "median": 10093.29,
+      "delta": -0.21080836872813535,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.21532567806400016,
+        -0.21497642625122204,
+        -0.20803910481548848,
+        -0.20126143209993974,
+        -0.21111368321917134
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/load/design",
+      "role": "today",
+      "median": 450.61
+    },
+    {
+      "suite": "core",
+      "id": "large/load/design",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "large/load/design",
+      "role": "week",
+      "median": 432.48,
+      "delta": 0.04501942286348504,
+      "repeats": [
+        0.1254521875639889,
+        0.05097290755050743,
+        0.049392203437194304,
+        0.07324094064117737,
+        0.03625573740089938
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/load/design",
+      "role": "month",
+      "median": 819.21,
+      "delta": -0.4534246408124901,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.4380442637206511,
+        -0.45037802543080174,
+        -0.455934836971036,
+        -0.4486018361354428,
+        -0.4598724405799929
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/load/model",
+      "role": "today",
+      "median": 709.715
+    },
+    {
+      "suite": "core",
+      "id": "large/load/model",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "large/load/model",
+      "role": "week",
+      "median": 800.28,
+      "delta": -0.11417253961113616,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.10721427667383876,
+        -0.10351201478743055,
+        -0.10205178187634323,
+        -0.12941625427776549,
+        -0.1268991841928
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/load/model",
+      "role": "month",
+      "median": 955.27,
+      "delta": -0.256943063217729,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.25175001842124656,
+        -0.25461895587910177,
+        -0.2569873415066438,
+        -0.25808837315889255,
+        -0.26173037308308533
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/data",
+      "role": "today",
+      "median": 0.08
+    },
+    {
+      "suite": "core",
+      "id": "large/output/data",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "large/output/data",
+      "role": "week",
+      "median": 0.08,
+      "delta": 0,
+      "repeats": [
+        0,
+        -0.11111111111111105,
+        0,
+        0.125,
+        0
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/data",
+      "role": "month",
+      "median": 0.09,
+      "delta": -0.11111111111111105,
+      "repeats": [
+        -0.11111111111111105,
+        0,
+        0,
+        -0.11111111111111105,
+        -0.11111111111111105
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/dispose",
+      "role": "today",
+      "median": 46.455
+    },
+    {
+      "suite": "core",
+      "id": "large/output/dispose",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "large/output/dispose",
+      "role": "week",
+      "median": 47.8,
+      "delta": -0.018200836820083666,
+      "repeats": [
+        -0.03831967213114751,
+        -0.002850162866449568,
+        0.03331184182248004,
+        -0.0010996261271166707,
+        0.0019612115929394935
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/dispose",
+      "role": "month",
+      "median": 47.11,
+      "delta": -0.02037783909997881,
+      "repeats": [
+        0.023605150214592197,
+        0.023758561643835607,
+        -0.1165328392011531,
+        -0.02037783909997881,
+        -0.09797790285595154
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/toJSON",
+      "role": "today",
+      "median": 91.42500000000001
+    },
+    {
+      "suite": "core",
+      "id": "large/output/toJSON",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "large/output/toJSON",
+      "role": "week",
+      "median": 102.44999999999999,
+      "delta": -0.07764763299170307,
+      "repeats": [
+        -0.05164182013056606,
+        -0.10166799046862585,
+        -0.054850673433535,
+        -0.09797866367209429,
+        -0.14044497417560586
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "large/output/toJSON",
+      "role": "month",
+      "median": 123.745,
+      "delta": -0.26607135641844126,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.2825910273081925,
+        -0.2776886035313001,
+        -0.2655121470781353,
+        -0.24728885967794934,
+        -0.25932879605726344
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/load/model",
+      "role": "today",
+      "median": 730.995
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/load/model",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/load/model",
+      "role": "week",
+      "median": 788.51,
+      "delta": -0.06924452448288543,
+      "repeats": [
+        -0.08413711045289995,
+        -0.058464699242875784,
+        -0.060364067962793255,
+        -0.058709611660381245,
+        -0.09845562240277861
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/load/model",
+      "role": "month",
+      "median": 814.29,
+      "delta": -0.10744329415810094,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.11390141212414762,
+        -0.11191485721966299,
+        -0.1149555612450166,
+        -0.10196486503029945,
+        -0.10209170075045748
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/last",
+      "role": "today",
+      "median": 8.225000000000001
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/last",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/last",
+      "role": "week",
+      "median": 7.93,
+      "delta": 0.0321563682219419,
+      "repeats": [
+        0.03811944091486663,
+        0.07216494845360821,
+        -0.02533172496984304,
+        0.6494023904382471,
+        0.09492273730684331
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/last",
+      "role": "month",
+      "median": 12.51,
+      "delta": -0.3393285371702637,
+      "repeats": [
+        -0.2096385542168674,
+        -0.33678343949044587,
+        -0.5160075329566856,
+        -0.17235901509134233,
+        -0.35382190701339644
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/locale",
+      "role": "today",
+      "median": 24.245
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/locale",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/locale",
+      "role": "week",
+      "median": 22.72,
+      "delta": 0.042913732394366244,
+      "repeats": [
+        0.030864197530864113,
+        0.02393617021276606,
+        0.0069702602230483635,
+        0.040983606557376984,
+        -0.015761821366024442
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/locale",
+      "role": "month",
+      "median": 29.060000000000002,
+      "delta": -0.13059187887130086,
+      "rerun": "unconfirmed",
+      "repeats": [
+        -0.16708497669415556,
+        -0.1284709366901149,
+        -0.1942766295707472,
+        -0.1691152464903689,
+        -0.047635605006954185
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/next10",
+      "role": "today",
+      "median": 54.894999999999996
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/next10",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/next10",
+      "role": "week",
+      "median": 53.565,
+      "delta": 0.016241949033884095,
+      "repeats": [
+        0.1147391462969718,
+        0.0029951329090227574,
+        0.01781695423855978,
+        0.003397508493771184,
+        0.029714072136049374
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/next10",
+      "role": "month",
+      "median": 65.91,
+      "delta": -0.15938400849643453,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.1348729792147807,
+        -0.14678059200488258,
+        -0.17633691864868972,
+        -0.15226586102719042,
+        -0.18621307072515658
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/prev",
+      "role": "today",
+      "median": 26.32
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/prev",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/prev",
+      "role": "week",
+      "median": 26.395,
+      "delta": 0.003788596325061677,
+      "repeats": [
+        0.05030487804878048,
+        -0.006870229007633566,
+        -0.0030097817908201208,
+        -0.04196063869290745,
+        0.07300970873786405
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/prev",
+      "role": "month",
+      "median": 31.439999999999998,
+      "delta": -0.16396310432569972,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.15731070496083555,
+        -0.19810455518190162,
+        -0.17017879948914438,
+        -0.1594432141727301,
+        -0.11157024793388437
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/preview",
+      "role": "today",
+      "median": 1591.4099999999999
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/preview",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/preview",
+      "role": "week",
+      "median": 1552.89,
+      "delta": 0.017914984319558958,
+      "repeats": [
+        0.009036971752278466,
+        0.011803337451272933,
+        0.03154897568684811,
+        0.030935393074556616,
+        0.04104848602233835
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/preview",
+      "role": "month",
+      "median": 2001.69,
+      "delta": -0.19876704184963712,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.17688423639169548,
+        -0.2107044309365752,
+        -0.2191279606658847,
+        -0.18924173363719965,
+        -0.1932437104475967
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/validate",
+      "role": "today",
+      "median": 59.95
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/validate",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/validate",
+      "role": "week",
+      "median": 58.57,
+      "delta": 0.030561721017585697,
+      "repeats": [
+        0.06730434782608685,
+        0.061133022588741426,
+        -0.027078687480089236,
+        -0.05434423521638587,
+        0.07211622615088387
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "manyPages/pages/validate",
+      "role": "month",
+      "median": 64.52000000000001,
+      "delta": -0.07540297582145083,
+      "repeats": [
+        -0.07581171353114813,
+        -0.10675735620286853,
+        -0.12240322821700789,
+        -0.08199910219961093,
+        -0.021227955584585345
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/data",
+      "role": "today",
+      "median": 681.895
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/data",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/data",
+      "role": "week",
+      "median": 1249.97,
+      "delta": -0.4502028048673168,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.41681997994425446,
+        -0.4428627441566444,
+        -0.45058754453836936,
+        -0.4423056635315312,
+        -0.46168839951309937
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/data",
+      "role": "month",
+      "median": 803.94,
+      "delta": -0.16045973580117923,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.1693275278180939,
+        -0.1685633354867564,
+        -0.15752136966385089,
+        -0.15391695897703805,
+        -0.15526908635794734
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/model",
+      "role": "today",
+      "median": 64.82499999999999
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/model",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/model",
+      "role": "week",
+      "median": 95.095,
+      "delta": -0.3070613596929386,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.35857976262321467,
+        -0.32396010186757207,
+        -0.3245642177307241,
+        -0.26065485775630703,
+        -0.24637833298341383
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/load/model",
+      "role": "month",
+      "median": 111.03,
+      "delta": -0.4212825362514636,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.4190294438386042,
+        -0.39519274376417224,
+        -0.44664879356568365,
+        -0.42540646775058066,
+        -0.4195470798569725
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/data",
+      "role": "today",
+      "median": 0.11
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/data",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/data",
+      "role": "week",
+      "median": 0.11,
+      "delta": 0.045454545454545414,
+      "repeats": [
+        0,
+        -0.09090909090909083,
+        0.09999999999999987,
+        0,
+        0.09090909090909083
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/data",
+      "role": "month",
+      "median": 0.13,
+      "delta": -0.15384615384615385,
+      "repeats": [
+        -0.07692307692307698,
+        -0.15384615384615385,
+        -0.15384615384615385,
+        -0.23076923076923073,
+        -0.07692307692307698
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/dispose",
+      "role": "today",
+      "median": 11.945
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/dispose",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/dispose",
+      "role": "week",
+      "median": 11.95,
+      "delta": -0.0008368200836820217,
+      "repeats": [
+        -0.009991673605328821,
+        -0.00663900414937757,
+        -0.0033388981636061077,
+        -0.0016736401673639323,
+        0.010109519797809607
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/dispose",
+      "role": "month",
+      "median": 11.73,
+      "delta": 0.018755328218243772,
+      "repeats": [
+        0.060176991150442394,
+        0.007672634271099765,
+        0.01619778346121059,
+        0.001677852348993314,
+        0.0359897172236503
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/toJSON",
+      "role": "today",
+      "median": 24.61
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/toJSON",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/toJSON",
+      "role": "week",
+      "median": 24.83,
+      "delta": -0.011075312122432512,
+      "repeats": [
+        -0.005698005698005715,
+        0.01680672268907557,
+        -0.06833268254588054,
+        -0.022883295194507935,
+        -0.05871066768994615
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/output/toJSON",
+      "role": "month",
+      "median": 26.685000000000002,
+      "delta": -0.07626007120104938,
+      "rerun": "unconfirmed",
+      "repeats": [
+        -0.04557438794726931,
+        -0.07656612529002327,
+        -0.12331606217616586,
+        -0.11272727272727279,
+        -0.11165970375996959
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/add-row@orders",
+      "role": "today",
+      "median": 494.07
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/add-row@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/add-row@orders",
+      "role": "week",
+      "median": 500.52,
+      "delta": -0.014165268121153929,
+      "repeats": [
+        -0.0399107734973172,
+        -0.0393382282460748,
+        -0.005641553505681185,
+        0.010670984886231416,
+        -0.01534404219611607
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/add-row@orders",
+      "role": "month",
+      "median": 292.79,
+      "delta": 0.6889579562143515,
+      "verdict": "up",
+      "rerun": "confirmed",
+      "repeats": [
+        0.7277543106433073,
+        0.6699746766135102,
+        0.700646288209607,
+        0.6841392846265779,
+        0.7287444064227426
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "today",
+      "median": 456.16999999999996
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "week",
+      "median": 458.27,
+      "delta": -0.005629868854605369,
+      "repeats": [
+        0.0058483403954801005,
+        -0.009230769230769265,
+        0.022481816178091307,
+        -0.015516342141863815,
+        -0.026418242491657473
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "month",
+      "median": 308.25,
+      "delta": 0.48421735604217364,
+      "verdict": "up",
+      "rerun": "confirmed",
+      "repeats": [
+        0.4906339123671246,
+        0.4784094237089582,
+        0.5020496433297827,
+        0.4480435763553148,
+        0.49175101879847527
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-change@orders",
+      "role": "today",
+      "median": 634.9549999999999
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-change@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-change@orders",
+      "role": "week",
+      "median": 645.62,
+      "delta": -0.013397974040457172,
+      "repeats": [
+        -0.017634968699499542,
+        0.0029449802888885657,
+        -0.022022875767221617,
+        -0.033754562463577,
+        -0.011457719619212936
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-change@orders",
+      "role": "month",
+      "median": 571.14,
+      "delta": 0.11144377910844971,
+      "verdict": "up",
+      "rerun": "confirmed",
+      "repeats": [
+        0.09753233551824447,
+        0.1256738544474394,
+        0.0998354168855271,
+        0.11691372898224306,
+        0.10688278952527663
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-clear@orders",
+      "role": "today",
+      "median": 434.90999999999997
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-clear@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-clear@orders",
+      "role": "week",
+      "median": 455.11,
+      "delta": -0.04348399288084204,
+      "repeats": [
+        -0.0546022836001786,
+        -0.028389314305603874,
+        -0.01752165223184543,
+        -0.053126033741316525,
+        -0.05402112103980505
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-clear@orders",
+      "role": "month",
+      "median": 386.81,
+      "delta": 0.12383340658204278,
+      "verdict": "up",
+      "rerun": "confirmed",
+      "repeats": [
+        0.11751483311116351,
+        0.10786580353473085,
+        0.1550066755674233,
+        0.15020851365174304,
+        0.1195194451325241
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "today",
+      "median": 389.95
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "week",
+      "median": 396.55,
+      "delta": -0.01825747068465522,
+      "repeats": [
+        -0.008388211433007053,
+        -0.020618296529968494,
+        -0.022643311301550728,
+        -0.012630297496766363,
+        -0.0242860016090104
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "month",
+      "median": 380.86,
+      "delta": 0.029748464002520514,
+      "repeats": [
+        0.03545948248322861,
+        0.04514886995965095,
+        0.029748464002520514,
+        0.02865824907004777,
+        0.006572308329236387
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/first-visit@orders",
+      "role": "today",
+      "median": 416.055
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/first-visit@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/first-visit@orders",
+      "role": "week",
+      "median": 413.95,
+      "delta": -0.01978499818818702,
+      "repeats": [
+        0.022085383888094334,
+        0.029501276261535425,
+        -0.0013151691108961305,
+        -0.021439768479440513,
+        -0.05890372320421211
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/first-visit@orders",
+      "role": "month",
+      "median": 358.07,
+      "delta": 0.16848660876364963,
+      "verdict": "up",
+      "rerun": "confirmed",
+      "repeats": [
+        0.13050931814411326,
+        0.1527592641962141,
+        0.14039917412250524,
+        0.19638097909945285,
+        0.13749999999999996
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/last@orders",
+      "role": "today",
+      "median": 170.5
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/last@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/last@orders",
+      "role": "week",
+      "median": 170.84,
+      "delta": -0.01568719269491925,
+      "repeats": [
+        -0.05654927230307749,
+        -0.011214298230243669,
+        -0.029652527334134815,
+        -0.0065738361321939776,
+        -0.00041853512705525286
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/last@orders",
+      "role": "month",
+      "median": 348.17,
+      "delta": -0.5059022891116409,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5241349728338576,
+        -0.5049490622829358,
+        -0.5096247493554855,
+        -0.498898231371412,
+        -0.49406162143553845
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/next@orders",
+      "role": "today",
+      "median": 360.74
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/next@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/next@orders",
+      "role": "week",
+      "median": 352.86,
+      "delta": 0.017967465850478925,
+      "repeats": [
+        0.026809803754508588,
+        0.033044266848041515,
+        -0.010206051912945102,
+        0.028989634354710025,
+        -0.0064811710805676714
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/next@orders",
+      "role": "month",
+      "median": 624.42,
+      "delta": -0.41797187790269363,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.41070677664564126,
+        -0.42325439805171916,
+        -0.4336014327059914,
+        -0.41016555975722135,
+        -0.4213616529774128
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/prev@orders",
+      "role": "today",
+      "median": 248.52499999999998
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/prev@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/prev@orders",
+      "role": "week",
+      "median": 246.95,
+      "delta": 0.022757643247621084,
+      "repeats": [
+        -0.05136908802896578,
+        -0.017257111119927004,
+        0.027540052727641484,
+        0.01631909293379219,
+        0.03372529805650837
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/prev@orders",
+      "role": "month",
+      "median": 425.09,
+      "delta": -0.41911124703004066,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.41925058548009375,
+        -0.44887679611432163,
+        -0.3913868928888996,
+        -0.42298628458311727,
+        -0.43120280411207035
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/remove-row@orders",
+      "role": "today",
+      "median": 598.125
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/remove-row@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/remove-row@orders",
+      "role": "week",
+      "median": 1133.55,
+      "delta": -0.47018658197697494,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.4504282882627779,
+        -0.4638396053783117,
+        -0.4721954805622166,
+        -0.47150635208711433,
+        -0.47757727667107785
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/remove-row@orders",
+      "role": "month",
+      "median": 910.61,
+      "delta": -0.3451203039720626,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.3507826928150558,
+        -0.34247030300346504,
+        -0.3440894393598949,
+        -0.33861744084136713,
+        -0.3522655518540292
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-1@orders",
+      "role": "today",
+      "median": 174.82
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-1@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-1@orders",
+      "role": "week",
+      "median": 173.43,
+      "delta": 0.009571585077552847,
+      "repeats": [
+        0.0013238171981120317,
+        0.02850521436848208,
+        -0.017245240761478042,
+        0.01987909788421316,
+        -0.034007352941176516
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-1@orders",
+      "role": "month",
+      "median": 359.3,
+      "delta": -0.5137767881992764,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5150601568824498,
+        -0.5091055689937999,
+        -0.5157348510210913,
+        -0.5165884718498659,
+        -0.5073929746013321
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-3@orders",
+      "role": "today",
+      "median": 215.62
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-3@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-3@orders",
+      "role": "week",
+      "median": 210.28,
+      "delta": 0.023730264409359103,
+      "repeats": [
+        0.01376415903244732,
+        -0.033334849242803166,
+        0.06194777629695425,
+        0.07374993854171796,
+        -0.03142766180015466
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-3@orders",
+      "role": "month",
+      "median": 356.32,
+      "delta": -0.39470139200718457,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.41422209852490954,
+        -0.3950381679389313,
+        -0.3870364069411364,
+        -0.40773233795602537,
+        -0.3651207022677396
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-reverse@orders",
+      "role": "today",
+      "median": 253.16
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-reverse@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-reverse@orders",
+      "role": "week",
+      "median": 249.91,
+      "delta": 0.016766035772878274,
+      "repeats": [
+        0.0180378354597448,
+        0.01112400464167096,
+        0.000359037778753013,
+        0.013942001274697358,
+        0.029828969765745228
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-10k/records/sort-reverse@orders",
+      "role": "month",
+      "median": 425.87,
+      "delta": -0.4066968793293728,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.43369601794727985,
+        -0.4008614466528706,
+        -0.40604928179376376,
+        -0.39411376285256106,
+        -0.390315991829869
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/data",
+      "role": "today",
+      "median": 191.25
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/data",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/data",
+      "role": "week",
+      "median": 203.72,
+      "delta": -0.06540840369134115,
+      "repeats": [
+        -0.08820658010348537,
+        -0.13080910942418067,
+        -0.06067123493222626,
+        -0.06182648855340922,
+        -0.01143726683683488
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/data",
+      "role": "month",
+      "median": 162.245,
+      "delta": 0.18512126721932876,
+      "verdict": "up",
+      "rerun": "confirmed",
+      "repeats": [
+        0.16393944965373541,
+        0.17036440257808616,
+        0.18639071424184728,
+        0.1777301927194861,
+        0.1855409815875364
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/model",
+      "role": "today",
+      "median": 61.239999999999995
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/model",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/model",
+      "role": "week",
+      "median": 91.19,
+      "delta": -0.32547428446101545,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.3435147812806807,
+        -0.3273503338075955,
+        -0.31706229800512653,
+        -0.33168425681618285,
+        -0.24384715025906745
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/load/model",
+      "role": "month",
+      "median": 106.91,
+      "delta": -0.42774296136937606,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.4146294698494871,
+        -0.4604162795019513,
+        -0.43027258349613917,
+        -0.4215061820906707,
+        -0.4237224566338491
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/filter-set@orders",
+      "role": "today",
+      "median": 255.16500000000002
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/filter-set@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/filter-set@orders",
+      "role": "week",
+      "median": 272.18,
+      "delta": -0.06374458079212286,
+      "repeats": [
+        -0.09225223939188454,
+        -0.0689693062779283,
+        -0.06243772832945871,
+        -0.04791873688859438,
+        -0.04502995794722919
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/filter-set@orders",
+      "role": "month",
+      "median": 362.18,
+      "delta": -0.2930863106742505,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.2969151315971167,
+        -0.2980954477899488,
+        -0.28700839593460004,
+        -0.30024779735682816,
+        -0.29619788527913216
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@orders",
+      "role": "today",
+      "median": 73.44999999999999
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@orders",
+      "role": "week",
+      "median": 71.66499999999999,
+      "delta": 0.03879159980464664,
+      "repeats": [
+        0.10752688172043023,
+        0.017682840571509484,
+        0.04207119741100329,
+        0.0795901179112859,
+        0.009353507565336816
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@orders",
+      "role": "month",
+      "median": 399.24,
+      "delta": -0.8178914938382927,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.8139052663135805,
+        -0.8230788485607008,
+        -0.8112924928279469,
+        -0.8199686330061722,
+        -0.8220368700531009
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "today",
+      "median": 35.91
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "week",
+      "median": 35.81,
+      "delta": 0.014521083496229936,
+      "repeats": [
+        0.041620111731843545,
+        0.028315110737314297,
+        -0.050224689399947064,
+        -0.009822646657571599,
+        0.02654109589041087
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "month",
+      "median": 169.86,
+      "delta": -0.7912398445778877,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7905333804309431,
+        -0.7934483767183387,
+        -0.7872959335114277,
+        -0.7940400070393617,
+        -0.7891726130801439
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@orders",
+      "role": "today",
+      "median": 62.144999999999996
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@orders",
+      "role": "week",
+      "median": 62.735,
+      "delta": 0.011317446401530207,
+      "repeats": [
+        0.0024702794503630443,
+        -0.007491233662735075,
+        0.0057729313662604476,
+        0.03597122302158273,
+        0.014515871749880338
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@orders",
+      "role": "month",
+      "median": 358.09,
+      "delta": -0.8296378005529337,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.8336042315215295,
+        -0.8251464494927847,
+        -0.8284040024324175,
+        -0.8229549600112249,
+        -0.8365314685314685
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@ordersPanel",
+      "role": "today",
+      "median": 23.425
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@ordersPanel",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@ordersPanel",
+      "role": "week",
+      "median": 23.41,
+      "delta": 0.011106364801366952,
+      "repeats": [
+        0.041452822739834305,
+        0.022462562396006636,
+        0.00043649061545192325,
+        0.02959641255605372,
+        0.014193548387096744
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-1k/records/sort-1@ordersPanel",
+      "role": "month",
+      "median": 79.3,
+      "delta": -0.706998738965952,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.6917652984134979,
+        -0.7168652499692912,
+        -0.7048725069426913,
+        -0.7207508356904089,
+        -0.7037974683544304
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "today",
+      "median": 33.095
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "week",
+      "median": 32.435,
+      "delta": 0.013257283798365993,
+      "repeats": [
+        -0.005179768433881793,
+        0.014049328754292656,
+        0.03869141239383467,
+        0.00907441016333932,
+        0.013002721499848713
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "month",
+      "median": 89.205,
+      "delta": -0.6272069951235917,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.6255625562556255,
+        -0.6274003368893879,
+        -0.6283593837849994,
+        -0.6228647984816345,
+        -0.6314260169870363
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@orders30",
+      "role": "today",
+      "median": 36.835
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@orders30",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@orders30",
+      "role": "week",
+      "median": 36.79,
+      "delta": -0.003941288393585096,
+      "repeats": [
+        -0.010523400720022225,
+        -0.028131634819532958,
+        -0.030303030303030276,
+        0.0442378134685828,
+        -0.019530219055159725
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@orders30",
+      "role": "month",
+      "median": 306.72,
+      "delta": -0.8794177099634846,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.8765986089297734,
+        -0.8766842413591095,
+        -0.8804468182114245,
+        -0.8830376758369676,
+        -0.8821183393265772
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@ordersPaged",
+      "role": "today",
+      "median": 38.965
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@ordersPaged",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@ordersPaged",
+      "role": "week",
+      "median": 39.545,
+      "delta": -0.024655455809836968,
+      "repeats": [
+        0.018286311389759557,
+        0.0033531080732522867,
+        0.004119464469618972,
+        -0.0524714828897338,
+        -0.07072135785007072
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@ordersPaged",
+      "role": "month",
+      "median": 176.72,
+      "delta": -0.7784348121321865,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7766523313716613,
+        -0.7816338028169014,
+        -0.7805739266898329,
+        -0.7792895366048047,
+        -0.7725765889346137
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "today",
+      "median": 33.805
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "week",
+      "median": 34.65,
+      "delta": -0.04819624819624824,
+      "repeats": [
+        -0.16645521441258548,
+        -0.05366416618580494,
+        -0.016312263326536458,
+        -0.02496285289747391,
+        -0.01097631426920842
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "month",
+      "median": 113.4,
+      "delta": -0.6978395061728395,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7015227532787607,
+        -0.686215715671576,
+        -0.7087361574969239,
+        -0.6952808988764045,
+        -0.6975113915177007
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "today",
+      "median": 20.59
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "week",
+      "median": 20.61,
+      "delta": -0.016254245511887477,
+      "repeats": [
+        -0.02198852772466542,
+        -0.046212482134349586,
+        0.05834186284544529,
+        -0.04734576757532272,
+        -0.014896684286400674
+      ]
+    },
+    {
+      "suite": "core",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "month",
+      "median": 45.315,
+      "delta": -0.5409908418845857,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5339095744680851,
+        -0.5103283322461405,
+        -0.5493392070484582,
+        -0.5412741139524451,
+        -0.5508864084044649
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "calculations/load/paint",
+      "role": "today",
+      "median": 384.9
+    },
+    {
+      "suite": "react",
+      "id": "calculations/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "calculations/load/paint",
+      "role": "week",
+      "median": 385.9,
+      "delta": -0.005700958797615896,
+      "repeats": [
+        -0.005692108667529117,
+        0.010427528675703845,
+        -0.014656724093597306,
+        -0.007563901930099037,
+        -0.014668039114771103
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "calculations/load/paint",
+      "role": "month",
+      "median": 483.9,
+      "delta": -0.2012812564579458,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.21264838313548917,
+        -0.19434628975265011,
+        -0.2092588748183517,
+        -0.20815406678959236,
+        -0.18795430944963654
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/first",
+      "role": "today",
+      "median": 248.1
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/first",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/first",
+      "role": "week",
+      "median": 240.8,
+      "delta": 0.022425249169435224,
+      "repeats": [
+        0.03748981255093731,
+        0.012751953928424431,
+        0.011212624584717501,
+        0.03790459965928439,
+        -0.01043405676126874
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/first",
+      "role": "month",
+      "median": 295.8,
+      "delta": -0.15043948613928326,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.15037852718513423,
+        -0.1604036186499651,
+        -0.14085470085470086,
+        -0.16046511627906979,
+        -0.15156507413509057
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/type",
+      "role": "today",
+      "median": 396.7
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/type",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/type",
+      "role": "week",
+      "median": 363.2,
+      "delta": 0.020925110132158586,
+      "verdict": "down",
+      "counterKind": "heap",
+      "repeats": [
+        0.027630477253697938,
+        -0.008495478213208951,
+        0.021781625244345015,
+        0.1169510181618052,
+        0.04956117707795582
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/answer/type",
+      "role": "month",
+      "median": 482.9,
+      "delta": -0.17229240008283286,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.214330089045351,
+        -0.18032111980238785,
+        -0.13607727845443096,
+        -0.15878661087866108,
+        -0.19238725693007863
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/load/paint",
+      "role": "today",
+      "median": 1559.4
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/load/paint",
+      "role": "week",
+      "median": 1569.4,
+      "delta": -0.006371861858034955,
+      "repeats": [
+        0.0024402774210119382,
+        -0.009967621103421864,
+        -0.00643476044852187,
+        -0.010875095395573742,
+        0.001093036713174289
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "complexLogic/load/paint",
+      "role": "month",
+      "median": 2136.5,
+      "delta": -0.27011467353147667,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.26773830724529013,
+        -0.27124030283204037,
+        -0.27423355956002815,
+        -0.27063877474785203,
+        -0.2730715287517531
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "expressions/load/paint",
+      "role": "today",
+      "median": 7161.8
+    },
+    {
+      "suite": "react",
+      "id": "expressions/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "expressions/load/paint",
+      "role": "week",
+      "median": 7426.8,
+      "delta": 0.014649647223568651,
+      "repeats": [
+        0.04010163202753203,
+        -0.008689307508622957,
+        0.044906929684673136,
+        0.028007039275336654,
+        0.20312300712424625
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "expressions/load/paint",
+      "role": "month",
+      "median": 8273.1,
+      "delta": -0.16369921794732323,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.21528831859791886,
+        -0.23311212950839177,
+        -0.2440122377622378,
+        -0.23168244799876536,
+        -0.129467793209317
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "large/load/paint",
+      "role": "today",
+      "median": 571.6
+    },
+    {
+      "suite": "react",
+      "id": "large/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "large/load/paint",
+      "role": "week",
+      "median": 607.5,
+      "delta": -0.05843621399176957,
+      "repeats": [
+        -0.03933054393305435,
+        -0.07477861593965218,
+        -0.0509732761464865,
+        -0.06667775191220493,
+        -0.06839967506092615
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "large/load/paint",
+      "role": "month",
+      "median": 719.1,
+      "delta": -0.2056737588652482,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.2080490182425846,
+        -0.19283515253288563,
+        -0.18281510272071066,
+        -0.2076570952975446,
+        -0.22008043267230626
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/load/paint",
+      "role": "today",
+      "median": 475.85
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/load/paint",
+      "role": "week",
+      "median": 483.9,
+      "delta": -0.01756561272990287,
+      "repeats": [
+        -0.0327568667344863,
+        0.009712750568299233,
+        -0.013223140495867702,
+        -0.011969760604787827,
+        -0.021048287247214303
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/load/paint",
+      "role": "month",
+      "median": 524.1,
+      "delta": -0.09120396870826175,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.09750047700820463,
+        -0.07155356795644552,
+        -0.07553046525209284,
+        -0.09798758698514198,
+        -0.11592021076401948
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/locale",
+      "role": "today",
+      "median": 98.94999999999999
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/locale",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/locale",
+      "role": "week",
+      "median": 97.8,
+      "delta": 0.00920245398773023,
+      "repeats": [
+        0.027607361963190247,
+        -0.02249488752556239,
+        0.022517911975435068,
+        0.06290672451193058,
+        -0.014970059880239472
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/locale",
+      "role": "month",
+      "median": 119.5,
+      "delta": -0.16234309623430965,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.1652892561983471,
+        -0.11317567567567577,
+        -0.17294520547945214,
+        -0.19202603742880398,
+        -0.15261382799325462
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/next10",
+      "role": "today",
+      "median": 368.75
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/next10",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/next10",
+      "role": "week",
+      "median": 374,
+      "delta": -0.011229946524064172,
+      "repeats": [
+        -0.04182319058352113,
+        -0.03469775006776887,
+        -0.036363636363636376,
+        0.015109121432568706,
+        -0.03494132985658405
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/next10",
+      "role": "month",
+      "median": 391,
+      "delta": -0.08081841432225068,
+      "repeats": [
+        -0.04686677198525546,
+        -0.13320322029763354,
+        -0.07182182182182195,
+        -0.02577453788076034,
+        -0.06430617026815943
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/preview",
+      "role": "today",
+      "median": 4585.950000000001
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/preview",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/preview",
+      "role": "week",
+      "median": 6084.4,
+      "delta": -0.2443626323055682,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.2475977296346631,
+        -0.2398593123397541,
+        -0.2517295649037673,
+        -0.25100487612018973,
+        -0.23826744745442185
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "manyPages/pages/preview",
+      "role": "month",
+      "median": 7496.6,
+      "delta": -0.39072379478697017,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.3916335415483626,
+        -0.3999816912091648,
+        -0.3907355350981202,
+        -0.3853322528363047,
+        -0.38171179896777274
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/load/paint",
+      "role": "today",
+      "median": 1292.0500000000002
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/load/paint",
+      "role": "week",
+      "median": 1776.2,
+      "delta": -0.2714221371467178,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.27199421643866095,
+        -0.27169234254644303,
+        -0.26520901778633743,
+        -0.27669493905521536,
+        -0.2740416946872898
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/load/paint",
+      "role": "month",
+      "median": 1397.8,
+      "delta": -0.07890971526684787,
+      "repeats": [
+        -0.06317663817663821,
+        -0.07639885222381637,
+        -0.08513378165688945,
+        -0.0933910083676075,
+        -0.08075736928924904
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/add-row@orders",
+      "role": "today",
+      "median": 293.1
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/add-row@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/add-row@orders",
+      "role": "week",
+      "median": 303,
+      "delta": -0.020132013201320187,
+      "repeats": [
+        -0.0006727211570803915,
+        0.006569847856155109,
+        -0.02394227615611666,
+        -0.0302734375,
+        0.015187310158623069
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/add-row@orders",
+      "role": "month",
+      "median": 212.4,
+      "delta": 0.3705273069679851,
+      "verdict": "up",
+      "counterKind": "leak",
+      "rerun": "confirmed",
+      "repeats": [
+        0.3390909090909091,
+        0.35837610825944943,
+        0.35378031383737496,
+        0.37761904761904774,
+        0.3977979894686452
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "today",
+      "median": 563.05
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "week",
+      "median": 563.4,
+      "delta": 0.004437344692935774,
+      "repeats": [
+        0.005324813631522929,
+        -0.0032275416890802378,
+        -0.006495786516854007,
+        -0.006066012488849193,
+        -0.017838586768271436
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "month",
+      "median": 446.1,
+      "delta": 0.26047971306881856,
+      "verdict": "up",
+      "counterKind": "heap",
+      "rerun": "confirmed",
+      "repeats": [
+        0.2415669205658324,
+        0.23026025584472865,
+        0.2713864306784659,
+        0.2620116748989674,
+        0.28289621161174616
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "today",
+      "median": 481.75
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "week",
+      "median": 484.4,
+      "delta": -0.005161023947151122,
+      "repeats": [
+        -0.04147088866189996,
+        -0.014244426094137008,
+        0.0035262393694253102,
+        -0.0010358400662937584,
+        -0.016467682173734066
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "month",
+      "median": 486,
+      "delta": -0.011316872427983515,
+      "verdict": "down",
+      "counterKind": "leak",
+      "repeats": [
+        -0.020734962020119152,
+        -0.01897810218978102,
+        -0.013261500207211063,
+        0.013575605680868907,
+        -0.012129934210526216
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/last@orders",
+      "role": "today",
+      "median": 315.65
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/last@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/last@orders",
+      "role": "week",
+      "median": 311.7,
+      "delta": 0.01187038819377606,
+      "repeats": [
+        0.03507632348165002,
+        -0.004084197298146464,
+        -0.014887551472917315,
+        -0.006778566817301601,
+        0.02662337662337655
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/last@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: No element for [data-name=\"orders\"] .sd-pager button[title=\"Last\"]"
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/next@orders",
+      "role": "today",
+      "median": 238.8
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/next@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/next@orders",
+      "role": "week",
+      "median": 235.2,
+      "delta": 0.015306122448979664,
+      "repeats": [
+        0.036206896551724155,
+        -0.006347862886161626,
+        -0.0072867552507501765,
+        0.02360876897133224,
+        -0.003754693366708306
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/next@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: No element for [data-name=\"orders\"] .sd-pager button[title=\"Next\"]"
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "today",
+      "median": 404.1
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "week",
+      "median": 397.4,
+      "delta": 0.00452944136889788,
+      "repeats": [
+        -0.0009995002498750516,
+        0.02031602708803626,
+        -0.005490391814324869,
+        -0.004529441368897769,
+        0.004788306451612767
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "month",
+      "median": 729.1,
+      "delta": -0.44493210807845296,
+      "verdict": "down",
+      "counterKind": "leak",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.43931837073981705,
+        -0.44643835616438354,
+        -0.44738647276718335,
+        -0.44250918492311875,
+        -0.443590447433434
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/load/paint",
+      "role": "today",
+      "median": 1372.65
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/load/paint",
+      "role": "week",
+      "median": 1441.8,
+      "delta": -0.04466638923567756,
+      "repeats": [
+        -0.04861886160714268,
+        -0.04881421558459509,
+        -0.02611388752023658,
+        -0.05382668764106413,
+        -0.04848150953791053
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/load/paint",
+      "role": "month",
+      "median": 1548,
+      "delta": -0.11834625322997416,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.07344595916769936,
+        -0.12757492138869275,
+        -0.12709524115342619,
+        -0.11674828599412335,
+        -0.11067885625364715
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "today",
+      "median": 49.2
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "week",
+      "median": 48.3,
+      "delta": 0.01449275362318847,
+      "repeats": [
+        -0.06759443339960236,
+        0.04033970276008492,
+        0.02898550724637694,
+        0.01263157894736855,
+        0.040000000000000036
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: No element for [data-name=\"ordersPanel\"] .sd-pager button[title=\"Next\"]"
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "today",
+      "median": 48.45
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "week",
+      "median": 47.7,
+      "delta": -0.004192872117400492,
+      "repeats": [
+        0.010204081632652962,
+        -0.004073319755600879,
+        0.025423728813559254,
+        0.023354564755838636,
+        0.02178649237472774
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: No element for [data-name=\"panelsPaged\"] .sd-pager button[title=\"Next\"]"
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "today",
+      "median": 109.25
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "week",
+      "median": 106.4,
+      "delta": 0.017387218045112673,
+      "repeats": [
+        0.04694835680751175,
+        -0.008874357776739838,
+        0.034383954154727725,
+        0.016136687233032854,
+        -0.008574007220216617
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "month",
+      "median": 480.5,
+      "delta": -0.7695109261186264,
+      "verdict": "down",
+      "counterKind": "leak",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7668640304504124,
+        -0.7640998959417273,
+        -0.7729067109910659,
+        -0.776876689540445,
+        -0.7646066230753006
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "today",
+      "median": 51.150000000000006
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "week",
+      "median": 51,
+      "delta": 0.00588235294117645,
+      "repeats": [
+        -0.06082289803220031,
+        -0.03838771593090207,
+        0.07201646090534974,
+        0.007936507936507908,
+        -0.006172839506172978
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "month",
+      "median": 172.7,
+      "delta": -0.704111175448755,
+      "verdict": "down",
+      "counterKind": "leak",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7011627906976745,
+        -0.713375796178344,
+        -0.7038750722961249,
+        -0.7188591385331782,
+        -0.7000579038795599
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "today",
+      "median": 88.1
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "week",
+      "median": 86.5,
+      "delta": 0.015028901734104094,
+      "repeats": [
+        0.011641443538998875,
+        0.024165707710011475,
+        0.03019744483159137,
+        0.015028901734104094,
+        -0.010321100917431214
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "month",
+      "median": 436.3,
+      "delta": -0.7969287187714875,
+      "verdict": "down",
+      "counterKind": "leak",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7964058234758872,
+        -0.7942649066909422,
+        -0.7983039193215677,
+        -0.7876696572348746,
+        -0.7982093663911846
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "today",
+      "median": 43.45
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "week",
+      "median": 43.6,
+      "delta": 0.002293577981651307,
+      "repeats": [
+        0.35046728971962615,
+        -0.013761467889908285,
+        0,
+        -0.02733485193621854,
+        0.002293577981651307
+      ]
+    },
+    {
+      "suite": "react",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "month",
+      "median": 160,
+      "delta": -0.733125,
+      "verdict": "down",
+      "counterKind": "leak",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7353673723536738,
+        -0.7404963870562362,
+        -0.7367119901112484,
+        -0.7304212168486739,
+        -0.7252396166134185
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "calculations/load/paint",
+      "role": "today",
+      "median": 403.70000000000005
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "calculations/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "calculations/load/paint",
+      "role": "week",
+      "median": 402.8,
+      "delta": -0.002234359483614834,
+      "repeats": [
+        0.005413385826771755,
+        -0.008840864440078477,
+        -0.0057100297914598475,
+        0.012891809908998964,
+        -0.011831402514173028
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "calculations/load/paint",
+      "role": "month",
+      "median": 504.8,
+      "delta": -0.19413629160063395,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.19581523884721685,
+        -0.19530332681017615,
+        -0.17130278166900137,
+        -0.20130900436334787,
+        -0.2027511961722489
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/first",
+      "role": "today",
+      "median": 234.4
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/first",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/first",
+      "role": "week",
+      "median": 226.7,
+      "delta": 0.02602558447287162,
+      "repeats": [
+        0.03539823008849563,
+        0.03489399293286222,
+        0.04631671812968685,
+        0.0008710801393729817,
+        -0.014423076923076983
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/first",
+      "role": "month",
+      "median": 280.7,
+      "delta": -0.1603135019593872,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.1636102121539016,
+        -0.13562386980108498,
+        -0.14631541473834098,
+        -0.16613418530351431,
+        -0.16672604203776265
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/type",
+      "role": "today",
+      "median": 472.6
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/type",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/type",
+      "role": "week",
+      "median": 456.5,
+      "delta": 0.033734939759036076,
+      "repeats": [
+        0.0474194971327746,
+        0.0230162209557212,
+        0.022562979189485244,
+        0.00692340977931627,
+        0.0423673291111597
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/answer/type",
+      "role": "month",
+      "median": 563.8,
+      "delta": -0.16051791415395522,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.16530684639943227,
+        -0.16201217329036877,
+        -0.17730372442734743,
+        -0.16258042079638324,
+        -0.14293419633225468
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/load/paint",
+      "role": "today",
+      "median": 1566.35
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/load/paint",
+      "role": "week",
+      "median": 1571.6,
+      "delta": -0.0038813947569354967,
+      "repeats": [
+        0.08244782998335687,
+        0.0019199999999999218,
+        -0.0033906979719787733,
+        -0.01270061923417154,
+        -0.0072257083095645935
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "complexLogic/load/paint",
+      "role": "month",
+      "median": 2232.2,
+      "delta": -0.29710599408655136,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.3009830205540661,
+        -0.30121341898643816,
+        -0.2856495947108636,
+        -0.2868318712128064,
+        -0.2987082644258705
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "expressions/load/paint",
+      "role": "today",
+      "median": 6130.4
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "expressions/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "expressions/load/paint",
+      "role": "week",
+      "median": 6083.6,
+      "delta": 0.023522256558616617,
+      "repeats": [
+        0.0103686056071004,
+        0.050252667040988186,
+        0.011048565299440316,
+        0.019438126871410555,
+        0.0219771188112301
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "expressions/load/paint",
+      "role": "month",
+      "median": 7985.7,
+      "delta": -0.2347821731344778,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.21885115836242464,
+        -0.2258708227032762,
+        -0.23394030411113198,
+        -0.23804470050158555,
+        -0.28180932233605105
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "large/load/paint",
+      "role": "today",
+      "median": 539.6500000000001
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "large/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "large/load/paint",
+      "role": "week",
+      "median": 578.9,
+      "delta": -0.07376058041112443,
+      "repeats": [
+        -0.05441332860687709,
+        -0.16382412767954946,
+        -0.07545875493054366,
+        -0.08669732583886902,
+        -0.05938530994964397
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "large/load/paint",
+      "role": "month",
+      "median": 681.6,
+      "delta": -0.19997065727699537,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.1964521331183111,
+        -0.21101051401869164,
+        -0.22337019790454016,
+        -0.186215056944239,
+        -0.19500965394326442
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/load/paint",
+      "role": "today",
+      "median": 854.85
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/load/paint",
+      "role": "week",
+      "median": 878.8,
+      "delta": -0.026968593536640828,
+      "repeats": [
+        -0.024698383792397083,
+        -0.02648028185021023,
+        -0.03236392440873603,
+        -0.02654060826973459,
+        -0.028535266367506695
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/load/paint",
+      "role": "month",
+      "median": 937.6,
+      "delta": -0.0885238907849829,
+      "repeats": [
+        -0.10339686934298797,
+        -0.09053323438990779,
+        -0.08805570433851106,
+        -0.0889505119453925,
+        -0.07346326836581696
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/locale",
+      "role": "today",
+      "median": 60.7
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/locale",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/locale",
+      "role": "week",
+      "median": 64.7,
+      "delta": -0.018547140649149974,
+      "repeats": [
+        -0.02941176470588225,
+        -0.004497751124437732,
+        0.029185867895545448,
+        0.009389671361502261,
+        0.03253424657534243
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/locale",
+      "role": "month",
+      "median": 74.8,
+      "delta": -0.21791443850267378,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.18503401360544225,
+        -0.1986301369863014,
+        -0.2552356020942409,
+        -0.186013986013986,
+        -0.21578947368421053
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/next10",
+      "role": "today",
+      "median": 284.4
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/next10",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/next10",
+      "role": "week",
+      "median": 281.9,
+      "delta": 0.02483150053210359,
+      "repeats": [
+        0.02821083890126208,
+        0.08260105448154653,
+        0.04698433855381534,
+        -0.008667388949079036,
+        -0.029390681003584218
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "manyPages/pages/next10",
+      "role": "month",
+      "median": 300.9,
+      "delta": -0.05516782984380186,
+      "repeats": [
+        -0.05631399317406138,
+        -0.06363325350667126,
+        -0.04634146341463419,
+        -0.057048092868988376,
+        -0.05841708542713553
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/load/paint",
+      "role": "today",
+      "median": 1309.35
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/load/paint",
+      "role": "week",
+      "median": 1797.9,
+      "delta": -0.27476500361532896,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.28128324281955086,
+        -0.2731478900719103,
+        -0.27943800178412126,
+        -0.27971796849179253,
+        -0.27522374784590586
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/load/paint",
+      "role": "month",
+      "median": 1440.5,
+      "delta": -0.08267962513016303,
+      "repeats": [
+        -0.09207962138084624,
+        -0.08281358281358286,
+        -0.0801442041042707,
+        -0.0786595136905176,
+        -0.08114111195946416
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/add-row@orders",
+      "role": "today",
+      "median": 285.2
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/add-row@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/add-row@orders",
+      "role": "week",
+      "median": 290.7,
+      "delta": -0.01238390092879249,
+      "repeats": [
+        -0.008925506350841106,
+        -0.02098383212934285,
+        0.005142269454919468,
+        -0.017696044413601508,
+        0.01661474558670828
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/add-row@orders",
+      "role": "month",
+      "median": 202.6,
+      "delta": 0.40029615004935826,
+      "verdict": "up",
+      "counterKind": "leak",
+      "rerun": "confirmed",
+      "repeats": [
+        0.4467131474103585,
+        0.3687068114511354,
+        0.34431709646609354,
+        0.3989071038251366,
+        0.4229816740960872
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "today",
+      "median": 300.65
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "week",
+      "median": 309.2,
+      "delta": -0.02587322121604141,
+      "repeats": [
+        0.0065402223675605775,
+        -0.024975984630163373,
+        -0.06465651227852043,
+        -0.029430789133246926,
+        0.017572944297082005
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "month",
+      "median": 251.1,
+      "delta": 0.19155714854639583,
+      "verdict": "up",
+      "counterKind": "heap",
+      "rerun": "confirmed",
+      "repeats": [
+        0.2180786380218891,
+        0.14854639585822382,
+        0.18968909878000795,
+        0.16244057052297922,
+        0.2512274959083469
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "today",
+      "median": 491.8
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "week",
+      "median": 496.8,
+      "delta": -0.01912238325281801,
+      "repeats": [
+        -0.004974134500596916,
+        -0.00448979591836729,
+        -0.013431013431013383,
+        -0.022934848792368623,
+        -0.023354137306221046
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/filter-set@orders",
+      "role": "month",
+      "median": 505.9,
+      "delta": -0.021150424985174943,
+      "verdict": "down",
+      "counterKind": "leak",
+      "repeats": [
+        -0.0216110019646365,
+        -0.006181455633100796,
+        -0.03571428571428581,
+        0.0036652412950517466,
+        -0.014489876935291801
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/last@orders",
+      "role": "today",
+      "median": 235.14999999999998
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/last@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/last@orders",
+      "role": "week",
+      "median": 236.1,
+      "delta": -0.004235493434985194,
+      "repeats": [
+        -0.041078838174273935,
+        0.02770562770562779,
+        0.007224819379515468,
+        -0.022509378907878297,
+        -0.009700548291859956
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/last@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: No element for [data-name=\"orders\"] .sd-pager button[title=\"Last\"]"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/next@orders",
+      "role": "today",
+      "median": 240
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/next@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/next@orders",
+      "role": "week",
+      "median": 237.6,
+      "delta": 0.004208754208754106,
+      "repeats": [
+        -0.05136702568351281,
+        -0.009068425391591028,
+        -0.019039735099337762,
+        0.020701309674693746,
+        0.026236559139784843
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/next@orders",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: No element for [data-name=\"orders\"] .sd-pager button[title=\"Next\"]"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "today",
+      "median": 344.54999999999995
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "week",
+      "median": 345.1,
+      "delta": -0.0031874818893075085,
+      "verdict": "down",
+      "counterKind": "leak",
+      "repeats": [
+        0.0026200873362445254,
+        -0.01524741081703107,
+        0.001447596988998212,
+        0.0011641443538998875,
+        -0.005795421616922591
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "month",
+      "median": 613.5,
+      "delta": -0.4352078239608802,
+      "verdict": "down",
+      "counterKind": "leak",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.4399155569990256,
+        -0.4251584592881521,
+        -0.4295028524857376,
+        -0.4446443172526574,
+        -0.4339156229400132
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/load/paint",
+      "role": "today",
+      "median": 1116.65
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/load/paint",
+      "role": "week",
+      "median": 1176.2,
+      "delta": -0.04497534432919581,
+      "repeats": [
+        -0.024475219928577596,
+        -0.04167024658475815,
+        -0.032848912202253056,
+        -0.05237204557048136,
+        -0.051829523570292135
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/load/paint",
+      "role": "month",
+      "median": 1288,
+      "delta": -0.1378105590062112,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.1333025475255908,
+        -0.1609020265122656,
+        -0.10004775549188161,
+        -0.13467138921684374,
+        -0.13636717230649553
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "today",
+      "median": 51.150000000000006
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "week",
+      "median": 51.9,
+      "delta": -0.015414258188824581,
+      "repeats": [
+        -0.057034220532319435,
+        -0.024809160305343414,
+        -0.01348747591522148,
+        0.026156941649899235,
+        0.029013539651837617
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-1k/records/next@ordersPanel",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: No element for [data-name=\"ordersPanel\"] .sd-pager button[title=\"Next\"]"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "today",
+      "median": 46.1
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "week",
+      "median": 44.4,
+      "delta": 0.03828828828828845,
+      "repeats": [
+        0.03828828828828845,
+        0.022172949002217335,
+        0.07441860465116279,
+        0.059633027522935755,
+        -0.0066225165562913135
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/next@panelsPaged",
+      "role": "month",
+      "mark": "n/a",
+      "reason": "Error: page.evaluate: Error: No element for [data-name=\"panelsPaged\"] .sd-pager button[title=\"Next\"]"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "today",
+      "median": 99
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "week",
+      "median": 97.4,
+      "delta": 0.03696098562628336,
+      "repeats": [
+        0.047280122013218184,
+        0.04771784232365128,
+        -0.0024838549428712886,
+        0.05741127348643005,
+        0.0050761421319796
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panels30",
+      "role": "month",
+      "median": 502.2,
+      "delta": -0.8052568697729988,
+      "verdict": "down",
+      "counterKind": "leak",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.8069267515923567,
+        -0.8038823293976386,
+        -0.8110590074247753,
+        -0.8031543222200039,
+        -0.8058542413381123
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "today",
+      "median": 46.2
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "week",
+      "median": 45.1,
+      "delta": 0.022172949002217335,
+      "repeats": [
+        0.11136363636363633,
+        0.035010940919037115,
+        0.028761061946902533,
+        -0.004444444444444473,
+        -0.019565217391304346
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-1@panelsPaged",
+      "role": "month",
+      "median": 172.7,
+      "delta": -0.7319050376375218,
+      "verdict": "down",
+      "counterKind": "leak",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7128270580727505,
+        -0.7300177619893429,
+        -0.7108433734939759,
+        -0.7383073496659243,
+        -0.7329873125720876
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "today",
+      "median": 93.2
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "week",
+      "median": 90.8,
+      "delta": 0.020925110132158586,
+      "repeats": [
+        0.022026431718061623,
+        0.030000000000000027,
+        0.018358531317494542,
+        0.04189636163175292,
+        -0.02777777777777768
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "month",
+      "median": 460.9,
+      "delta": -0.7967021045779996,
+      "verdict": "down",
+      "counterKind": "leak",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7983556901774124,
+        -0.7927194860813704,
+        -0.7989247311827957,
+        -0.796421557931486,
+        -0.7881244522348817
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "today",
+      "median": 46.8
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "week",
+      "median": 46.8,
+      "delta": -0.002136752136752018,
+      "repeats": [
+        0.023504273504273643,
+        0.0021459227467810482,
+        0.015350877192982448,
+        0.0021645021645020357,
+        0
+      ]
+    },
+    {
+      "suite": "survey-js-ui",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "month",
+      "median": 175.9,
+      "delta": -0.7316657191586129,
+      "verdict": "down",
+      "counterKind": "leak",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7255787690570299,
+        -0.7323943661971831,
+        -0.7324106113033448,
+        -0.7345998848589521,
+        -0.7212925562608195
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "calculations/load/paint",
+      "role": "today",
+      "median": 857.55
+    },
+    {
+      "suite": "vue3",
+      "id": "calculations/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "vue3",
+      "id": "calculations/load/paint",
+      "role": "week",
+      "median": 860.9,
+      "delta": 0.002903937739574758,
+      "repeats": [
+        0.01216943599344722,
+        0.008127249506559853,
+        0.0019887693027609288,
+        0.0009292600766639403,
+        0.005803830528148479
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "calculations/load/paint",
+      "role": "month",
+      "median": 1019,
+      "delta": -0.16054955839057905,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.15630922693266835,
+        -0.16725594185818116,
+        -0.16470930796855277,
+        -0.16122388937922927,
+        -0.15422396856581533
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/answer/type",
+      "role": "today",
+      "median": 408.15
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/answer/type",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/answer/type",
+      "role": "week",
+      "median": 395.7,
+      "delta": 0.03411675511751322,
+      "repeats": [
+        0.05407463823305414,
+        0.03458646616541361,
+        0.0701935483870968,
+        0.002589331952356222,
+        0.0027638190954775155
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/answer/type",
+      "role": "month",
+      "median": 481.2,
+      "delta": -0.1591853699085619,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.14234949832775912,
+        -0.13782318598832366,
+        -0.1369439868204283,
+        -0.1756840156346431,
+        -0.18916091232475407
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/load/paint",
+      "role": "today",
+      "median": 1567.6
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/load/paint",
+      "role": "week",
+      "median": 1573,
+      "delta": -0.003877940241576505,
+      "repeats": [
+        -0.009465513977409024,
+        -0.003168768616515605,
+        -0.0222867605278112,
+        0.006179594464113203,
+        0.0009535918626828455
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "complexLogic/load/paint",
+      "role": "month",
+      "median": 2232.1,
+      "delta": -0.29756731329241515,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.2996562952243126,
+        -0.29659730284897745,
+        -0.30038820222212304,
+        -0.2963046013095346,
+        -0.29676089780923787
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "expressions/load/paint",
+      "role": "today",
+      "median": 6101.6
+    },
+    {
+      "suite": "vue3",
+      "id": "expressions/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "vue3",
+      "id": "expressions/load/paint",
+      "role": "week",
+      "median": 6026.9,
+      "delta": 0.013622260200103042,
+      "repeats": [
+        0.015060640201471243,
+        0.02365508709752917,
+        0.012408867238286492,
+        -0.003558777766742849,
+        0.018937813892179634
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "expressions/load/paint",
+      "role": "month",
+      "median": 8029.1,
+      "delta": -0.2421940192549601,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.23870476285621522,
+        -0.2367931012935074,
+        -0.24108187498444145,
+        -0.24742689406606466,
+        -0.24416778824585006
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "large/load/paint",
+      "role": "today",
+      "median": 582.95
+    },
+    {
+      "suite": "vue3",
+      "id": "large/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "vue3",
+      "id": "large/load/paint",
+      "role": "week",
+      "median": 622.2,
+      "delta": -0.05609128897460636,
+      "repeats": [
+        -0.05964118312590927,
+        -0.043927648578811485,
+        -0.07253061873707656,
+        -0.039297124600639055,
+        -0.053519768563163095
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "large/load/paint",
+      "role": "month",
+      "median": 723.2,
+      "delta": -0.2021570796460177,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.2166938553561718,
+        -0.20041666666666658,
+        -0.18304323413812462,
+        -0.20911928348486908,
+        -0.19726180497345625
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/load/paint",
+      "role": "today",
+      "median": 468.20000000000005
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/load/paint",
+      "role": "week",
+      "median": 486.6,
+      "delta": -0.046239210850801515,
+      "repeats": [
+        -0.04337152209492634,
+        -0.04198552223371255,
+        -0.0598974358974359,
+        -0.04391339869281041,
+        -0.034055727554179516
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/load/paint",
+      "role": "month",
+      "median": 513.3,
+      "delta": -0.07890122735242533,
+      "repeats": [
+        -0.06226892391515859,
+        -0.09229305423406275,
+        -0.10505394662123779,
+        -0.07562364957768608,
+        -0.0629217943628424
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/pages/next10",
+      "role": "today",
+      "median": 298.15
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/pages/next10",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/pages/next10",
+      "role": "week",
+      "median": 315.4,
+      "delta": -0.024730500951173018,
+      "repeats": [
+        -0.08502611723737674,
+        -0.06844336765596593,
+        -0.05519580635214316,
+        0.08204067562909323,
+        -0.014871116986120314
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "manyPages/pages/next10",
+      "role": "month",
+      "median": 318.5,
+      "delta": -0.09387755102040807,
+      "repeats": [
+        -0.13013910355486868,
+        -0.08206106870228991,
+        -0.03810138844042621,
+        -0.09569230769230774,
+        -0.08811143505021057
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/load/paint",
+      "role": "today",
+      "median": 1371.25
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/load/paint",
+      "role": "week",
+      "median": 1847.9,
+      "delta": -0.2593755073326479,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.27746509362485117,
+        -0.25494577361164106,
+        -0.2525863007731678,
+        -0.2483037156704362,
+        -0.26918780915908724
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/load/paint",
+      "role": "month",
+      "median": 1474.8,
+      "delta": -0.07017900732302684,
+      "repeats": [
+        -0.06851253031527893,
+        -0.07296984548362928,
+        -0.0683470344452749,
+        -0.08409837164109091,
+        -0.06976585897086851
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "today",
+      "median": 314.25
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "week",
+      "median": 313.8,
+      "delta": 0.007010834926704845,
+      "repeats": [
+        -0.006371455877668075,
+        0.013439999999999896,
+        0.1972594008922881,
+        -0.016588419405320853,
+        0.016731016731016624
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "month",
+      "median": 204.2,
+      "delta": 0.526934378060725,
+      "verdict": "up",
+      "rerun": "confirmed",
+      "repeats": [
+        0.5947973986993498,
+        0.5286063569682153,
+        0.5581167238842568,
+        0.4987775061124695,
+        0.50561797752809
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "today",
+      "median": 297.5
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "week",
+      "median": 289,
+      "delta": 0.0269896193771626,
+      "repeats": [
+        0.0378947368421052,
+        0.03234782608695652,
+        0.014334470989761039,
+        -0.0013670539986330166,
+        0.03210217466344489
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "month",
+      "median": 607.7,
+      "delta": -0.5102846799407603,
+      "verdict": "down",
+      "counterKind": "leak",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5079391333112802,
+        -0.5126146788990826,
+        -0.5114839550415378,
+        -0.5142017629774731,
+        -0.5024933510638299
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-1k/load/paint",
+      "role": "today",
+      "median": 1079.55
+    },
+    {
+      "suite": "vue3",
+      "id": "records-1k/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "vue3",
+      "id": "records-1k/load/paint",
+      "role": "week",
+      "median": 1130.7,
+      "delta": -0.045016361545945016,
+      "repeats": [
+        -0.051384098346157314,
+        -0.043559427504667125,
+        -0.05330527792389972,
+        -0.042623809939732915,
+        -0.03011994669035989
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-1k/load/paint",
+      "role": "month",
+      "median": 1207.8,
+      "delta": -0.10647458188441783,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.10605934668772332,
+        -0.1106971352872993,
+        -0.09219151937598535,
+        -0.10143392537070228,
+        -0.11129485695386154
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "today",
+      "median": 138.5
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "week",
+      "median": 136.1,
+      "delta": 0.040411462160176326,
+      "repeats": [
+        0.08769288671433961,
+        0.052246985750822095,
+        0.02958801498127328,
+        0.05684754521963842,
+        -0.009148486980999126
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "month",
+      "median": 689.4,
+      "delta": -0.8018566869741804,
+      "verdict": "down",
+      "counterKind": "leak",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7941867293012331,
+        -0.8048954034438595,
+        -0.7982572736671097,
+        -0.7973574821852731,
+        -0.8031638254839641
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "today",
+      "median": 50
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "week",
+      "median": 49,
+      "delta": 0.012244897959183598,
+      "repeats": [
+        -0.022403258655804503,
+        0.020964360587002018,
+        0.014432989690721598,
+        0.049792531120331995,
+        -0.009960159362549792
+      ]
+    },
+    {
+      "suite": "vue3",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "month",
+      "median": 206.1,
+      "delta": -0.7540029112081513,
+      "verdict": "down",
+      "counterKind": "leak",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7514423076923077,
+        -0.7528592739930382,
+        -0.752970297029703,
+        -0.7472208796520059,
+        -0.7576481835564053
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "calculations/load/paint",
+      "role": "today",
+      "median": 489.9
+    },
+    {
+      "suite": "angular",
+      "id": "calculations/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "angular",
+      "id": "calculations/load/paint",
+      "role": "week",
+      "median": 505.9,
+      "delta": -0.034492982802925454,
+      "repeats": [
+        -0.029266850610957795,
+        -0.032020684168655555,
+        -0.022650506656070046,
+        -0.04506269592476486,
+        -0.03139372125574891
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "calculations/load/paint",
+      "role": "month",
+      "median": 597.3,
+      "delta": -0.17863720073664813,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.1671131949095781,
+        -0.18142259414225936,
+        -0.16832511079521706,
+        -0.17197345207090642,
+        -0.17564482029598316
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/answer/type",
+      "role": "today",
+      "median": 609.7
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/answer/type",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/answer/type",
+      "role": "week",
+      "median": 598.4,
+      "delta": 0.015875668449197855,
+      "repeats": [
+        0.04917757636790876,
+        0.018716577540107027,
+        0.013536096256684615,
+        0.0038180610889775313,
+        0.013166666666666549
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/answer/type",
+      "role": "month",
+      "median": 730.7,
+      "delta": -0.1642260845764335,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.1642260845764335,
+        -0.1698087243704418,
+        -0.16064035329837145,
+        -0.16471549142390418,
+        -0.18194235760142063
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/load/paint",
+      "role": "today",
+      "median": 1598.4
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/load/paint",
+      "role": "week",
+      "median": 1587.4,
+      "delta": 0.009071437570870478,
+      "repeats": [
+        0.015691958658936356,
+        0.005585890918220038,
+        0.0032859399684044277,
+        0.011812267070936855,
+        0.003626586631651385
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "complexLogic/load/paint",
+      "role": "month",
+      "median": 2251.7,
+      "delta": -0.29102455922192116,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.2927520822257663,
+        -0.28665275866660755,
+        -0.2885145346253001,
+        -0.2893952205064305,
+        -0.29600248182946287
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "expressions/load/paint",
+      "role": "today",
+      "median": 6449.75
+    },
+    {
+      "suite": "angular",
+      "id": "expressions/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "angular",
+      "id": "expressions/load/paint",
+      "role": "week",
+      "median": 6424.8,
+      "delta": 0.007424355621964862,
+      "repeats": [
+        0.01664660737452528,
+        0.01669545192861266,
+        -0.003978243978244089,
+        -0.0008366904245428186,
+        0.005669340394050204
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "expressions/load/paint",
+      "role": "month",
+      "median": 8415.3,
+      "delta": -0.23724644397704175,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.23696772059171045,
+        -0.23750920624361505,
+        -0.23734354012386039,
+        -0.23812204323612185,
+        -0.23190377317963773
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "large/load/paint",
+      "role": "today",
+      "median": 700.05
+    },
+    {
+      "suite": "angular",
+      "id": "large/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "angular",
+      "id": "large/load/paint",
+      "role": "week",
+      "median": 740.8,
+      "delta": -0.05399568034557234,
+      "repeats": [
+        -0.09320512820512827,
+        -0.0330792267900899,
+        -0.05794544714343863,
+        -0.08447488584474883,
+        -0.07610020311442123
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "large/load/paint",
+      "role": "month",
+      "median": 869.5,
+      "delta": -0.1957446808510639,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.1672221583726008,
+        -0.19851231985123197,
+        -0.21615201900237535,
+        -0.1951133972410568,
+        -0.2033035411245615
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/load/paint",
+      "role": "today",
+      "median": 998.8
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/load/paint",
+      "role": "week",
+      "median": 1043.4,
+      "delta": -0.04600345025876951,
+      "repeats": [
+        -0.04885584628753503,
+        -0.053997528282156204,
+        -0.0455935767539668,
+        -0.03337537595808682,
+        -0.04102122776821571
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/load/paint",
+      "role": "month",
+      "median": 1094.1,
+      "delta": -0.08427017640069456,
+      "repeats": [
+        -0.07321576955036468,
+        -0.07319788477595335,
+        -0.10775670139816551,
+        -0.09233417905038044,
+        -0.08402518018428973
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/pages/next10",
+      "role": "today",
+      "median": 351.2
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/pages/next10",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/pages/next10",
+      "role": "week",
+      "median": 364.6,
+      "delta": -0.05266044980800888,
+      "repeats": [
+        -0.04856512141280345,
+        -0.06580751302440357,
+        -0.05083814234679862,
+        -0.042786615469007194,
+        -0.06744868035190621
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "manyPages/pages/next10",
+      "role": "month",
+      "median": 415.7,
+      "delta": -0.15034880923743088,
+      "verdict": "down",
+      "counterKind": "heap",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.15740297077144227,
+        -0.16492643569055532,
+        -0.12819869543401907,
+        -0.07092377587077225,
+        -0.14965335883337327
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/load/paint",
+      "role": "today",
+      "median": 1449.7
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/load/paint",
+      "role": "week",
+      "median": 1977.7,
+      "delta": -0.26970723567780763,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.25747207406661976,
+        -0.2712967165985778,
+        -0.2689079904379227,
+        -0.2685118986824635,
+        -0.2655278718350432
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/load/paint",
+      "role": "month",
+      "median": 1618.4,
+      "delta": -0.09985170538803767,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.09738435607715834,
+        -0.09027605073364842,
+        -0.09791808241181199,
+        -0.11245939817368389,
+        -0.09971597925413678
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "today",
+      "median": 299.9
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "week",
+      "median": 372.5,
+      "delta": -0.20939597315436242,
+      "verdict": "down",
+      "counterKind": "heap",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.22034805890227582,
+        -0.22020794454812054,
+        -0.1551819184123484,
+        -0.20005465974309922,
+        -0.2249870399170555
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/edit-cell@orders",
+      "role": "month",
+      "median": 286.7,
+      "delta": 0.04952912452040459,
+      "verdict": "down",
+      "counterKind": "heap",
+      "repeats": [
+        0.07764198418404034,
+        0.05513176144244114,
+        0.04566050888811435,
+        0.059280169371912494,
+        0.06287530907806405
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "today",
+      "median": 266.1
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "week",
+      "median": 284.8,
+      "delta": -0.055828651685393416,
+      "repeats": [
+        -0.03824756606397772,
+        -0.052649930264993094,
+        -0.039264237707817395,
+        -0.07766990291262132,
+        -0.0853230337078652
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-10k/records/sort-header@orders",
+      "role": "month",
+      "median": 649.6,
+      "delta": -0.5926724137931034,
+      "verdict": "down",
+      "counterKind": "leak",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.5904410634701092,
+        -0.5908248378127896,
+        -0.591983716925004,
+        -0.5855121501076592,
+        -0.5998183744513396
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-1k/load/paint",
+      "role": "today",
+      "median": 1689.9
+    },
+    {
+      "suite": "angular",
+      "id": "records-1k/load/paint",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "angular",
+      "id": "records-1k/load/paint",
+      "role": "week",
+      "median": 1874.4,
+      "delta": -0.08882842509603073,
+      "repeats": [
+        -0.06802646085997799,
+        -0.09465891062929666,
+        -0.07693551865430237,
+        -0.11470037453183524,
+        -0.0965201660104289
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-1k/load/paint",
+      "role": "month",
+      "median": 1944.4,
+      "delta": -0.1694610162518,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.14848377461651396,
+        -0.172410251142725,
+        -0.12777692661253248,
+        -0.1765296417626545,
+        -0.15153620090836217
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "today",
+      "median": 96.05
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "week",
+      "median": 147,
+      "delta": -0.35578231292517004,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.28896672504378285,
+        -0.3595352016404648,
+        -0.3623681524328002,
+        -0.36528150134048254,
+        -0.38241042345276877
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@orders30",
+      "role": "month",
+      "median": 636.3,
+      "delta": -0.8475561841898476,
+      "verdict": "down",
+      "counterKind": "leak",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.8431803896920176,
+        -0.8508730533270411,
+        -0.8469197261978842,
+        -0.8464491362763915,
+        -0.8453690419257134
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "today",
+      "median": 77.55
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "yesterday",
+      "mark": "same",
+      "reason": "today"
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "week",
+      "median": 111.6,
+      "delta": -0.30241935483870974,
+      "verdict": "down",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.30045662100456627,
+        -0.29264972776769504,
+        -0.2907801418439716,
+        -0.29268292682926833,
+        -0.31530343007915573
+      ]
+    },
+    {
+      "suite": "angular",
+      "id": "records-plain/records/sort-header@ordersPaged",
+      "role": "month",
+      "median": 337.5,
+      "delta": -0.7722962962962963,
+      "verdict": "down",
+      "counterKind": "leak",
+      "rerun": "confirmed",
+      "repeats": [
+        -0.7746312684365781,
+        -0.7704262877442274,
+        -0.7749181791133591,
+        -0.7636146020347098,
+        -0.7725925925925926
+      ]
+    }
+  ]
+}
