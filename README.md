@@ -23,12 +23,16 @@ for both.
   one machine.
 - 5 interleaved repeats, in the order A B B A A B B A A B (A is today, B the older build).
 - The highlight rule: delta = today / build − 1 (plus: today is slower). Each repeat gives l = ln(today / build) of its
-  two medians; the change is the mean of l with its 99% t-interval. A cell is highlighted when the change is 5% or
+  two medians; the change is the mean of l with its 99% t-interval. A cell is highlighted when the change is 10% or
   more and the whole interval is past 2% and past `minDelta` (2 ms for `core`, 8 ms for the browser suites) on the
-  same side: confirmed. A change of 5% or more whose interval is not is unconfirmed and not highlighted. Why: on the
-  nights of 2026-11-17..20 the repeats of one pair were 1.5–2.4% apart (the median per suite), so the former fixed 25%
-  in every repeat left out changes of 5–20% that every repeat showed; replayed on those nights, this rule kept every
-  former highlight, and about 0.01 a night would come from the noise alone. A run of one repeat (`PERF_REPEATS=1`) has
+  same side: confirmed. A change of 10% or more whose interval is not is unconfirmed and not highlighted. Why the
+  interval: on the nights of 2026-11-17..20 the repeats of one pair were 1.5–2.4% apart (the median per suite), so the
+  former fixed 25% in every repeat left out changes that every repeat showed. Why 10%: the interval holds the noise of
+  one machine, but on another night the scenario's worker may have another CPU model (seven on 2026-11-23), and the
+  change itself depends on the CPU. Two runs of the same builds on one model put the other run's mean outside the 99%
+  interval in 1% of cells, on two models in 31%. Replayed on the runs of 2026-11-17..23 that compared the same builds,
+  7% of the highlights at 5% were not in the other run, 5% at 10% (6% for the former 25%). So a change under 10% is
+  not highlighted, even when every repeat shows it. A run of one repeat (`PERF_REPEATS=1`) has
   no interval and keeps the former rule: the delta over all samples over 25% and over `minDelta`. A scenario the
   runner marks `counterOnly` (too short or not repeatable to judge by time) shows its time without a highlight; its
   leak and heap counters decide instead.
@@ -88,7 +92,7 @@ Attachments, in this order:
    verdict in some build (the scenario's name on its first row only; today's value, then each build's value:
    `🔴 **0**` when it decided slower, `🟢 **12064**` faster, the plain value when it changed without a verdict, `=` when
    it did not change, `—` when the build has none); `Repeats 1D`, `Repeats 7D`, `Repeats 30D` for each highlighted or
-   unconfirmed cell (the pooled delta, the 99% interval as `+5%..+7%`, a column per repeat, and confirmed: 🟢 when the
+   unconfirmed cell (the pooled delta, the 99% interval as `+11%..+13%`, a column per repeat, and confirmed: 🟢 when the
    interval clears 2% and `minDelta`, 🔴 when not — then its time is not judged; a run of one repeat has no interval
    column, and confirmed means its repeat agrees); `Counters (information)`, the other differences of the counters, `work` and `render`
    among them (the medians over the repeats, with their kind); the log tails of failed columns; and the last line

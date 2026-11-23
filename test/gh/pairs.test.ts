@@ -215,8 +215,9 @@ describe("pairMatrix", () => {
     expect(Object.keys(m.rows[0].cells)).toEqual(["today", "yesterday"]);
   });
 
-  // 20.11: core expressions/answer/first +6.3% in every repeat, under the 25% of one-repeat runs. Five repeats judge by
-  // the 99% interval of the repeats (test/report.test.ts, repeatsVerdict).
+  // 20.11: core expressions/answer/first +6.3% in every repeat, under the 25% of one-repeat runs and under the 10% of the
+  // interval rule too: not highlighted. Five repeats judge by the 99% interval of the repeats (test/report.test.ts,
+  // repeatsVerdict).
   test("+12% in every repeat: the interval confirms it, highlighted", () => {
     const m = pairMatrix("core", roles, {}, [{ id: "a", pairs: [pair("yesterday", [112, 113, 111, 112, 112], [100, 100, 100, 100, 100])] }], 5);
     expect(cellOf(m, "yesterday").rerun).toBe("confirmed");

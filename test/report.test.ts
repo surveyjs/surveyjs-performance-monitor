@@ -443,31 +443,37 @@ describe("suiteMarkdown with repeats", () => {
 });
 
 // The rule of two or more repeats: l = ln(today / build) of each repeat and the 99% t-interval of their mean. A cell is
-// highlighted when the change is 5% or more and the interval clears 2% and the suite's ms, in one direction. The expected
-// values are worked out by hand (n = 5: t 0.995 with 4 degrees of freedom = 4.604).
+// highlighted when the change is 10% or more and the interval clears 2% and the suite's ms, in one direction. The
+// expected values are worked out by hand (n = 5: t 0.995 with 4 degrees of freedom = 4.604).
 describe("repeatsVerdict", () => {
   const reps = (today: number[], build = 100): Repeat[] => today.map((x: number) => ({ today: x, build: build, delta: x / build - 1 }));
-  test("+6% with the repeats about 1% apart: confirmed, the interval +4.6%..+7.5%", () => {
-    const j = repeatsVerdict(reps([106, 107, 105, 106, 106]), 100, "core");
+  test("+12% with the repeats about 1% apart: confirmed, the interval +10.6%..+13.5%", () => {
+    const j = repeatsVerdict(reps([112, 113, 111, 112, 112]), 100, "core");
     expect(j?.rerun).toBe("confirmed");
+    expect(j?.interval[0]).toBeCloseTo(0.1055, 3);
+    expect(j?.interval[1]).toBeCloseTo(0.1346, 3);
+  });
+  test("+6% with the repeats about 1% apart is under 10%: its interval (+4.6%..+7.5%), no verdict", () => {
+    const j = repeatsVerdict(reps([106, 107, 105, 106, 106]), 100, "core");
+    expect(j?.rerun).toBeUndefined();
     expect(j?.interval[0]).toBeCloseTo(0.0455, 3);
     expect(j?.interval[1]).toBeCloseTo(0.0746, 3);
   });
-  test("+7% with one repeat the other way: unconfirmed, the interval reaches below 0", () => {
-    const j = repeatsVerdict(reps([110, 111, 109, 96, 110]), 100, "core");
+  test("+11% with one repeat the other way: unconfirmed, the interval reaches below 0", () => {
+    const j = repeatsVerdict(reps([114, 115, 113, 98, 114]), 100, "core");
     expect(j?.rerun).toBe("unconfirmed");
-    expect(j?.interval[0]).toBeCloseTo(-0.0563, 3);
+    expect(j?.interval[0]).toBeCloseTo(-0.0383, 3);
   });
-  test("+6% whose interval stays past 0 but not past 2% (+0.6%..+11.7%): unconfirmed", () => {
-    // 1000 ms, so the low end (5.8 ms) clears the ms floor and only the 2% decides.
-    const j = repeatsVerdict(reps([1028.7, 1092.3, 1060, 1039, 1081.4], 1000), 1000, "core");
-    expect(j?.interval[0]).toBeCloseTo(0.0058, 3);
+  test("+11% whose interval stays past 0 but not past 2% (+1.4%..+20.5%): unconfirmed", () => {
+    // 1000 ms, so the low end (14 ms) clears the ms floor and only the 2% decides.
+    const j = repeatsVerdict(reps([1050, 1160, 1110, 1070, 1140], 1000), 1000, "core");
+    expect(j?.interval[0]).toBeCloseTo(0.0140, 3);
     expect(j?.rerun).toBe("unconfirmed");
   });
-  test("+4% in every repeat is under 5%: neither confirmed nor unconfirmed", () => {
-    const j = repeatsVerdict(reps([104, 104, 104, 104, 104]), 100, "core");
+  test("+8% in every repeat is under 10%: neither confirmed nor unconfirmed", () => {
+    const j = repeatsVerdict(reps([108, 108, 108, 108, 108]), 100, "core");
     expect(j?.rerun).toBeUndefined();
-    expect(j?.interval[0]).toBeCloseTo(0.04, 3);
+    expect(j?.interval[0]).toBeCloseTo(0.08, 3);
   });
   test("the ms floor holds for the interval's low end: +12% of 20 ms is 2.4 ms, its low end 1.76 ms", () => {
     expect(repeatsVerdict(reps([22.4, 22.6, 22.2, 22.8, 22.0], 20), 20, "core")?.rerun).toBe("unconfirmed");
@@ -482,12 +488,12 @@ describe("repeatsVerdict", () => {
     expect(repeatsVerdict(reps([130]), 100, "core")).toBeUndefined();
   });
   test("verdictOf: a confirmed interval decides the time, also under 25%", () => {
-    const up = repeatsVerdict(reps([106, 107, 105, 106, 106]), 100, "core")!;
-    expect(verdictOf(row("a", { today: own(106), yesterday: vs(106, 100, { rerun: up.rerun, interval: up.interval }) }), "yesterday", "core")).toBe("up");
+    const up = repeatsVerdict(reps([112, 113, 111, 112, 112]), 100, "core")!;
+    expect(verdictOf(row("a", { today: own(112), yesterday: vs(112, 100, { rerun: up.rerun, interval: up.interval }) }), "yesterday", "core")).toBe("up");
     const down = repeatsVerdict(reps([90, 91, 89, 90, 90]), 100, "core")!;
     expect(verdictOf(row("a", { today: own(90), yesterday: vs(90, 100, { rerun: down.rerun, interval: down.interval }) }), "yesterday", "core")).toBe("down");
-    const un = repeatsVerdict(reps([110, 111, 109, 96, 110]), 100, "core")!;
-    expect(verdictOf(row("a", { today: own(107), yesterday: vs(107, 100, { rerun: un.rerun, interval: un.interval }) }), "yesterday", "core")).toBeUndefined();
+    const un = repeatsVerdict(reps([114, 115, 113, 98, 114]), 100, "core")!;
+    expect(verdictOf(row("a", { today: own(111), yesterday: vs(111, 100, { rerun: un.rerun, interval: un.interval }) }), "yesterday", "core")).toBeUndefined();
     // A quiet cell with an interval: no time verdict, whatever its pooled delta says.
     const quiet = repeatsVerdict(reps([104, 104, 104, 104, 104]), 100, "core")!;
     expect(verdictOf(row("a", { today: own(130), yesterday: vs(130, 100, { interval: quiet.interval }) }), "yesterday", "core")).toBeUndefined();
@@ -496,25 +502,25 @@ describe("repeatsVerdict", () => {
 
 describe("suiteMarkdown with intervals", () => {
   const cell = (rerun: "confirmed" | "unconfirmed", interval: [number, number]): Cell => ({
-    median: 100, delta: 0.06, flags: [], counterDiffs: [], rerun: rerun, interval: interval,
-    repeats: [0.06, 0.07, 0.05, 0.06, 0.06].map((d: number) => ({ today: 100 * (1 + d), build: 100, delta: d }))
+    median: 100, delta: 0.12, flags: [], counterDiffs: [], rerun: rerun, interval: interval,
+    repeats: [0.12, 0.13, 0.11, 0.12, 0.12].map((d: number) => ({ today: 100 * (1 + d), build: 100, delta: d }))
   });
-  const m = (c: Cell): SuiteMatrix => matrixOf("core", { roles: ["today", "yesterday"], rows: [{ id: "a", cells: { today: own(106), yesterday: c } }],
+  const m = (c: Cell): SuiteMatrix => matrixOf("core", { roles: ["today", "yesterday"], rows: [{ id: "a", cells: { today: own(112), yesterday: c } }],
     up: c.rerun === "confirmed" ? { yesterday: 1 } : {} });
   test("a confirmed cell: highlighted, its 99% interval in the repeats table, the interval rule in the legend", () => {
-    const md = suiteMarkdown(surveyLibrary, m(cell("confirmed", [0.0455, 0.0746])), date);
-    expect(md).toContain("| a | 106 | 🔴 **+6%** |");
+    const md = suiteMarkdown(surveyLibrary, m(cell("confirmed", [0.1055, 0.1346])), date);
+    expect(md).toContain("| a | 112 | 🔴 **+12%** |");
     expect(md).toContain("## Repeats 1D\n\n" +
       "| scenario | Δ | 99% | 1 | 2 | 3 | 4 | 5 | confirmed |\n" +
       "|---|--:|--:|--:|--:|--:|--:|--:|---|\n" +
-      "| a | +6% | +5%..+7% | +6% | +7% | +5% | +6% | +6% | 🟢 |\n");
-    expect(md).toContain("🔴 slower · 🟢 faster: a change of 5% or more whose 99% interval over the repeats clears 2% and 2 ms");
+      "| a | +12% | +11%..+13% | +12% | +13% | +11% | +12% | +12% | 🟢 |\n");
+    expect(md).toContain("🔴 slower · 🟢 faster: a change of 10% or more whose 99% interval over the repeats clears 2% and 2 ms");
     expect(md.split("\n")).toContain("confirmed: 🟢 the 99% interval clears 2% and 2 ms · 🔴 it does not (its time is not judged)");
     expect(md).not.toContain("over 25%");
   });
   test("an unconfirmed cell: not highlighted, its interval listed, not confirmed", () => {
-    const md = suiteMarkdown(surveyLibrary, m(cell("unconfirmed", [-0.0563, 0.2142])), date);
-    expect(md).toContain("| a | 106 | +6% |");
-    expect(md).toContain("| a | +6% | −6%..+21% | +6% | +7% | +5% | +6% | +6% | 🔴 |");
+    const md = suiteMarkdown(surveyLibrary, m(cell("unconfirmed", [-0.0383, 0.2720])), date);
+    expect(md).toContain("| a | 112 | +12% |");
+    expect(md).toContain("| a | +12% | −4%..+27% | +12% | +13% | +11% | +12% | +12% | 🔴 |");
   });
 });

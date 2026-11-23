@@ -144,9 +144,14 @@ export function cellTimeVerdict(c: Cell, suite: string): Verdict | undefined {
 // 99% t-interval of that mean. A change of PRACTICAL or more (and over the suite's ms) is a candidate: confirmed when
 // the interval's end nearer to zero is still past CONFIDENT and past the suite's ms, else unconfirmed.
 // Why not the fixed 25%: on the history of 2026-11-17..20 the repeats of one pair were 1.5-2.4% apart (the median SD
-// of l per suite), so the fixed 25% left out changes of 5-20% that every repeat showed. Replayed on those six nights,
-// this rule kept every highlight of the 25% rule, and about 0.01 a night would come from the noise alone.
-const PRACTICAL = 0.05;
+// of l per suite), so the fixed 25% left out changes of 5-20% that every repeat showed.
+// Why 10% and not 5%: the interval holds the noise of one machine (every repeat of a pair runs on one worker), but on
+// another night the scenario's worker has another CPU model (seven of them on 2026-11-23), and the change itself
+// depends on the CPU: two runs of the same builds on one model put the other's mean outside the 99% interval in 1% of
+// cells, on two models in 31%. Replayed on the history's runs that compared the same builds (2026-11-17..23, 3281
+// pairs of cells), 7% of the highlights at 5% were not in the other run, 5% at 10% (and 6% for the fixed 25%), and the
+// share of highlighted cells fell from 27% to 23%.
+const PRACTICAL = 0.10;
 const CONFIDENT = 0.02;
 const percent = (v: number): string => Math.round(v * 100) + "%";
 
@@ -174,7 +179,7 @@ export function judgedByInterval(m: SuiteMatrix): boolean {
   return m.rows.some((r: Row) => Object.values(r.cells).some((c?: Cell) => !!c && !!c.interval));
 }
 
-// The interval rule's thresholds for a legend: "5%", "2%".
+// The interval rule's thresholds for a legend: "10%", "2%".
 export function intervalLegend(): { practical: string, confident: string } {
   return { practical: percent(PRACTICAL), confident: percent(CONFIDENT) };
 }
