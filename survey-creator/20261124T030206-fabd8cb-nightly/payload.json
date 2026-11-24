@@ -1,0 +1,38 @@
+{
+  "content": "📊 survey-creator nightly\nrun: <https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/45316600023>",
+  "embeds": [
+    {
+      "title": "Builds",
+      "description": "**today** [fabd8cb85](https://github.com/surveyjs/survey-creator/commit/fabd8cb857672b42819205a82d4a47f4bd562400) · 23.11.2026 · library [df947bd94](https://github.com/surveyjs/survey-library/commit/df947bd94a698495e93e7ffdd56a0e758d95fe1b)\n**yesterday** [b59784acb](https://github.com/surveyjs/survey-creator/commit/b59784acbee739c000e61ced47d18f4cc35ea6c0) · 20.11.2026 · library [12123f42f](https://github.com/surveyjs/survey-library/commit/12123f42f38d113258d785cb42c7da49f0ee8abe)\n**week** [a59eed4d6](https://github.com/surveyjs/survey-creator/commit/a59eed4d6d577a582519cb5628d526af3f942d6b) · 16.11.2026 · library [50a7175e3](https://github.com/surveyjs/survey-library/commit/50a7175e34f4ed7fd01e3b47d9d1cd2e868e0318)\n**month** [faa307505](https://github.com/surveyjs/survey-creator/commit/faa30750523fcabadb811e6a9d18c493bbb0344f) · 22.10.2026 · library [247b8c5f2](https://github.com/surveyjs/survey-library/commit/247b8c5f2700734d019f04c244916754d390a94e)"
+    },
+    {
+      "title": "Commits since yesterday (2)",
+      "description": "[#8202](https://github.com/surveyjs/survey-creator/pull/8202) remove pointer cursor from property grid\n[#8201](https://github.com/surveyjs/survey-creator/pull/8201) feat(creator): compact, click-through license banner for the embedded marker"
+    },
+    {
+      "title": "survey-library commits since yesterday (8)",
+      "description": "[#12379](https://github.com/surveyjs/survey-library/pull/12379) Worktree filter autocomplete off\n[#12388](https://github.com/surveyjs/survey-library/pull/12388) feat(dynamic-data): add optional count?(filter) function into IDynamicDataSource\n[f67be6471](https://github.com/surveyjs/survey-library/commit/f67be64717f6110eeaa833fe6c33d22044c07521) Add sorting and paging demo links to doccomments\n[#12387](https://github.com/surveyjs/survey-library/pull/12387)  fix \\#12385 generateSchema() outputs string\\[\\] properties as arrays of strings\n[#12383](https://github.com/surveyjs/survey-library/pull/12383) \\#12372 Records questions: Support checkmark images for boolean column\n[#12380](https://github.com/surveyjs/survey-library/pull/12380) using checkIfValuesEqual  instead of isTwoValueEquals\n[189c3e6ef](https://github.com/surveyjs/survey-library/commit/189c3e6efd2e0fbea61a6b02764d1838b91c1b5f) updated survey-library translation for master \\[azurepipelines skip\\]\n[#12378](https://github.com/surveyjs/survey-library/pull/12378) fix(survey-core): correct Indonesian (id) auto-translated strings"
+    }
+  ],
+  "allowed_mentions": {
+    "parse": []
+  },
+  "attachments": [
+    {
+      "id": 0,
+      "filename": "overview.png"
+    },
+    {
+      "id": 1,
+      "filename": "core.md"
+    },
+    {
+      "id": 2,
+      "filename": "react.md"
+    },
+    {
+      "id": 3,
+      "filename": "results.tar.gz"
+    }
+  ]
+}
