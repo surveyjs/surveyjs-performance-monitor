@@ -1,0 +1,46 @@
+{
+  "content": "📊 survey-library nightly\nrun: <https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/45302415096>",
+  "embeds": [
+    {
+      "title": "Builds",
+      "description": "**today** [df947bd94](https://github.com/surveyjs/survey-library/commit/df947bd94a698495e93e7ffdd56a0e758d95fe1b) · 23.11.2026\n**yesterday** [12123f42f](https://github.com/surveyjs/survey-library/commit/12123f42f38d113258d785cb42c7da49f0ee8abe) · 20.11.2026\n**week** [50a7175e3](https://github.com/surveyjs/survey-library/commit/50a7175e34f4ed7fd01e3b47d9d1cd2e868e0318) · 16.11.2026\n**month** [247b8c5f2](https://github.com/surveyjs/survey-library/commit/247b8c5f2700734d019f04c244916754d390a94e) · 23.10.2026"
+    },
+    {
+      "title": "Commits since yesterday (8)",
+      "description": "[#12379](https://github.com/surveyjs/survey-library/pull/12379) Worktree filter autocomplete off\n[#12388](https://github.com/surveyjs/survey-library/pull/12388) feat(dynamic-data): add optional count?(filter) function into IDynamicDataSource\n[f67be6471](https://github.com/surveyjs/survey-library/commit/f67be64717f6110eeaa833fe6c33d22044c07521) Add sorting and paging demo links to doccomments\n[#12387](https://github.com/surveyjs/survey-library/pull/12387)  fix \\#12385 generateSchema() outputs string\\[\\] properties as arrays of strings\n[#12383](https://github.com/surveyjs/survey-library/pull/12383) \\#12372 Records questions: Support checkmark images for boolean column\n[#12380](https://github.com/surveyjs/survey-library/pull/12380) using checkIfValuesEqual  instead of isTwoValueEquals\n[189c3e6ef](https://github.com/surveyjs/survey-library/commit/189c3e6efd2e0fbea61a6b02764d1838b91c1b5f) updated survey-library translation for master \\[azurepipelines skip\\]\n[#12378](https://github.com/surveyjs/survey-library/pull/12378) fix(survey-core): correct Indonesian (id) auto-translated strings"
+    }
+  ],
+  "allowed_mentions": {
+    "parse": []
+  },
+  "attachments": [
+    {
+      "id": 0,
+      "filename": "overview.png"
+    },
+    {
+      "id": 1,
+      "filename": "core.md"
+    },
+    {
+      "id": 2,
+      "filename": "react.md"
+    },
+    {
+      "id": 3,
+      "filename": "survey-js-ui.md"
+    },
+    {
+      "id": 4,
+      "filename": "vue3.md"
+    },
+    {
+      "id": 5,
+      "filename": "angular.md"
+    },
+    {
+      "id": 6,
+      "filename": "results.tar.gz"
+    }
+  ]
+}
