@@ -1,0 +1,38 @@
+{
+  "content": "📊 survey-creator nightly\nrun: <https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/45537070349>",
+  "embeds": [
+    {
+      "title": "Builds",
+      "description": "**today** [c913841a6](https://github.com/surveyjs/survey-creator/commit/c913841a6d46afeda573e5012ca696ec81c3dc08) · 24.11.2026 · library [a38b04055](https://github.com/surveyjs/survey-library/commit/a38b040551b2584e348db04f7cb2573598412c50)\n**yesterday** [fabd8cb85](https://github.com/surveyjs/survey-creator/commit/fabd8cb857672b42819205a82d4a47f4bd562400) · 23.11.2026 · library [df947bd94](https://github.com/surveyjs/survey-library/commit/df947bd94a698495e93e7ffdd56a0e758d95fe1b)\n**week** [0841d9bb3](https://github.com/surveyjs/survey-creator/commit/0841d9bb3ed0db5eeb5f3889cd98efe60d0a8d35) · 17.11.2026 · library [598c0b174](https://github.com/surveyjs/survey-library/commit/598c0b174c63e788956d935970c907535f8d1cac)\n**month** [faa307505](https://github.com/surveyjs/survey-creator/commit/faa30750523fcabadb811e6a9d18c493bbb0344f) · 22.10.2026 · library [247b8c5f2](https://github.com/surveyjs/survey-library/commit/247b8c5f2700734d019f04c244916754d390a94e)"
+    },
+    {
+      "title": "Commits since yesterday (3)",
+      "description": "[c913841a6](https://github.com/surveyjs/survey-creator/commit/c913841a6d46afeda573e5012ca696ec81c3dc08) \\#\\# Makes it easier for developers and their AI coding agents to report bugs and missing A…\n[31b1cc5b1](https://github.com/surveyjs/survey-creator/commit/31b1cc5b1fdde3adba18f73f11208d0ffff9193e) updated survey-creator translation for master \\[azurepipelines skip\\]\n[#8206](https://github.com/surveyjs/survey-creator/pull/8206) fix(i18n): correct mistranslated Indonesian strings"
+    },
+    {
+      "title": "survey-library commits since yesterday (9)",
+      "description": "[#12382](https://github.com/surveyjs/survey-library/pull/12382) feat(survey-core): add onUpdateMatrixCellCss for matrix data cells and rows (\\#12381)\n[#12405](https://github.com/surveyjs/survey-library/pull/12405) Makes it easier for developers and their AI coding agents to report bugs and missing APIs…\n[#12399](https://github.com/surveyjs/survey-library/pull/12399) \\#12375 Panelless theme: error message location issue  \\[adapters:62\\]\n[#12393](https://github.com/surveyjs/survey-library/pull/12393) \\#12377 No fitToContainer: progress bar overlaps the content\n[#12402](https://github.com/surveyjs/survey-library/pull/12402) fix(paneldynamic) \\#12398: build panels for a sort or filter view when the value is set on…\n[#12395](https://github.com/surveyjs/survey-library/pull/12395) feat(survey-core): getRecord() for matrix rows, dynamic panels and their events\n[#12384](https://github.com/surveyjs/survey-library/pull/12384) feat(survey-core): convert a data source request into a filter tree, SQL, MongoDB and ODa…\n[#12392](https://github.com/surveyjs/survey-library/pull/12392) test(dynamic-data): pin that a superseded read answering first is dropped\n+1 more"
+    }
+  ],
+  "allowed_mentions": {
+    "parse": []
+  },
+  "attachments": [
+    {
+      "id": 0,
+      "filename": "overview.png"
+    },
+    {
+      "id": 1,
+      "filename": "core.md"
+    },
+    {
+      "id": 2,
+      "filename": "react.md"
+    },
+    {
+      "id": 3,
+      "filename": "results.tar.gz"
+    }
+  ]
+}
