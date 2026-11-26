@@ -1,0 +1,43 @@
+{
+  "content": "🔺 survey-creator nightly\nrun: <https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/45746256674>",
+  "embeds": [
+    {
+      "title": "Builds",
+      "description": "**today** [692ca32b1](https://github.com/surveyjs/survey-creator/commit/692ca32b11e2f3919fb9b05e0520efa514804503) · 25.11.2026 · library [4ca360a52](https://github.com/surveyjs/survey-library/commit/4ca360a522219674bb7fbfd97928140b74a9e6b9)\n**yesterday** [c913841a6](https://github.com/surveyjs/survey-creator/commit/c913841a6d46afeda573e5012ca696ec81c3dc08) · 24.11.2026 · library [a38b04055](https://github.com/surveyjs/survey-library/commit/a38b040551b2584e348db04f7cb2573598412c50)\n**week** [e05634046](https://github.com/surveyjs/survey-creator/commit/e056340464d9f56361cc2ea26fd38fc84c8d409a) · 18.11.2026 · library [9e5b74b48](https://github.com/surveyjs/survey-library/commit/9e5b74b48124c0d084c1b5ab07b69729d86674ce)\n**month** [86eca334a](https://github.com/surveyjs/survey-creator/commit/86eca334aace819ad675237d289fad63d45eed31) · 26.10.2026 · library [fc67e76ba](https://github.com/surveyjs/survey-library/commit/fc67e76bad48f7151478c071301ec81fcae5eddf)"
+    },
+    {
+      "title": "Commits since yesterday (4)",
+      "description": "[692ca32b1](https://github.com/surveyjs/survey-creator/commit/692ca32b11e2f3919fb9b05e0520efa514804503) updated survey-creator translation for master \\[azurepipelines skip\\]\n[#8211](https://github.com/surveyjs/survey-creator/pull/8211) feat(ci): add GitHub Actions workflow for CI integration\n[#8209](https://github.com/surveyjs/survey-creator/pull/8209) fix(linter):  \\[library:12409 \\] localize cycle/value-write messages for self-referencing e…\n[#8205](https://github.com/surveyjs/survey-creator/pull/8205) Remove ensureRowsVisibility usage"
+    },
+    {
+      "title": "survey-library commits since yesterday (7)",
+      "description": "[#12414](https://github.com/surveyjs/survey-library/pull/12414) test(survey-core): run the Vitest setup file for every test file\n[#12413](https://github.com/surveyjs/survey-library/pull/12413) perf(core): data, setup and named operations for local extra fixtures…\n[#12409](https://github.com/surveyjs/survey-library/pull/12409) fix(linter): don't report self-referencing fallback expressions as cycles fix \\#12407 \\[cre…\n[#12411](https://github.com/surveyjs/survey-library/pull/12411) fix(survey-core): run a question's own {self} conditions when its value changes\n[#12391](https://github.com/surveyjs/survey-library/pull/12391) mui dynamic panel\n[#12400](https://github.com/surveyjs/survey-library/pull/12400) \\#12376 MUI adapter: error messages are placed below the dividers in dynamic panels\n[#12386](https://github.com/surveyjs/survey-library/pull/12386) Use intersection observer for lazy rendering \\[creator:8205\\]"
+    },
+    {
+      "title": "react · 3 slower · 1 faster vs yesterday",
+      "description": "`huge/tabs/logic` 1807 ms · y 🔴 +41% · w 🔴 +45% · m 🔴 +24%\n`huge/tabs/translation` 174 ms · y 🔴 +20% · w 🔴 +23% · m 🔴 +12%\n`locales/tabs/translation` 231 ms · y 🔴 +20% · w 🔴 +22% · m 🔴 +15%\n`huge/designer/expand-all` 260 ms · y 🟢 −9% · w 🟢 −10% · m 🟢 −30%",
+      "color": 13199466
+    }
+  ],
+  "allowed_mentions": {
+    "parse": []
+  },
+  "attachments": [
+    {
+      "id": 0,
+      "filename": "overview.png"
+    },
+    {
+      "id": 1,
+      "filename": "core.md"
+    },
+    {
+      "id": 2,
+      "filename": "react.md"
+    },
+    {
+      "id": 3,
+      "filename": "results.tar.gz"
+    }
+  ]
+}
