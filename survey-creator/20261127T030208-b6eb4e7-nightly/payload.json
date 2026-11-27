@@ -1,0 +1,38 @@
+{
+  "content": "📊 survey-creator nightly\nrun: <https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/45931758579>",
+  "embeds": [
+    {
+      "title": "Builds",
+      "description": "**today** [b6eb4e787](https://github.com/surveyjs/survey-creator/commit/b6eb4e78727c4136d955e842f55ac267a0542227) · 26.11.2026 · library [09cfe4293](https://github.com/surveyjs/survey-library/commit/09cfe4293f07991064d99382b7b468ad96b271f8)\n**yesterday** [692ca32b1](https://github.com/surveyjs/survey-creator/commit/692ca32b11e2f3919fb9b05e0520efa514804503) · 25.11.2026 · library [4ca360a52](https://github.com/surveyjs/survey-library/commit/4ca360a522219674bb7fbfd97928140b74a9e6b9)\n**week** [c86fd7ca2](https://github.com/surveyjs/survey-creator/commit/c86fd7ca2295294cdb0e06019c523fdb2393b370) · 19.11.2026 · library [c5faf6d2f](https://github.com/surveyjs/survey-library/commit/c5faf6d2f0d724afd20fd2fc2bf65503660f718e)\n**month** [5cdd30a46](https://github.com/surveyjs/survey-creator/commit/5cdd30a46d255035133984ac20dcd43d0bffcaba) · 27.10.2026 · library [22ec8c88f](https://github.com/surveyjs/survey-library/commit/22ec8c88f941832e89bdff69fd580d8c259dbda8)"
+    },
+    {
+      "title": "Commits since yesterday (6)",
+      "description": "[b6eb4e787](https://github.com/surveyjs/survey-creator/commit/b6eb4e78727c4136d955e842f55ac267a0542227) updated survey-creator docs \\[azurepipelines skip\\]\n[419bda885](https://github.com/surveyjs/survey-creator/commit/419bda885c4a12efa43fd0f8635d8bd1c7901e6f) Release: 3.2.8 \\[azurepipelines skip\\]\n[b8545e4de](https://github.com/surveyjs/survey-creator/commit/b8545e4de9cb5b366ea77c5b89e05e42062f3e17) updated survey-creator translation for master \\[azurepipelines skip\\]\n[#8207](https://github.com/surveyjs/survey-creator/pull/8207) \\[library:12404\\] Filter release changes\n[#8174](https://github.com/surveyjs/survey-creator/pull/8174) feat(creator): propertyDefaults option for the designer and preview surveys \\[library:1230…\n[#8208](https://github.com/surveyjs/survey-creator/pull/8208) feat(creator): add a Copy button to each JSON Editor error and allow selecting its text"
+    },
+    {
+      "title": "survey-library commits since yesterday (18)",
+      "description": "[09cfe4293](https://github.com/surveyjs/survey-library/commit/09cfe4293f07991064d99382b7b468ad96b271f8) updated survey-library docs \\[azurepipelines skip\\]\n[cec2c28e1](https://github.com/surveyjs/survey-library/commit/cec2c28e106130f0c3e4ad97a42dd35ba18a4f5f) Release: 3.2.8 \\[azurepipelines skip\\]\n[8a4a5249a](https://github.com/surveyjs/survey-library/commit/8a4a5249af8b52d31dce56819f692dd69e906e10) updated survey-library translation for master \\[azurepipelines skip\\]\n[81e2fe4ef](https://github.com/surveyjs/survey-library/commit/81e2fe4efe12fcf1f2e1658e2de30b7299e32d64) FIx the master\n[#12416](https://github.com/surveyjs/survey-library/pull/12416) test(survey-core): restore the global state that tests change\n[#12404](https://github.com/surveyjs/survey-library/pull/12404) \\[creator:8207\\] Filter release changes\n[#12390](https://github.com/surveyjs/survey-library/pull/12390) feat(survey-core): add getDataView() to Dynamic Matrix and Dynamic Panel\n[#12426](https://github.com/surveyjs/survey-library/pull/12426) Fix lazyRenderEnabled setter in survey\n+10 more"
+    }
+  ],
+  "allowed_mentions": {
+    "parse": []
+  },
+  "attachments": [
+    {
+      "id": 0,
+      "filename": "overview.png"
+    },
+    {
+      "id": 1,
+      "filename": "core.md"
+    },
+    {
+      "id": 2,
+      "filename": "react.md"
+    },
+    {
+      "id": 3,
+      "filename": "results.tar.gz"
+    }
+  ]
+}
