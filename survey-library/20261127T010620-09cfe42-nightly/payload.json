@@ -1,0 +1,56 @@
+{
+  "content": "⚠️ survey-library nightly\nrun: <https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/45920610067>",
+  "embeds": [
+    {
+      "title": "Builds",
+      "description": "**today** [09cfe4293](https://github.com/surveyjs/survey-library/commit/09cfe4293f07991064d99382b7b468ad96b271f8) · 26.11.2026\n**yesterday** [4ca360a52](https://github.com/surveyjs/survey-library/commit/4ca360a522219674bb7fbfd97928140b74a9e6b9) · 25.11.2026\n**week** [c5faf6d2f](https://github.com/surveyjs/survey-library/commit/c5faf6d2f0d724afd20fd2fc2bf65503660f718e) · 19.11.2026\n**month** [22ec8c88f](https://github.com/surveyjs/survey-library/commit/22ec8c88f941832e89bdff69fd580d8c259dbda8) · 27.10.2026"
+    },
+    {
+      "title": "Commits since yesterday (18)",
+      "description": "[09cfe4293](https://github.com/surveyjs/survey-library/commit/09cfe4293f07991064d99382b7b468ad96b271f8) updated survey-library docs \\[azurepipelines skip\\]\n[cec2c28e1](https://github.com/surveyjs/survey-library/commit/cec2c28e106130f0c3e4ad97a42dd35ba18a4f5f) Release: 3.2.8 \\[azurepipelines skip\\]\n[8a4a5249a](https://github.com/surveyjs/survey-library/commit/8a4a5249af8b52d31dce56819f692dd69e906e10) updated survey-library translation for master \\[azurepipelines skip\\]\n[81e2fe4ef](https://github.com/surveyjs/survey-library/commit/81e2fe4efe12fcf1f2e1658e2de30b7299e32d64) FIx the master\n[#12416](https://github.com/surveyjs/survey-library/pull/12416) test(survey-core): restore the global state that tests change\n[#12404](https://github.com/surveyjs/survey-library/pull/12404) \\[creator:8207\\] Filter release changes\n[#12390](https://github.com/surveyjs/survey-library/pull/12390) feat(survey-core): add getDataView() to Dynamic Matrix and Dynamic Panel\n[#12426](https://github.com/surveyjs/survey-library/pull/12426) Fix lazyRenderEnabled setter in survey\n[#12424](https://github.com/surveyjs/survey-library/pull/12424) \\#12421 Dynamic Matrix in View Mode: Rows with checkboxes are taller than other rows\n[#12419](https://github.com/surveyjs/survey-library/pull/12419) Fast scroll cause error\n[#12304](https://github.com/surveyjs/survey-library/pull/12304) feat(survey): per-survey property defaults\n[eaf1e830d](https://github.com/surveyjs/survey-library/commit/eaf1e830db4bec3d4a3d9363354be94675fd25ee) FIx perf tests compilation\n[#12363](https://github.com/surveyjs/survey-library/pull/12363) fix(a11y): name the Boolean radio group with the question title\n[#12418](https://github.com/surveyjs/survey-library/pull/12418) perf(core): a new Base value is a property change without a JSON comparison\n[#12412](https://github.com/surveyjs/survey-library/pull/12412) perf(survey-core): check defaultValueExpression first in Question.runCondition\n+3 more"
+    },
+    {
+      "title": "core · 2 faster vs yesterday",
+      "description": "`expressions/answer/first` 846 ms · y 🟢 −15% · w 🟢 −11% · m +2%\n`expressions/answer/next3` 2196 ms · y 🟢 −15% · w 🟢 −14% · m −4%",
+      "color": 6266484
+    },
+    {
+      "title": "react · 1 faster vs yesterday",
+      "description": "`complexLogic/answer/first` 287 ms · y 🟢 heap: jsHeapGrowth 395.11 → 294.09 · w 🟢 heap: jsHeapGrowth 406.26 → 291.96 · m 0%",
+      "color": 6266484
+    }
+  ],
+  "allowed_mentions": {
+    "parse": []
+  },
+  "attachments": [
+    {
+      "id": 0,
+      "filename": "overview.png"
+    },
+    {
+      "id": 1,
+      "filename": "core.md"
+    },
+    {
+      "id": 2,
+      "filename": "react.md"
+    },
+    {
+      "id": 3,
+      "filename": "survey-js-ui.md"
+    },
+    {
+      "id": 4,
+      "filename": "vue3.md"
+    },
+    {
+      "id": 5,
+      "filename": "angular.md"
+    },
+    {
+      "id": 6,
+      "filename": "results.tar.gz"
+    }
+  ]
+}
