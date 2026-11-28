@@ -1,0 +1,38 @@
+{
+  "content": "📊 survey-creator nightly\nrun: <https://github.com/surveyjs/surveyjs-performance-monitor/actions/runs/46100872553>",
+  "embeds": [
+    {
+      "title": "Builds",
+      "description": "**today** [4765fcfe2](https://github.com/surveyjs/survey-creator/commit/4765fcfe220c8888864c6ab1dafc8bc8943e299e) · 27.11.2026 · library [64a5757ab](https://github.com/surveyjs/survey-library/commit/64a5757abeb973fb464603689d7290ee60f25fa7)\n**yesterday** [b6eb4e787](https://github.com/surveyjs/survey-creator/commit/b6eb4e78727c4136d955e842f55ac267a0542227) · 26.11.2026 · library [09cfe4293](https://github.com/surveyjs/survey-library/commit/09cfe4293f07991064d99382b7b468ad96b271f8)\n**week** [b59784acb](https://github.com/surveyjs/survey-creator/commit/b59784acbee739c000e61ced47d18f4cc35ea6c0) · 20.11.2026 · library [12123f42f](https://github.com/surveyjs/survey-library/commit/12123f42f38d113258d785cb42c7da49f0ee8abe)\n**month** [631168982](https://github.com/surveyjs/survey-creator/commit/63116898263fab7285c94682025aa3e667858556) · 28.10.2026 · library [b7269c1ea](https://github.com/surveyjs/survey-library/commit/b7269c1ea2d9d36ede3d765e7a865247605b211e)"
+    },
+    {
+      "title": "Commits since yesterday (3)",
+      "description": "[4765fcfe2](https://github.com/surveyjs/survey-creator/commit/4765fcfe220c8888864c6ab1dafc8bc8943e299e) updated survey-creator translation for master \\[azurepipelines skip\\]\n[#8217](https://github.com/surveyjs/survey-creator/pull/8217) Property Grid: Fix \"inline\" in lower case\n[#8213](https://github.com/surveyjs/survey-creator/pull/8213) fix: add a question when Add Question is clicked from the page title"
+    },
+    {
+      "title": "survey-library commits since yesterday (2)",
+      "description": "[#12434](https://github.com/surveyjs/survey-library/pull/12434) fix(survey-core): treat two NaN values as equal in change detection\n[#12422](https://github.com/surveyjs/survey-library/pull/12422) fix(survey-core): trunc() returns wrong digits for numbers in exponent notation"
+    }
+  ],
+  "allowed_mentions": {
+    "parse": []
+  },
+  "attachments": [
+    {
+      "id": 0,
+      "filename": "overview.png"
+    },
+    {
+      "id": 1,
+      "filename": "core.md"
+    },
+    {
+      "id": 2,
+      "filename": "react.md"
+    },
+    {
+      "id": 3,
+      "filename": "results.tar.gz"
+    }
+  ]
+}
